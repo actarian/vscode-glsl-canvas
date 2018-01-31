@@ -1,5 +1,5 @@
 {
-  "name": "vscode-glsl-canvas",
+  "name": "glsl-canvas",
   "description": "Live WebGL preview of GLSL shaders",
   "main": "./bower_components",
   "authors": [

@@ -10,7 +10,7 @@ Running the command splits the view and displays a fullscreen quad with your sha
 
 ## Features
 
-Automatically update display with the results of your shader. At the moment, ```iResolution```, ```iGlobalTime```, and ```iDeltaTime```, ```iChannelN``` are the only uniforms provided. The texture channels (```iChannel0```, ```iChannel1```, ...) may be defined by modifying the workspace's settings.json file. For example:  
+Automatically update display with the results of your shader. At the moment, ```u_resolution```, ```u_time```, ```u_mouse``` are the only uniforms provided. The texture channels (```u_texture_0```, ```u_texture_1```, ...) may be defined by modifying the workspace's settings.json file. For example:  
 ```
 {
     "glsl-canvas.textures": {
@@ -22,7 +22,7 @@ Automatically update display with the results of your shader. At the moment, ```
 ```
 This demonstrates using local and remote images as textures. *Remember that "power of 2" texture sizes is generally what you want to stick to.*
 
-The following is an example ported from Shadertoy.com:
+An example of fragment shader:
 ```glsl
 // Author:
 // Title:

@@ -1,6 +1,6 @@
 {
-    "name": "vscode-glsl-canvas",
-    "displayName": "vscode-glsl-canvas",
+    "name": "glsl-canvas",
+    "displayName": "glsl-canvas",
     "description": "Live WebGL preview of GLSL shaders",
     "version": "0.1.1",
     "publisher": "vscode-circledev",
@@ -23,7 +23,7 @@
                         "0": "",
                         "1": ""
                     },
-                    "description": "The texture channels (iChannel0, iChannel1, ...) using http:// or file:// protocol."
+                    "description": "The texture channels (u_texture_0, u_texture_1, ...) using http:// or file:// protocol."
                 }
             }
         },
