@@ -12,17 +12,15 @@ export function activate(context: ExtensionContext) {
 
     vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) => {
         clearTimeout(ti);
-        if (!vscode.window.activeTextEditor) {
-            ti = setTimeout(function () {
-                if (vscode.window.activeTextEditor && e.document === vscode.window.activeTextEditor.document) {
-                    provider.update(uri);
-                }
-            }, 1000);
-        }
+        ti = setTimeout(function () {
+            if (vscode.window.activeTextEditor && e.document === vscode.window.activeTextEditor.document) {
+                provider.update(uri);
+            }
+        }, 1000);
     });
 
     let command = vscode.commands.registerCommand('extension.showGlslCanvas', () => {
-        return vscode.commands.executeCommand('vscode.previewHtml', uri, ViewColumn.Two, 'GlslCanvas').then((success) => {
+        return vscode.commands.executeCommand('vscode.previewHtml', uri, ViewColumn.Two, 'glslCanvas').then((success) => {
 
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
@@ -56,7 +54,6 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
         let textures = config['textures'] || {};
 
         let fragment = vscode.window.activeTextEditor.document.getText();
-        // fragment = fragment.replace(/(\r\n|\n|\r)/gm, "");
 
         let vertex = "";
 

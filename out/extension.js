@@ -10,16 +10,14 @@ function activate(context) {
     let ti;
     vscode.workspace.onDidChangeTextDocument((e) => {
         clearTimeout(ti);
-        if (!vscode.window.activeTextEditor) {
-            ti = setTimeout(function () {
-                if (vscode.window.activeTextEditor && e.document === vscode.window.activeTextEditor.document) {
-                    provider.update(uri);
-                }
-            }, 1000);
-        }
+        ti = setTimeout(function () {
+            if (vscode.window.activeTextEditor && e.document === vscode.window.activeTextEditor.document) {
+                provider.update(uri);
+            }
+        }, 1000);
     });
     let command = vscode.commands.registerCommand('extension.showGlslCanvas', () => {
-        return vscode.commands.executeCommand('vscode.previewHtml', uri, vscode_1.ViewColumn.Two, 'GlslCanvas').then((success) => {
+        return vscode.commands.executeCommand('vscode.previewHtml', uri, vscode_1.ViewColumn.Two, 'glslCanvas').then((success) => {
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });
@@ -41,7 +39,6 @@ class GlslDocumentContentProvider {
         // const has_textures = 'textures' in vscode.workspace.getConfiguration('glsl-canvas');
         let textures = config['textures'] || {};
         let fragment = vscode.window.activeTextEditor.document.getText();
-        // fragment = fragment.replace(/(\r\n|\n|\r)/gm, "");
         let vertex = "";
         const content = `
             <head>

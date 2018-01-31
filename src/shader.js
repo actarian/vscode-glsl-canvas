@@ -36,26 +36,22 @@
                 glsl.load(fragment);
             }
 
-            // glsl.setUniform("u_texture", texture);
-            /*
-            for (let i in textures) {
-                textureScript += `shader.uniforms.iChannel${i} = { type: 't', value: THREE.ImageUtils.loadTexture('${textures[i]}') };`;
-                console.log('texture', textures[i]);
+            for (var p in window.textures) {
+                glsl.setUniform('u_texture_' + p, window.textures[p]);
             }
-            */
 
-            console.log('onResize');
+            // console.log('onResize');
         }
 
         window.addEventListener('resize', onResize);
         onResize();
 
-        console.log('canvas', canvas);
-        console.log('glsl', glsl);
+        // console.log('canvas', canvas);
+        // console.log('glsl', glsl);
     }
 
     function onGlslError(message) {
-        console.log('onGlslError.error', message.error);
+        // console.log('onGlslError.error', message.error);
         var errors = [],
             warnings = [];
         message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function (m, l, v, t) {
@@ -63,12 +59,13 @@
             errors.push(li);
             return li;
         });
-        output += message.error.replace(/WARNING: \d+:(\d+): \'\' : (.+)/g, function (m, l) {
+        message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function (m, l, v, t) {
             var li = '<li class="warning"><span class="line">WARN line ' + Number(l) + '</span> <span class="text">' + t + '</span></li>';
             warnings.push(li);
+            console.log('WARN', li);
             return li;
         });
-        var output = '<div id="error"><h4>glsl shader error</h4><ul>';
+        var output = '<div id="error"><h4>glslCanvas error</h4><ul>';
         output += errors.join('\n');
         output += warnings.join('\n');
         output += '</ul></div>';

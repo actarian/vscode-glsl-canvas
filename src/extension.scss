@@ -7,7 +7,8 @@ body {
 	overflow: hidden;
 	background: #111;
 	color: #eee;
-	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	font-family: Courier New, Courier, monospace;
+	font-size: 13px;
 }
 
 #shader,
@@ -18,7 +19,7 @@ body {
 	width: 100vw;
 	height: 100vh;
 	overflow: hidden;
-	background: #000;
+	background: #111;
 	color: #eee;
 }
 
