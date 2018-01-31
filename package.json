@@ -2,7 +2,7 @@
     "name": "vscode-glsl-canvas",
     "displayName": "vscode-glsl-canvas",
     "description": "Live WebGL preview of GLSL shaders",
-    "version": "0.0.1",
+    "version": "0.1.1",
     "publisher": "vscode-circledev",
     "engines": {
         "vscode": "^1.19.0"
@@ -61,7 +61,7 @@
         "typescript": "^2.6.1",
         "vscode": "^1.1.6"
     },
-    "icon": "https://rawgit.com/actarian/vscode-glsl-canvas/master/resources/icon.png",
+    "icon": "resources/icon.png",
     "repository": {
         "type": "git",
         "url": "git://github.com/actarian/vscode-glsl-canvas.git"

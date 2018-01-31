@@ -57,3 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
+_README.md
+vscode-glsl-canvas-0.1.1.vsix

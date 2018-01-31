@@ -9,7 +9,7 @@
   "keywords": [
     "glsl"
   ],
-  "homepage": "",
+  "homepage": "https://github.com/actarian/vscode-glsl-canvas",
   "private": true,
   "ignore": [
     "**/.*",

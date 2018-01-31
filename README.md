@@ -1,65 +1,62 @@
-# vscode-glsl-canvas README
+# Visual Studio Code - glslCanvas
 
-This is the README for your extension "vscode-glsl-canvas". After writing up a brief description, we recommend including the following sections.
+The extension let you view a live WebGL preview of GLSL shaders within VSCode by providing a "Show glslCanvas" command.
+
+It use [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) a javaScript library from Book of Shaders and glslEditor made by Patricio Gonzalez Vivo [patriciogonzalezvivo](https://github.com/patriciogonzalezvivo/glslCanvas).
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/resources/example.jpg)
+
+Running the command splits the view and displays a fullscreen quad with your shader applied. Your fragment shader's entry point is ```void main()```. 
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Automatically update display with the results of your shader. At the moment, ```iResolution```, ```iGlobalTime```, and ```iDeltaTime```, ```iChannelN``` are the only uniforms provided. The texture channels (```iChannel0```, ```iChannel1```, ...) may be defined by modifying the workspace's settings.json file. For example:  
+```
+{
+    "glsl-canvas.textures": {
+        "0": "./texture.png",
+        "1": "https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-1.png",
+        "2": "https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-2.jpg",        
+    }
+}
+```
+This demonstrates using local and remote images as textures. *Remember that "power of 2" texture sizes is generally what you want to stick to.*
 
-For example if there is an image subfolder under your extension project workspace:
+The following is an example ported from Shadertoy.com:
+```glsl
+// Author:
+// Title:
 
-\!\[feature X\]\(images/feature-x.png\)
+#ifdef GL_ES
+    precision mediump float;
+#endif
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+void main() {
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    st.x *= u_resolution.x/u_resolution.y;
+
+    vec3 color = vec3(0.);
+    color = vec3(st.x,st.y,abs(sin(u_time)));
+
+    gl_FragColor = vec4(color,1.0);
+}
+```
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+* A graphics card supporting WebGL.
 
-## Extension Settings
+## Contributing
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+[Github Project Page](https://github.com/actarian/vscode-glsl-canvas)  
+[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=circledev.glsl-canvas)
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.1.1
 
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Initial release of glsl-canvas for vscode.
