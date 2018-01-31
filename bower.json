@@ -1,0 +1,24 @@
+{
+  "name": "vscode-glsl-canvas",
+  "description": "Live WebGL preview of GLSL shaders",
+  "main": "./bower_components",
+  "authors": [
+    "actarian <lzampetti@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "glsl"
+  ],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "glslCanvas": "https://github.com/patriciogonzalezvivo/glslCanvas.git#0.0.25"
+  }
+}

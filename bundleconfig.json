@@ -1,0 +1,25 @@
+[{
+    "inputFiles": [
+        "bower_components/glslCanvas/build/GlslCanvas.js"
+    ],
+    "outputFileName": "resources/glslCanvas.js",
+    "minify": {
+        "enabled": true
+    }
+}, {
+    "inputFiles": [
+        "resources/extension.css"
+    ],
+    "outputFileName": "resources/extension.css",
+    "minify": {
+        "enabled": true
+    }
+}, {
+    "inputFiles": [
+        "src/shader.js"
+    ],
+    "outputFileName": "resources/shader.js",
+    "minify": {
+        "enabled": true
+    }
+}]

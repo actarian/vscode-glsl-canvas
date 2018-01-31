@@ -1,0 +1,68 @@
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #111;
+  color: #eee;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; }
+
+#shader,
+#error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  color: #eee; }
+
+#error {
+  width: calc(100vw - 30px);
+  height: auto;
+  padding: 15px; }
+  #error ul {
+    list-style: none;
+    padding: 0; }
+  #error .error,
+  #error .warning {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    padding: 3px 5px;
+    border: 1px solid #d4d4d4;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    line-height: 1;
+    margin-bottom: 5px; }
+    #error .error span,
+    #error .warning span {
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 2px 5px;
+      margin-bottom: 5px;
+      border-radius: 4px; }
+  #error .error {
+    background-color: rgba(203, 97, 86, 0.2);
+    border-color: rgba(203, 97, 86, 0.3); }
+    #error .error .line {
+      color: #d16969; }
+  #error .warning {
+    background-color: rgba(206, 145, 114, 0.2);
+    border-color: rgba(206, 145, 114, 0.3); }
+    #error .warning .line {
+      color: #ce8f58; }
+  #error .line {
+    color: #4ec9b0; }
+  #error .value {
+    color: #569cd0; }
+  #error .text {
+    color: #d4d4d4; }
