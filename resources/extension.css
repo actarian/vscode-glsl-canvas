@@ -40,8 +40,7 @@ body {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    padding: 3px 5px;
-    border: 1px solid #d4d4d4;
+    border: 0px solid #d4d4d4;
     -webkit-box-pack: start;
         -ms-flex-pack: start;
             justify-content: flex-start;
@@ -49,7 +48,9 @@ body {
         -ms-flex-align: center;
             align-items: center;
     line-height: 1;
+    padding: 5px;
     margin-bottom: 5px;
+    font-size: 11px;
     cursor: pointer;
     transition: ease-in-out 250ms background-color; }
     #error .error span,
@@ -58,9 +59,7 @@ body {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      padding: 2px 5px;
-      margin-bottom: 5px;
-      border-radius: 4px; }
+      padding: 2px; }
   #error .error {
     background-color: rgba(203, 97, 86, 0.2);
     border-color: rgba(203, 97, 86, 0.3); }
@@ -90,3 +89,9 @@ body {
     -webkit-box-flex: 1;
         -ms-flex: 1 0 300px;
             flex: 1 0 300px; }
+
+[unselectable] {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+   -ms-user-select: none;
+       user-select: none; }

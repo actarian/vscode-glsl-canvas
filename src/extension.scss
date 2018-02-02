@@ -44,12 +44,13 @@ body {
 	.error,
 	.warning {
 		display: flex;
-		padding: 3px 5px;
-		border: 1px solid #d4d4d4;
+		border: 0px solid #d4d4d4;
 		justify-content: flex-start;
 		align-items: center;
 		line-height: 1;
+		padding: 5px;
 		margin-bottom: 5px;
+		font-size: 11px;
 		cursor: pointer;
 		transition: ease-in-out 250ms background-color;
 		span {
@@ -57,9 +58,7 @@ body {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			padding: 2px 5px;
-			margin-bottom: 5px;
-			border-radius: 4px;
+			padding: 2px;
 		}
 	}
 	.error {
@@ -94,4 +93,9 @@ body {
 		color: #d4d4d4;
 		flex: 1 0 300px;
 	}
+}
+
+[unselectable] {
+	-webkit-user-select: none;
+	user-select: none;
 }
