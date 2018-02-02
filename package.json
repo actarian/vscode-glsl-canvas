@@ -30,9 +30,6 @@
         "commands": [{
             "command": "extension.showGlslCanvas",
             "title": "Show glslCanvas"
-        }, {
-            "command": "extension.revealGlslLine",
-            "title": "Reveal glsl line"
         }]
     },
     "scripts": {
