@@ -3,7 +3,7 @@
     "displayName": "glsl-canvas",
     "description": "Live WebGL preview of GLSL shaders",
     "version": "0.1.1",
-    "publisher": "vscode-circledev",
+    "publisher": "circledev",
     "engines": {
         "vscode": "^1.19.0"
     },
@@ -11,7 +11,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.showGlslCanvas"
+        "onCommand:glsl-canvas.showGlslCanvas"
     ],
     "main": "./out/extension",
     "contributes": {
@@ -28,7 +28,7 @@
             }
         },
         "commands": [{
-            "command": "extension.showGlslCanvas",
+            "command": "glsl-canvas.showGlslCanvas",
             "title": "Show glslCanvas"
         }]
     },

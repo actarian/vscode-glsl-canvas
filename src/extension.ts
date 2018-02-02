@@ -20,7 +20,7 @@ export function activate(context: ExtensionContext) {
         }, 1000);
     });
 
-    let command = vscode.commands.registerCommand('extension.showGlslCanvas', () => {
+    let command = vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
         return vscode.commands.executeCommand('vscode.previewHtml', uri, ViewColumn.Two, 'glslCanvas').then((success) => {
             // success
         }, (reason) => {
@@ -30,8 +30,8 @@ export function activate(context: ExtensionContext) {
 
     context.subscriptions.push(command, content);
 
-    command = vscode.commands.registerCommand('extension.revealGlslLine', (uri: vscode.Uri, line: number) => {
-        // console.log('extension.revealGlslLine', line, uri.toString());
+    command = vscode.commands.registerCommand('glsl-canvas.revealGlslLine', (uri: vscode.Uri, line: number) => {
+        // console.log('glsl-canvas.revealGlslLine', line, uri.toString());
         for (let editor of vscode.window.visibleTextEditors) {
             // console.log('editor', editor.document.uri.toString());
             if (editor.document.uri.toString() === uri.toString()) {

@@ -48,12 +48,12 @@
         var errors = [],
             warnings = [];
         message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function (m, l, v, t) {
-            var li = '<li><a class="error" unselectable data-line="' + Number(l) + '" href="' + encodeURI('command:extension.revealGlslLine?' + JSON.stringify([window.command, Number(l)])) + '"><span class="line">ERROR line ' + Number(l) + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
+            var li = '<li><a class="error" unselectable data-line="' + Number(l) + '" href="' + encodeURI('command:glsl-canvas.revealGlslLine?' + JSON.stringify([window.command, Number(l)])) + '"><span class="line">ERROR line ' + Number(l) + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
             errors.push(li);
             return li;
         });
         message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function (m, l, v, t) {
-            var li = '<li><a class="warning" unselectable data-line="' + Number(l) + '" href="' + encodeURI('command:extension.revealGlslLine?' + JSON.stringify([window.command, Number(l)])) + '"><span class="line">WARN line ' + Number(l) + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
+            var li = '<li><a class="warning" unselectable data-line="' + Number(l) + '" href="' + encodeURI('command:glsl-canvas.revealGlslLine?' + JSON.stringify([window.command, Number(l)])) + '"><span class="line">WARN line ' + Number(l) + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
             warnings.push(li);
             return li;
         });
