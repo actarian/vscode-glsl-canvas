@@ -4,22 +4,21 @@ body {
   height: 100vh;
   margin: 0;
   padding: 0;
-  overflow: hidden;
   background: #111;
   color: #eee;
   font-family: Courier New, Courier, monospace;
-  font-size: 13px; }
+  font-size: 12px; }
 
+#content,
 #shader,
 #error {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100vw;
-  height: 100vh;
-  overflow: hidden;
   background: #111;
   color: #eee; }
+
+#shader {
+  height: 100vh;
+  min-height: 100vh; }
 
 #error {
   width: calc(100vw - 30px);
@@ -28,6 +27,14 @@ body {
   #error ul {
     list-style: none;
     padding: 0; }
+  #error li {
+    padding: 0; }
+    #error li a,
+    #error li a:hover,
+    #error li a:visited,
+    #error li a:link {
+      color: unset;
+      text-decoration: none; }
   #error .error,
   #error .warning {
     display: -webkit-box;
@@ -42,12 +49,15 @@ body {
         -ms-flex-align: center;
             align-items: center;
     line-height: 1;
-    margin-bottom: 5px; }
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: ease-in-out 250ms background-color; }
     #error .error span,
     #error .warning span {
       display: inline-block;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
       padding: 2px 5px;
       margin-bottom: 5px;
       border-radius: 4px; }
@@ -56,14 +66,27 @@ body {
     border-color: rgba(203, 97, 86, 0.3); }
     #error .error .line {
       color: #d16969; }
+    #error .error:hover {
+      background-color: rgba(203, 97, 86, 0.3); }
   #error .warning {
     background-color: rgba(206, 145, 114, 0.2);
     border-color: rgba(206, 145, 114, 0.3); }
     #error .warning .line {
       color: #ce8f58; }
+    #error .warning:hover {
+      background-color: rgba(206, 145, 114, 0.3); }
   #error .line {
-    color: #4ec9b0; }
+    color: #4ec9b0;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 124px;
+            flex: 0 0 124px; }
   #error .value {
-    color: #569cd0; }
+    color: #569cd0;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 74px;
+            flex: 0 0 74px; }
   #error .text {
-    color: #d4d4d4; }
+    color: #d4d4d4;
+    -webkit-box-flex: 1;
+        -ms-flex: 1 0 300px;
+            flex: 1 0 300px; }

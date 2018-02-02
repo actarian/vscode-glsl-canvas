@@ -1,8 +1,8 @@
-# Visual Studio Code - glslCanvas
+# vscode-glsl-canvas
 
 The extension let you view a live WebGL preview of GLSL shaders within VSCode by providing a "Show glslCanvas" command.
 
-It use [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) a javaScript library from Book of Shaders and glslEditor made by Patricio Gonzalez Vivo [patriciogonzalezvivo](https://github.com/patriciogonzalezvivo/glslCanvas).
+It use [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) a javaScript library from [Book of Shaders](http://thebookofshaders.com) and [glslEditor](http://editor.thebookofshaders.com) made by [Patricio Gonzalez Vivo](http://patriciogonzalezvivo.com).
 
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/resources/example.jpg)
 
