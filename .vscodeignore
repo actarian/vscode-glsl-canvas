@@ -4,5 +4,11 @@ out/test/**
 out/**/*.map
 src/**
 .gitignore
+bower.json
+bundleconfig.json
+compilerconfig.json
 tsconfig.json
+gulpfile.js
 vsc-extension-quickstart.md
+*.vsix
+*.zip
