@@ -53,7 +53,7 @@ void main() {
 
 * A graphics card supporting WebGL.
 
-## Todo
+## Todo
 
 * Play / pause functionality.
 * Record button that exports to ```.webm``` video.
