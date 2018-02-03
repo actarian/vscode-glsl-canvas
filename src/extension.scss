@@ -1,7 +1,8 @@
 html,
 body {
-	width: 100vw;
-	height: 100vh;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
 	margin: 0;
 	padding: 0;
 	background: #111;
@@ -13,19 +14,17 @@ body {
 #content,
 #shader,
 #error {
-	width: 100vw;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
 	background: #111;
 	color: #eee;
 }
 
-#shader {
-	height: 100vh;
-	min-height: 100vh;
-}
-
 #error {
-	width: calc(100vw - 30px);
+	width: calc(100% - 30px);
 	height: auto;
+	min-height: 100%;
 	padding: 15px;
 	ul {
 		list-style: none;

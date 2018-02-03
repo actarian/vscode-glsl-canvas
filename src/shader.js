@@ -11,8 +11,6 @@
         var h = Math.ceil(window.innerHeight / 2) * 2.0;
 
         var canvas = document.getElementById('shader');
-        canvas.style.width = '100vw';
-        canvas.style.height = '100vh';
         canvas.width = w;
         canvas.height = h;
 
@@ -21,8 +19,6 @@
         function onResize() {
             var w = Math.ceil(window.innerWidth / 2) * 2.0;
             var h = Math.ceil(window.innerHeight / 2) * 2.0;
-            canvas.style.width = w + 'px';
-            canvas.style.height = h + 'px';
             canvas.width = w;
             canvas.height = h;
             glsl.on('error', onGlslError);
