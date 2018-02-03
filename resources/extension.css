@@ -52,6 +52,7 @@ body {
     margin-bottom: 5px;
     font-size: 11px;
     cursor: pointer;
+    -webkit-transition: ease-in-out 250ms background-color;
     transition: ease-in-out 250ms background-color; }
     #error .error span,
     #error .warning span {

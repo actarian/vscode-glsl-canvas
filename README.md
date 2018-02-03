@@ -1,16 +1,16 @@
 # vscode-glsl-canvas
 
-The extension let you view a live WebGL preview of GLSL shaders within VSCode by providing a "Show glslCanvas" command.
+The extension opens a live WebGL preview of GLSL shaders within VSCode by providing a ```Show glslCanvas``` command.
 
 It use [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) a javaScript library from [Book of Shaders](http://thebookofshaders.com) and [glslEditor](http://editor.thebookofshaders.com) made by [Patricio Gonzalez Vivo](http://patriciogonzalezvivo.com).
 
+*Run the command to display a fullscreen preview of your fragment shader.*
+
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/resources/example.jpg)
 
-Running the command splits the view and displays a fullscreen quad with your shader applied. Your fragment shader's entry point is ```void main()```. 
+## Uniforms
 
-## Features
-
-Automatically update display with the results of your shader. At the moment, ```u_resolution```, ```u_time```, ```u_mouse``` are the only uniforms provided. The texture channels (```u_texture_0```, ```u_texture_1```, ...) may be defined by modifying the workspace's settings.json file. For example:  
+The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse```. You can define the texture channels (```u_texture_0```, ```u_texture_1```, ...) by modifying the workspace's ```settings.json``` file. 
 ```
 {
     "glsl-canvas.textures": {
@@ -20,7 +20,6 @@ Automatically update display with the results of your shader. At the moment, ```
     }
 }
 ```
-This demonstrates using local and remote images as textures. *Remember that "power of 2" texture sizes is generally what you want to stick to.*
 
 An example of fragment shader:
 ```glsl
@@ -46,9 +45,18 @@ void main() {
 }
 ```
 
+## Features
+
+* Integrated support of error handling with lines hilight.
+
 ## Requirements
 
 * A graphics card supporting WebGL.
+
+## Todo
+
+* Play / pause functionality.
+* Record button that exports to ```.webm``` video.
 
 ## Contributing
 
