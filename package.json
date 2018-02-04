@@ -25,6 +25,10 @@
                         "1": ""
                     },
                     "description": "The texture channels (u_texture_0, u_texture_1, ...) using http:// or file:// protocol."
+                },
+                "glsl-canvas.uniforms": {
+                    "type": "object",
+                    "description": "Custom uniforms values."
                 }
             }
         },

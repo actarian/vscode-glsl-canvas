@@ -9,15 +9,32 @@ export function activate(context: ExtensionContext) {
     let provider = new GlslDocumentContentProvider(context);
     let content = vscode.workspace.registerTextDocumentContentProvider('glsl-preview', provider);
 
+    let editor = vscode.window.activeTextEditor;
+    let doc = editor.document;
+
+    console.log(editor.document.fileName, editor.document.languageId);
+
     let ti;
 
     vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) => {
         clearTimeout(ti);
         ti = setTimeout(function () {
-            if (vscode.window.activeTextEditor && e.document === vscode.window.activeTextEditor.document) {
+            if (e.document === doc) {
                 provider.update(uri);
             }
         }, 1000);
+    });
+
+    vscode.workspace.onDidCloseTextDocument((e: vscode.TextDocument) => {
+        if (doc.isClosed) {
+            clearTimeout(ti);
+            console.log('onDidCloseTextDocument', e.fileName);
+        }
+    });
+
+    vscode.workspace.onDidChangeConfiguration((e: vscode.ConfigurationChangeEvent) => {
+        const config = vscode.workspace.getConfiguration('glsl-canvas');
+        console.log('onDidChangeConfiguration', config);
     });
 
     let command = vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
@@ -45,17 +62,19 @@ export function activate(context: ExtensionContext) {
 
 class GlslDocumentContentProvider implements TextDocumentContentProvider {
     private onChange = new EventEmitter<Uri>();
-    private ctx: ExtensionContext;
+    private context: ExtensionContext;
 
     constructor(context: ExtensionContext) {
-        this.ctx = context;
+        this.context = context;
     }
 
     public provideTextDocumentContent(uri: Uri): string {
+        console.log('provideTextDocumentContent');
         const editorConfig = vscode.workspace.getConfiguration('editor');
         // console.log('editorConfig', editorConfig);
         const config = vscode.workspace.getConfiguration('glsl-canvas');
         // const has_textures = 'textures' in vscode.workspace.getConfiguration('glsl-canvas');
+        let uniforms = config['uniforms'] || {};
         let textures = config['textures'] || {};
         let fragment = vscode.window.activeTextEditor.document.getText();
         let vertex = '';
@@ -70,6 +89,7 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
             <script type="x-shader/x-fragment" id="fragment">${fragment}</script>
             <script type="x-shader/x-vertex" id="vertex">${vertex}</script>
             <script>
+                var uniforms = ${JSON.stringify(uniforms)};
                 var textures = ${JSON.stringify(textures)};
                 var command = ${JSON.stringify(vscode.window.activeTextEditor.document.uri)};
             </script>
@@ -93,9 +113,10 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
     }
 
     private getResource(resource: string): string {
-        return this.ctx.asAbsolutePath(path.join('resources', resource));
+        return this.context.asAbsolutePath(path.join('resources', resource));
     }
 }
 
 export function deactivate() {
+
 }

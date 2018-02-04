@@ -4,39 +4,60 @@
     'use strict';
 
     function onLoad() {
+        var o = 1; // important
+
         var fragment = document.getElementById('fragment').innerHTML;
         var vertex = document.getElementById('vertex').innerHTML;
-
-        var w = Math.ceil(window.innerWidth / 2) * 2.0;
-        var h = Math.ceil(window.innerHeight / 2) * 2.0;
-
+        var content = document.getElementById('content');
         var canvas = document.getElementById('shader');
-        canvas.width = w;
-        canvas.height = h;
+
+        onResize();
 
         var glsl = new GlslCanvas(canvas);
+        glsl.on('error', onGlslError);
 
-        function onResize() {
-            var w = Math.ceil(window.innerWidth / 2) * 2.0;
-            var h = Math.ceil(window.innerHeight / 2) * 2.0;
-            canvas.width = w;
-            canvas.height = h;
-            glsl.on('error', onGlslError);
+        load();
+
+        function load() {
             if (vertex.trim().length > 0) {
                 glsl.load(fragment, vertex);
             } else if (fragment) {
                 glsl.load(fragment);
             }
+            for (var p in window.uniforms) {
+                glsl.setUniform(p, window.uniforms[p]);
+            }
             for (var p in window.textures) {
                 glsl.setUniform('u_texture_' + p, window.textures[p]);
             }
-            // console.log('onResize');
         }
 
+        function onResize() {
+            var w = content.offsetWidth + o;
+            var h = content.offsetHeight + o;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            canvas.width = w;
+            canvas.height = h;
+            o = 0;
+        }
+
+        function onDown() {
+            if (glsl.paused) {
+                if (glsl.timePause) {
+                    glsl.timePrev = new Date();
+                    glsl.timeLoad += (glsl.timePrev - glsl.timePause);
+                }
+                glsl.play();
+            } else {
+                glsl.pause();
+                glsl.timePause = new Date();
+            }
+        }
+
+        canvas.addEventListener('mousedown', onDown);
         window.addEventListener('resize', onResize);
         onResize();
-        // console.log('canvas', canvas);
-        // console.log('glsl', glsl);
     }
 
     function onGlslError(message) {
@@ -53,30 +74,12 @@
             warnings.push(li);
             return li;
         });
-
         var output = '<div id="error"><h4>glslCanvas error</h4><ul>';
         output += errors.join('\n');
         output += warnings.join('\n');
         output += '</ul></div>';
         document.getElementById('content').innerHTML = output;
-        /*
-        var lines = document.querySelectorAll('[data-line]');
-        for (var i = 0; i < lines.length; i++) {
-            var line = lines[i];
-            var l = Number(line.getAttribute('data-line'));
-            // console.log('register line', l);
-            line.addEventListener('click', onClick);
-        }
-        */
     }
-
-    /*
-    function onClick(e) {
-        var line = e.currentTarget;
-        var l = Number(line.getAttribute('data-line'));
-        // console.log('click line', l, window);
-    }
-    */
 
     /*
     function onConsoleError() {
@@ -86,6 +89,7 @@
     console.error = onConsoleError;
     */
 
-    window.onload = onLoad;
+    // window.onload = onLoad;
+    window.addEventListener('load', onLoad);
 
 }());
