@@ -1,0 +1,8 @@
+{
+	"voronoi":{
+  "prefix": "glsl.voronoi",
+  "body": "/* Voronoi noise */\n/* Author: */\nfloat snoise(vec3 p) {\n    float F3 =  0.3333333;\n    float G3 =  0.1666667;\n\tvec3 s = floor(p + dot(p, vec3(F3)));\n\tvec3 x = p - s + dot(s, vec3(G3));\t \n\tvec3 e = step(vec3(0.0), x - x.yzx);\n\tvec3 i1 = e*(1.0 - e.zxy);\n\tvec3 i2 = 1.0 - e.zxy*(1.0 - e);\t \t\n\tvec3 x1 = x - i1 + G3;\n\tvec3 x2 = x - i2 + 2.0*G3;\n\tvec3 x3 = x - 1.0 + 3.0*G3;\t \n\tvec4 w, d;\t \n\tw.x = dot(x, x);\n\tw.y = dot(x1, x1);\n\tw.z = dot(x2, x2);\n\tw.w = dot(x3, x3);\t \n\tw = max(0.6 - w, 0.0);\t \n\td.x = dot(random3(s), x);\n\td.y = dot(random3(s + i1), x1);\n\td.z = dot(random3(s + i2), x2);\n\td.w = dot(random3(s + 1.0), x3);\t \n\tw *= w;\n\tw *= w;\n\td *= w;\t \n\treturn dot(d, vec4(52.0));\n}",
+  "description": "description"
+}
+
+}

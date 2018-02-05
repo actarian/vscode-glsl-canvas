@@ -60,3 +60,4 @@ typings/
 _README.md
 *.vsix
 *.psd
+snippets/glsl-example.json

@@ -5,9 +5,11 @@ var fs = require('fs'),
 	autoprefixer = require('gulp-autoprefixer'),
 	coffee = require('gulp-coffee'),
 	concat = require('gulp-concat'),
+	concatutil = require('gulp-concat-util'),
 	cssmin = require('gulp-cssmin'),
 	html2js = require('gulp-html2js'),
 	livereload = require('gulp-livereload'),
+	path = require('path'),
 	plumber = require('gulp-plumber'),
 	rename = require('gulp-rename'),
 	sass = require('gulp-sass'),
@@ -101,7 +103,40 @@ gulp.task('bundle:partials', function () {
 		.pipe(sourcemaps.write('./')) // save .map
 		.pipe(gulp.dest('./docs/js/')); // save .min.js
 });
-gulp.task('bundle', ['bundle:css', 'bundle:js', 'bundle:partials']);
+gulp.task('bundle:snippets', function () {
+	return gulp.src('./src/snippets/**/*.glsl', {
+			base: './src/snippets/'
+		})
+		.pipe(plumber())
+		.pipe(rename(function (path) {
+			path.dirname = path.dirname.split('\\').join('/');
+			path.dirname = path.dirname.split('src/snippets/').join('');
+			path.extname = '';
+		}))
+		.pipe(concatutil('glsl.json', {
+			process: function (source, filePath) {
+				var name = path.basename(filePath);
+				var body = source.trim();
+				// body = body.replace(/^(?:\s?)+(?:\t?)(.*)(\n?)/gm, '$1\n');
+				var description = 'description';
+				var item = {
+					prefix: 'glsl.' + name,
+					body: body,
+					description: description,
+				};
+				item.body = body;
+				return '\t"' + name + '":' + JSON.stringify(item, null, 2) + ",\n";
+			}
+		}))
+		.pipe(concatutil('glsl.json', {
+			process: function (source, filePath) {
+				source = source.replace(new RegExp(',\n' + '$'), '\n');
+				return "{\n" + source + "\n}";
+			}
+		}))
+		.pipe(gulp.dest('./snippets/')); // save .json
+});
+gulp.task('bundle', ['bundle:css', 'bundle:js', 'bundle:partials', 'bundle:snippets']);
 
 // WEBSERVER
 gulp.task('webserver', function () {
