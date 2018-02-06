@@ -16,7 +16,8 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   background: #111;
   color: #eee; }
 
@@ -58,6 +59,7 @@ body {
     margin-bottom: 5px;
     font-size: 11px;
     cursor: pointer;
+    -webkit-transition: ease-in-out 250ms background-color;
     transition: ease-in-out 250ms background-color; }
     #error .error span,
     #error .warning span {

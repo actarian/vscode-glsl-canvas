@@ -1,6 +1,6 @@
-/* Voronoi noise */
-/* Author: */
-float snoise(vec3 p) {
+/* Noises 3D Simple */
+/* Author  */
+float simple(vec3 p) {
     float F3 =  0.3333333;
     float G3 =  0.1666667;
 	vec3 s = floor(p + dot(p, vec3(F3)));

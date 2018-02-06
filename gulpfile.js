@@ -115,10 +115,17 @@ gulp.task('bundle:snippets', function () {
 		}))
 		.pipe(concatutil('glsl.json', {
 			process: function (source, filePath) {
-				var name = path.basename(filePath);
+				// console.log('filePath', filePath);
+				var folders = filePath.replace('src/snippets/', '').split(path.sep);
+				// console.log('folders', folders);
+				var name = folders.join('.');
 				var body = source.trim();
 				// body = body.replace(/^(?:\s?)+(?:\t?)(.*)(\n?)/gm, '$1\n');
-				var description = 'description';
+				var description = name;
+				var r = /^\/\*(?:\s?)(.*)\*\//g.exec(body);
+				if (r && r.length === 2) {
+					description = r[1];
+				}
 				var item = {
 					prefix: 'glsl.' + name,
 					body: body,
@@ -168,6 +175,7 @@ gulp.task('watch', function (done) {
 		gulp.watch(bundle.inputFiles, ['bundle:js']).on('change', log);
 	});
 	gulp.watch('./partials/**/*.html', ['bundle:partials']).on('change', log);
+	gulp.watch('./src/snippets/**/*.glsl', ['bundle:snippets']).on('change', log);
 	gulp.watch('./compilerconfig.json', ['compile', 'bundle']).on('change', log);
 	gulp.watch('./bundleconfig.json', ['bundle']).on('change', log);
 	done();
