@@ -11,4 +11,5 @@ tsconfig.json
 gulpfile.js
 vsc-extension-quickstart.md
 *.vsix
+*.psd
 *.zip

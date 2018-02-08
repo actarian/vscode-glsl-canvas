@@ -10,6 +10,16 @@
         var vertex = document.getElementById('vertex').innerHTML;
         var content = document.getElementById('content');
         var canvas = document.getElementById('shader');
+        var tools = {
+            pause: document.querySelector('#pause'),
+            record: document.querySelector('#record'),
+            stats: document.querySelector('#stats'),
+        };
+        var flags = {
+            toggle: false,
+            record: false,
+            stats: false,
+        };
 
         onResize();
 
@@ -30,21 +40,6 @@
             for (var p in window.textures) {
                 glsl.setUniform('u_texture_' + p, window.textures[p]);
             }
-
-            var stats = new Stats();
-            stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-            document.body.appendChild(stats.dom);
-
-            function animate() {
-                stats.update();
-                requestAnimationFrame(animate);
-                // stats.begin();
-                // monitored code goes here
-                // stats.end();
-                // requestAnimationFrame(animate);
-                // stats.begin();
-            }
-            requestAnimationFrame(animate);
         }
 
         function onResize() {
@@ -57,20 +52,72 @@
             o = 0;
         }
 
-        function onDown() {
+        function togglePause() {
+            flags.pause = !flags.pause;
+            console.log('pause', flags.pause);
             if (glsl.paused) {
                 if (glsl.timePause) {
                     glsl.timePrev = new Date();
                     glsl.timeLoad += (glsl.timePrev - glsl.timePause);
                 }
                 glsl.play();
+                tools.pause.querySelector('i').setAttribute('class', 'icon-pause');
             } else {
                 glsl.pause();
                 glsl.timePause = new Date();
+                tools.pause.querySelector('i').setAttribute('class', 'icon-play');
             }
         }
 
-        canvas.addEventListener('mousedown', onDown);
+        function toggleRecord() {
+            flags.record = !flags.record;
+            console.log('record', flags.record);
+            if (flags.record) {
+                tools.record.querySelector('i').setAttribute('class', 'icon-stop');
+            } else {
+                tools.record.querySelector('i').setAttribute('class', 'icon-record');
+            }
+        }
+
+        var stats, statsdom;
+
+        function toggleStats() {
+            flags.stats = !flags.stats;
+
+            function statsTick() {
+                stats.update();
+                // stats.begin();
+                // monitored code goes here
+                // stats.end();
+                if (flags.stats) {
+                    requestAnimationFrame(statsTick);
+                }
+                // stats.begin();
+            }
+            if (flags.stats) {
+                if (!statsdom) {
+                    stats = new Stats();
+                    stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+                    statsdom = stats.dom;
+                    statsdom.style.cssText = 'position:fixed;top:0;right:0;cursor:pointer;opacity:0.9;z-index:10000';
+                    document.body.appendChild(stats.dom);
+                } else {
+                    statsdom.style.visibility = 'visible';
+                }
+                requestAnimationFrame(statsTick);
+                tools.stats.setAttribute('class', 'btn active');
+            } else {
+                if (statsdom) {
+                    statsdom.style.visibility = 'hidden';
+                }
+                tools.stats.setAttribute('class', 'btn');
+            }
+        }
+
+        tools.pause.addEventListener('mousedown', togglePause);
+        tools.record.addEventListener('mousedown', toggleRecord);
+        tools.stats.addEventListener('mousedown', toggleStats);
+        document.addEventListener("dblclick", togglePause);
         window.addEventListener('resize', onResize);
         onResize();
     }

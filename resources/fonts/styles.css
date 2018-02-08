@@ -1,0 +1,55 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: "glslcanvas";
+  src:url("fonts/glslcanvas.eot");
+  src:url("fonts/glslcanvas.eot?#iefix") format("embedded-opentype"),
+    url("fonts/glslcanvas.woff") format("woff"),
+    url("fonts/glslcanvas.ttf") format("truetype"),
+    url("fonts/glslcanvas.svg#glslcanvas") format("svg");
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+[data-icon]:before {
+  font-family: "glslcanvas" !important;
+  content: attr(data-icon);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  font-family: "glslcanvas" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-pause:before {
+  content: "\61";
+}
+.icon-play:before {
+  content: "\62";
+}
+.icon-record:before {
+  content: "\63";
+}
+.icon-stop:before {
+  content: "\64";
+}
+.icon-stats:before {
+  content: "\65";
+}

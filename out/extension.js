@@ -71,7 +71,8 @@ class GlslDocumentContentProvider {
                 <style>
                     html, body { font-family: ${editorConfig.fontFamily}; font-weight: ${editorConfig.fontWeight}; font-size: ${editorConfig.fontSize}; };
                 </style>
-                <script src="file://${this.getResource('glslCanvas.min.js')}"></script>
+                <link href="file://${this.getResource('fonts/styles.css')}" rel="stylesheet">
+                <script src="file://${this.getResource('glslCanvas.min.js')}"></script>                
             </head>
             <script type="x-shader/x-fragment" id="fragment">${fragment}</script>
             <script type="x-shader/x-vertex" id="vertex">${vertex}</script>
@@ -83,6 +84,11 @@ class GlslDocumentContentProvider {
             <body>
                 <div id="content">
                     <canvas id="shader"></canvas>
+                </div>
+                <div id="tools">
+                    <button id="pause" class="btn" unselectable><i class="icon-pause"></i></button>
+                    <button id="record" class="btn" unselectable><i class="icon-record"></i></button>
+                    <button id="stats" class="btn" unselectable><i class="icon-stats"></i></button>
                 </div>
                 <script src="file://${this.getResource('shader.min.js')}"></script>
             </body>

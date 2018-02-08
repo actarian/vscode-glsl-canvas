@@ -17,16 +17,16 @@
   "description": "Normalized uv coordinates returns a vec2 "
 },
 
-	"deck.01-justice":{
-  "prefix": "glsl.deck.01-justice",
-  "body": "// Number: XI\n// Title: Justice\n// Author: Patricio Gonzalez Vivo\n\n#ifdef GL_ES\n    precision mediump float;\n#endif\n\nuniform vec2 u_resolution;\n\nvoid main() {\n    vec3 color = vec3(0.0);\n    vec2 st = gl_FragCoord.xy / u_resolution;\n\n    st = (st- 0.5) * 1.1912 + 0.5;\n    if (u_resolution.y > u_resolution.x) {\n        st.y *= u_resolution.y/u_resolution.x;\n        st.y -= (u_resolution.y*.5-u_resolution.x*.5)/u_resolution.x;\n    } else {\n        st.x *= u_resolution.x / u_resolution.y;\n        st.x -= (u_resolution.x * 0.5 - u_resolution.y * 0.5) / u_resolution.y;\n    }\n\n    color += step(0.5, st.x);\n    \n    gl_FragColor = vec4(color, 1.0);\n}",
-  "description": "deck.01-justice"
-},
-
 	"main.init":{
   "prefix": "glsl.main.init",
   "body": "/* Main function initializer */\n\n#ifdef GL_ES\n    precision mediump float;\n#endif\n\nuniform vec2 u_resolution;\nuniform vec2 u_mouse;\nuniform float u_time;\n\n#define PI\t\t\t\t3.14159265359\n#define TWO_PI\t\t\t6.28318530718\n#define RAD\t\t\t\t0.01745329251\n#define EPSILON\t\t\t0.001\n\nvec2 st() {\n\tvec2 st = gl_FragCoord.xy / u_resolution.xy;\n\tst.y *= u_resolution.y / u_resolution.x;\n\tst.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n\treturn st;\n}\n\nvec2 uv(vec2 st) {\n\tvec2 uv = -1.0 + st * 2.0;\n\treturn uv;\n}\n\nvec2 mx() {\n\treturn -1.0 + u_mouse / u_resolution.xy * 2.0;\n}\n\nvoid main() {\n    vec2 st = st();\n    vec2 mx = mx();\n\n    vec3 color = vec3(\n        abs(cos(st.x + mx.x)), \n        abs(sin(st.y + mx.y)), \n        abs(sin(u_time))\n    );\n\n    gl_FragColor = vec4(color, 1.0);\n}",
   "description": "Main function initializer "
+},
+
+	"deck.01-justice":{
+  "prefix": "glsl.deck.01-justice",
+  "body": "// Number: XI\n// Title: Justice\n// Author: Patricio Gonzalez Vivo\n\n#ifdef GL_ES\n    precision mediump float;\n#endif\n\nuniform vec2 u_resolution;\n\nvoid main() {\n    vec3 color = vec3(0.0);\n    vec2 st = gl_FragCoord.xy / u_resolution;\n\n    st = (st- 0.5) * 1.1912 + 0.5;\n    if (u_resolution.y > u_resolution.x) {\n        st.y *= u_resolution.y/u_resolution.x;\n        st.y -= (u_resolution.y*.5-u_resolution.x*.5)/u_resolution.x;\n    } else {\n        st.x *= u_resolution.x / u_resolution.y;\n        st.x -= (u_resolution.x * 0.5 - u_resolution.y * 0.5) / u_resolution.y;\n    }\n\n    color += step(0.5, st.x);\n    \n    gl_FragColor = vec4(color, 1.0);\n}",
+  "description": "deck.01-justice"
 },
 
 	"math.2d.transform":{
