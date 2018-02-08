@@ -29,10 +29,28 @@
   "description": "Main function initializer "
 },
 
+	"math.2d.transform":{
+  "prefix": "glsl.math.2d.transform",
+  "body": "/* Math 2D Transformations */\n\nmat2 rotate2d(float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}",
+  "description": "Math 2D Transformations "
+},
+
+	"math.3d.transform":{
+  "prefix": "glsl.math.3d.transform",
+  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
+  "description": "Math 3D Transformations "
+},
+
 	"noises.3d.simple":{
   "prefix": "glsl.noises.3d.simple",
-  "body": "/* Simple noise 3d */\n/* Author: */\nfloat simple(vec3 p) {\n    float F3 =  0.3333333;\n    float G3 =  0.1666667;\n\tvec3 s = floor(p + dot(p, vec3(F3)));\n\tvec3 x = p - s + dot(s, vec3(G3));\t \n\tvec3 e = step(vec3(0.0), x - x.yzx);\n\tvec3 i1 = e*(1.0 - e.zxy);\n\tvec3 i2 = 1.0 - e.zxy*(1.0 - e);\t \t\n\tvec3 x1 = x - i1 + G3;\n\tvec3 x2 = x - i2 + 2.0*G3;\n\tvec3 x3 = x - 1.0 + 3.0*G3;\t \n\tvec4 w, d;\t \n\tw.x = dot(x, x);\n\tw.y = dot(x1, x1);\n\tw.z = dot(x2, x2);\n\tw.w = dot(x3, x3);\t \n\tw = max(0.6 - w, 0.0);\t \n\td.x = dot(random3(s), x);\n\td.y = dot(random3(s + i1), x1);\n\td.z = dot(random3(s + i2), x2);\n\td.w = dot(random3(s + 1.0), x3);\t \n\tw *= w;\n\tw *= w;\n\td *= w;\t \n\treturn dot(d, vec4(52.0));\n}",
-  "description": "Simple noise 3d "
+  "body": "/* Noises 3D Simple */\n/* Author  */\nfloat simple(vec3 p) {\n    float F3 =  0.3333333;\n    float G3 =  0.1666667;\n\tvec3 s = floor(p + dot(p, vec3(F3)));\n\tvec3 x = p - s + dot(s, vec3(G3));\t \n\tvec3 e = step(vec3(0.0), x - x.yzx);\n\tvec3 i1 = e*(1.0 - e.zxy);\n\tvec3 i2 = 1.0 - e.zxy*(1.0 - e);\t \t\n\tvec3 x1 = x - i1 + G3;\n\tvec3 x2 = x - i2 + 2.0*G3;\n\tvec3 x3 = x - 1.0 + 3.0*G3;\t \n\tvec4 w, d;\t \n\tw.x = dot(x, x);\n\tw.y = dot(x1, x1);\n\tw.z = dot(x2, x2);\n\tw.w = dot(x3, x3);\t \n\tw = max(0.6 - w, 0.0);\t \n\td.x = dot(random3(s), x);\n\td.y = dot(random3(s + i1), x1);\n\td.z = dot(random3(s + i2), x2);\n\td.w = dot(random3(s + 1.0), x3);\t \n\tw *= w;\n\tw *= w;\n\td *= w;\t \n\treturn dot(d, vec4(52.0));\n}",
+  "description": "Noises 3D Simple "
+},
+
+	"shapes.2d.box":{
+  "prefix": "glsl.shapes.2d.box",
+  "body": "/* Shape 2D Box */\n\nfloat box(in vec2 p, in vec2 size){\n    size = vec2(0.5) - size * 0.5;\n    vec2 uv = smoothstep(\n        size,\n        size + vec2(0.001),\n        p\n    );\n    uv *= smoothstep(\n        size,\n        size + vec2(0.001),\n        vec2(1.0) - p\n    );\n    return uv.x * uv.y;\n}",
+  "description": "Shape 2D Box "
 },
 
 	"shapes.2d.circle":{

@@ -1,6 +1,7 @@
 [{
     "inputFiles": [
-        "bower_components/glslCanvas/build/GlslCanvas.js"
+        "bower_components/glslCanvas/build/GlslCanvas.js",
+        "bower_components/stats.js/build/stats.min.js"
     ],
     "outputFileName": "resources/glslCanvas.js",
     "minify": {

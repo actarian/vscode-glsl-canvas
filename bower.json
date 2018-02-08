@@ -19,6 +19,7 @@
     "tests"
   ],
   "dependencies": {
-    "glslCanvas": "https://github.com/patriciogonzalezvivo/glslCanvas.git#0.0.25"
+    "glslCanvas": "https://github.com/patriciogonzalezvivo/glslCanvas.git#0.0.25",
+    "stats.js": "https://github.com/mrdoob/stats.js.git#r17"
   }
 }
