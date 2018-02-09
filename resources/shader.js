@@ -6,8 +6,6 @@
     function onLoad() {
         var o = 1; // important
 
-        var fragment = document.getElementById('fragment').innerHTML;
-        var vertex = document.getElementById('vertex').innerHTML;
         var content = document.getElementById('content');
         var canvas = document.getElementById('shader');
         var tools = {
@@ -29,16 +27,19 @@
         load();
 
         function load() {
-            if (vertex.trim().length > 0) {
-                glsl.load(fragment, vertex);
-            } else if (fragment) {
-                glsl.load(fragment);
+            var o = window.options;
+            // var fragment = document.getElementById('fragment').innerHTML;
+            // var vertex = document.getElementById('vertex').innerHTML;
+            if (o.vertex.trim().length > 0) {
+                glsl.load(o.fragment, o.vertex);
+            } else if (o.fragment) {
+                glsl.load(o.fragment);
             }
-            for (var p in window.uniforms) {
-                glsl.setUniform(p, window.uniforms[p]);
+            for (var u in o.uniforms) {
+                glsl.setUniform(u, o.uniforms[u]);
             }
-            for (var p in window.textures) {
-                glsl.setUniform('u_texture_' + p, window.textures[p]);
+            for (var t in o.textures) {
+                glsl.setUniform('u_texture_' + t, o.textures[t]);
             }
         }
 
@@ -114,25 +115,70 @@
             }
         }
 
+        function onMessage(event) {
+            window.options = JSON.parse(event.data);
+            console.log('onMessage', window.options);
+            load();
+            // Assuming you've verified the origin of the received message (which
+            // you must do in any case), a convenient idiom for replying to a
+            // message is to call postMessage on event.source and provide
+            // event.origin as the targetOrigin.
+            // event.source.postMessage("hi there yourself!  the secret response " + "is: rheeeeet!", event.origin);
+        }
+
         tools.pause.addEventListener('mousedown', togglePause);
         tools.record.addEventListener('mousedown', toggleRecord);
         tools.stats.addEventListener('mousedown', toggleStats);
         document.addEventListener("dblclick", togglePause);
+        window.addEventListener("message", onMessage, false);
         window.addEventListener('resize', onResize);
         onResize();
+
+        /*
+        // Called sometime after postMessage is called
+        function receiveMessage(event) {
+            // Do we trust the sender of this message?
+            if (event.origin !== "http://example.com:8080") {
+                return;
+            }
+            // event.source is window.opener
+            // event.data is "hello there!"
+            // Assuming you've verified the origin of the received message (which
+            // you must do in any case), a convenient idiom for replying to a
+            // message is to call postMessage on event.source and provide
+            // event.origin as the targetOrigin.
+            event.source.postMessage("hi there yourself!  the secret response " + "is: rheeeeet!", event.origin);
+        }
+        window.addEventListener("message", receiveMessage, false);
+    
+        window.addEventListener('message', (() => {
+            const doScroll = throttle(line => {
+                scrollDisabled = true;
+                scrollToRevealSourceLine(line);
+            }, 50);
+            return event => {
+                const line = +event.data.line;
+                if (!isNaN(line)) {
+                    doScroll(line);
+                }
+            };
+        })(), false);
+        */
     }
 
     function onGlslError(message) {
         // console.log('onGlslError.error', message.error);
+        var options = window.options;
         var errors = [],
             warnings = [];
         message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function (m, l, v, t) {
-            var li = '<li><a class="error" unselectable data-line="' + Number(l) + '" href="' + encodeURI('command:glsl-canvas.revealGlslLine?' + JSON.stringify([window.command, Number(l)])) + '"><span class="line">ERROR line ' + Number(l) + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
+            var message = 'ERROR (' + v + ') ' + t;
+            var li = '<li><a class="error" unselectable data-line="' + Number(l) + '" href="' + encodeURI('command:glsl-canvas.revealGlslLine?' + JSON.stringify([options.uri, Number(l), message])) + '"><span class="line">ERROR line ' + Number(l) + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
             errors.push(li);
             return li;
         });
         message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function (m, l, v, t) {
-            var li = '<li><a class="warning" unselectable data-line="' + Number(l) + '" href="' + encodeURI('command:glsl-canvas.revealGlslLine?' + JSON.stringify([window.command, Number(l)])) + '"><span class="line">WARN line ' + Number(l) + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
+            var li = '<li><a class="warning" unselectable data-line="' + Number(l) + '" href="' + encodeURI('command:glsl-canvas.revealGlslLine?' + JSON.stringify([options.uri, Number(l), message])) + '"><span class="line">WARN line ' + Number(l) + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
             warnings.push(li);
             return li;
         });
@@ -141,6 +187,15 @@
         output += warnings.join('\n');
         output += '</ul></div>';
         document.getElementById('content').innerHTML = output;
+        if (errors.length) {
+            document.querySelectorAll('.error')[0].click();
+        }
+        /*
+        window.parent.postMessage({
+            command: "did-click-link",
+            data: createCommandUri('extension.sendMessage', 'hi')
+        }, "file://");
+        */
     }
 
     /*
@@ -153,5 +208,4 @@
 
     // window.onload = onLoad;
     window.addEventListener('load', onLoad);
-
 }());
