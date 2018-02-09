@@ -28,7 +28,7 @@ export function activate(context: ExtensionContext) {
         clearTimeout(ti);
         if (doc.isClosed) {
             clearTimeout(ti);
-            console.log('onDidCloseTextDocument', e.fileName);
+            // console.log('onDidCloseTextDocument', e.fileName);
         }
     });
     */
@@ -53,6 +53,7 @@ export function activate(context: ExtensionContext) {
         // }
     });
 
+    vscode.commands.registerCommand('glsl-canvas.createShader', onCreateShader);
     vscode.commands.registerCommand('glsl-canvas.revealGlslLine', onRevealLine);
 
     let content = vscode.workspace.registerTextDocumentContentProvider('glsl-preview', provider);
@@ -63,7 +64,7 @@ export function activate(context: ExtensionContext) {
 }
 
 function onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
-    console.log('onDidChangeActiveTextEditor', editor);
+    // console.log('onDidChangeActiveTextEditor', editor);
     if (editor && editor.document.languageId === 'glsl') {
         provider.update(uri);
     }
@@ -71,7 +72,57 @@ function onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
 
 function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
     const config = vscode.workspace.getConfiguration('glsl-canvas');
-    console.log('onDidChangeConfiguration', config);
+    // console.log('onDidChangeConfiguration', config);
+}
+
+function onCreateShader(uri: vscode.Uri) {
+    console.log('glsl-canvas.createShader');
+    const newFile = vscode.Uri.parse('untitled:' + path.join(vscode.workspace.rootPath, 'untitled.glsl'));
+    vscode.workspace.openTextDocument(newFile).then(document => {
+        const edit = new vscode.WorkspaceEdit();
+        edit.insert(newFile, new vscode.Position(0, 0),
+            `  
+#ifdef GL_ES
+    precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+vec2 st() {
+    vec2 st = gl_FragCoord.xy / u_resolution.xy;
+    st.y *= u_resolution.y / u_resolution.x;
+    st.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;
+    return st;
+}
+
+vec2 mx() {
+    return -1.0 + u_mouse / u_resolution.xy * 2.0;
+}
+
+void main() {
+    vec2 st = st();
+    vec2 mx = mx();
+
+    vec3 color = vec3(
+        abs(cos(st.x + mx.x)), 
+        abs(sin(st.y + mx.y)), 
+        abs(sin(u_time))
+    );
+
+    gl_FragColor = vec4(color, 1.0);
+}
+`
+        );
+        return vscode.workspace.applyEdit(edit).then(success => {
+            if (success) {
+                vscode.window.showTextDocument(document, ViewColumn.Two);
+            } else {
+                vscode.window.showInformationMessage('Error!');
+            }
+        });
+    });
 }
 
 function onRevealLine(uri: vscode.Uri, line: number, message: string) {
@@ -127,15 +178,6 @@ class DocumentOptions {
     public serialize(): string {
         return JSON.stringify(this);
     }
-    /*
-        <script type="x-shader/x-fragment" id="fragment">${fragment}</script>
-        <script type="x-shader/x-vertex" id="vertex">${vertex}</script>
-        <script>
-            var uniforms = ${JSON.stringify(uniforms)};
-            var textures = ${JSON.stringify(textures)};
-            var command = ${JSON.stringify(vscode.window.activeTextEditor.document.uri)};
-        </script>
-    */
 }
 
 class GlslDocumentContentProvider implements TextDocumentContentProvider {
@@ -147,7 +189,7 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
     }
 
     public provideTextDocumentContent(uri: Uri): string {
-        console.log('provideTextDocumentContent');
+        // console.log('provideTextDocumentContent');
         const editorConfig = vscode.workspace.getConfiguration('editor');
         // console.log('editorConfig', editorConfig);
         let options = new DocumentOptions();
@@ -158,21 +200,23 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
                     html, body { font-family: ${editorConfig.fontFamily}; font-weight: ${editorConfig.fontWeight}; font-size: ${editorConfig.fontSize}; };
                 </style>
                 <link href="file://${this.getResource('fonts/styles.css')}" rel="stylesheet">
-                <script src="file://${this.getResource('glslCanvas.min.js')}"></script>                
+                <script src="file://${this.getResource('vendors.min.js')}"></script>                
             </head>
             <script>
                 var options = ${options.serialize()};
             </script>
-            <body>
-                <div id="content">
-                    <canvas id="shader"></canvas>
+            <body class="idle">
+                <div class="content">
+                    <canvas class="shader"></canvas>
                 </div>
-                <div id="tools">
-                    <button id="pause" class="btn" unselectable><i class="icon-pause"></i></button>
-                    <button id="record" class="btn" unselectable><i class="icon-record"></i></button>
-                    <button id="stats" class="btn" unselectable><i class="icon-stats"></i></button>
+                <div class="tools">
+                    <button class="btn btn-pause" unselectable><i class="icon-pause"></i></button>
+                    <button class="btn btn-record" unselectable><i class="icon-record"></i></button>
+                    <button class="btn btn-stats" unselectable><i class="icon-stats"></i></button>
                 </div>
-                <script src="file://${this.getResource('shader.min.js')}"></script>
+                <div class="errors"></div>
+                <div class="welcome"><div class="welcome-content" unselectable><p>There's no active .glsl editor</p><button class="btn-create"><span>create one</span></button></div></div>
+                <script src="file://${this.getResource('app.min.js')}"></script>
             </body>
         `;
         // console.log('provideTextDocumentContent', content);
@@ -186,9 +230,9 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
     public update(uri: Uri) {
         let options = new DocumentOptions();
         vscode.commands.executeCommand('_workbench.htmlPreview.postMessage', uri, options.serialize()).then((success) => {
-            console.log('GlslDocumentContentProvider.update.success');
+            // console.log('GlslDocumentContentProvider.update.success');
         }, (reason) => {
-            console.log('GlslDocumentContentProvider.update.error');
+            // console.log('GlslDocumentContentProvider.update.error');
             vscode.window.showErrorMessage(reason);
         });
         // this.onChange.fire(uri);

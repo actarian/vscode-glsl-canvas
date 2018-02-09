@@ -70,13 +70,40 @@
             }
         }
 
+        var encoder;
+
         function toggleRecord() {
             flags.record = !flags.record;
             // console.log('record', flags.record);
             if (flags.record) {
                 buttons.record.querySelector('i').setAttribute('class', 'icon-stop');
+                try {
+                    encoder = new Whammy.Video(20);
+                    canvas = document.querySelector('.shader');
+                    // canvas.crossOrigin = 'anonymous';
+                    encoder.add(canvas.getContext("webgl")); // , 10 * 1000); // ten sec
+                } catch (e) {
+                    console.log('encoder.init.error', e);
+                }
             } else {
                 buttons.record.querySelector('i').setAttribute('class', 'icon-record');
+                try {
+                    if (encoder) {
+                        encoder.compile(function (output) {
+                            var blob = (window.webkitURL || window.URL).createObjectURL(output);
+                            var link = document.createElement('a');
+                            link.href = blob;
+                            link.download = "shader.webm";
+                            link.click();
+                            setTimeout(function () {
+                                (window.webkitURL || window.URL).revokeObjectURL(output);
+                            }, 100);
+                        });
+                        encoder = null;
+                    }
+                } catch (e) {
+                    console.log('encoder.compile.error', e);
+                }
             }
         }
 

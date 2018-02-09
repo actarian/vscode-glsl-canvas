@@ -1,9 +1,10 @@
 [{
     "inputFiles": [
         "bower_components/glslCanvas/build/GlslCanvas.js",
-        "bower_components/stats.js/build/stats.min.js"
+        "bower_components/stats.js/build/stats.min.js",
+        "bower_components/whammy.js/whammy.js"
     ],
-    "outputFileName": "resources/glslCanvas.js",
+    "outputFileName": "resources/vendors.js",
     "minify": {
         "enabled": true
     }
@@ -17,9 +18,9 @@
     }
 }, {
     "inputFiles": [
-        "src/shader.js"
+        "src/app.js"
     ],
-    "outputFileName": "resources/shader.js",
+    "outputFileName": "resources/app.js",
     "minify": {
         "enabled": true
     }

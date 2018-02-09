@@ -1,3 +1,13 @@
+$background: #1e1e1e;
+$errors: #252526;
+$error: #e54646;
+$warning: #cc6633;
+$line: #4ec9b0;
+$value: #569cd0;
+$text: #d4d4d4;
+$tools: #333333;
+$record: #e54646;
+$create: #007acc;
 html,
 body {
 	width: 100%;
@@ -5,27 +15,25 @@ body {
 	overflow: hidden;
 	margin: 0;
 	padding: 0;
-	background: #111;
-	color: #eee;
+	background: $background;
+	color: $text;
 	font-family: Courier New, Courier, monospace;
 	font-size: 12px;
 	cursor: pointer;
 }
 
-#content,
-#shader,
-#error {
+.content,
+.shader,
+.error {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
 	box-sizing: border-box;
-	background: #111;
-	color: #eee;
+	background: $background;
+	color: $text;
 }
 
-$blue: #007acc;
-$gray: #333333;
-#tools {
+.tools {
 	position: absolute;
 	width: auto;
 	height: 40px;
@@ -36,7 +44,7 @@ $gray: #333333;
 	left: 50%;
 	transform: translateX(-50%);
 	border-radius: 6px;
-	background: rgba($gray, .7);
+	background: rgba($tools, .7);
 	opacity: 0;
 	transition: opacity ease-in-out 250ms;
 	.btn {
@@ -60,24 +68,68 @@ $gray: #333333;
 	.btn+.btn {
 		margin-left: 10px;
 	}
-	#record {
-		color: red;
+	.btn-record {
+		color: $record;
 	}
 }
 
 body:hover {
-	#tools {
+	.tools {
 		opacity: 1;
 	}
 }
 
-/*
-#shader {
-	border: 5px solid red;;
+.errors {
+	display: none;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	min-height: 100%;
+	background: $errors;
+	&.active {
+		display: block;
+	}
 }
-*/
 
-#error {
+.welcome {
+	display: none;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
+	background: $background;
+	&.active {
+		display: flex;
+	}
+	.welcome-content {
+		text-align: center;
+	}
+}
+
+.btn-create {
+	-webkit-appearance: none;
+	background: $create;
+	color: $text;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	padding: 6px 15px;
+	border-radius: 6px;
+	border: 0;
+	text-decoration: none;
+	outline: 0 !important;
+	cursor: pointer;
+	transition: all ease-in-out 250ms;
+	&:hover,
+	&:active,
+	&:focus {
+		background: darken($create, 5%);
+		box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+	}
+}
+
+.errors-content {
 	width: calc(100% - 30px);
 	height: auto;
 	min-height: 100%;
@@ -99,7 +151,7 @@ body:hover {
 	.error,
 	.warning {
 		display: flex;
-		border: 0px solid #d4d4d4;
+		border: 0px solid $text;
 		justify-content: flex-start;
 		align-items: center;
 		line-height: 1;
@@ -117,35 +169,35 @@ body:hover {
 		}
 	}
 	.error {
-		background-color: rgba(203, 97, 86, .2); // #d16969;
-		border-color: rgba(203, 97, 86, .3);
+		background-color: rgba($error, .2);
+		border-color: rgba($error, .3);
 		.line {
-			color: #d16969;
+			color: $error;
 		}
 		&:hover {
-			background-color: rgba(203, 97, 86, .3);
+			background-color: rgba($error, .3);
 		}
 	}
 	.warning {
-		background-color: rgba(206, 145, 114, .2); // #ce8f58;
-		border-color: rgba(206, 145, 114, .3);
+		background-color: rgba($warning, .2);
+		border-color: rgba($warning, .3);
 		.line {
-			color: #ce8f58;
+			color: $warning;
 		}
 		&:hover {
-			background-color: rgba(206, 145, 114, .3);
+			background-color: rgba($warning, .3);
 		}
 	}
 	.line {
-		color: #4ec9b0;
+		color: $line;
 		flex: 0 0 124px;
 	}
 	.value {
-		color: #569cd0;
+		color: $value;
 		flex: 0 0 74px;
 	}
 	.text {
-		color: #d4d4d4;
+		color: $text;
 		flex: 1 0 300px;
 	}
 }

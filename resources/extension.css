@@ -5,24 +5,23 @@ body {
   overflow: hidden;
   margin: 0;
   padding: 0;
-  background: #111;
-  color: #eee;
+  background: #1e1e1e;
+  color: #d4d4d4;
   font-family: Courier New, Courier, monospace;
   font-size: 12px;
   cursor: pointer; }
 
-#content,
-#shader,
-#error {
+.content,
+.shader,
+.error {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  background: #111;
-  color: #eee; }
+  box-sizing: border-box;
+  background: #1e1e1e;
+  color: #d4d4d4; }
 
-#tools {
+.tools {
   position: absolute;
   width: auto;
   height: 40px;
@@ -42,9 +41,8 @@ body {
   border-radius: 6px;
   background: rgba(51, 51, 51, 0.7);
   opacity: 0;
-  -webkit-transition: opacity ease-in-out 250ms;
   transition: opacity ease-in-out 250ms; }
-  #tools .btn {
+  .tools .btn {
     width: 40px;
     height: 40px;
     -webkit-appearance: none;
@@ -57,44 +55,85 @@ body {
     font-size: 15px;
     -webkit-transform: scale3d(0.8, 0.8, 0.8);
             transform: scale3d(0.8, 0.8, 0.8);
-    -webkit-transition: -webkit-transform ease-in-out 150ms;
     transition: -webkit-transform ease-in-out 150ms;
     transition: transform ease-in-out 150ms;
     transition: transform ease-in-out 150ms, -webkit-transform ease-in-out 150ms; }
-    #tools .btn:hover, #tools .btn.active {
+    .tools .btn:hover, .tools .btn.active {
       -webkit-transform: scale3d(1, 1, 1);
               transform: scale3d(1, 1, 1); }
-  #tools .btn + .btn {
+  .tools .btn + .btn {
     margin-left: 10px; }
-  #tools #record {
-    color: red; }
+  .tools .btn-record {
+    color: #e54646; }
 
-body:hover #tools {
+body:hover .tools {
   opacity: 1; }
 
-/*
-#shader {
-	border: 5px solid red;;
-}
-*/
-#error {
+.errors {
+  display: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #252526; }
+  .errors.active {
+    display: block; }
+
+.welcome {
+  display: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background: #1e1e1e; }
+  .welcome.active {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex; }
+  .welcome .welcome-content {
+    text-align: center; }
+
+.btn-create {
+  -webkit-appearance: none;
+  background: #007acc;
+  color: #d4d4d4;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  padding: 6px 15px;
+  border-radius: 6px;
+  border: 0;
+  text-decoration: none;
+  outline: 0 !important;
+  cursor: pointer;
+  transition: all ease-in-out 250ms; }
+  .btn-create:hover, .btn-create:active, .btn-create:focus {
+    background: #006bb3;
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2); }
+
+.errors-content {
   width: calc(100% - 30px);
   height: auto;
   min-height: 100%;
   padding: 15px; }
-  #error ul {
+  .errors-content ul {
     list-style: none;
     padding: 0; }
-  #error li {
+  .errors-content li {
     padding: 0; }
-    #error li a,
-    #error li a:hover,
-    #error li a:visited,
-    #error li a:link {
+    .errors-content li a,
+    .errors-content li a:hover,
+    .errors-content li a:visited,
+    .errors-content li a:link {
       color: unset;
       text-decoration: none; }
-  #error .error,
-  #error .warning {
+  .errors-content .error,
+  .errors-content .warning {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -110,40 +149,39 @@ body:hover #tools {
     margin-bottom: 5px;
     font-size: 11px;
     cursor: pointer;
-    -webkit-transition: ease-in-out 250ms background-color;
     transition: ease-in-out 250ms background-color; }
-    #error .error span,
-    #error .warning span {
+    .errors-content .error span,
+    .errors-content .warning span {
       display: inline-block;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       padding: 2px; }
-  #error .error {
-    background-color: rgba(203, 97, 86, 0.2);
-    border-color: rgba(203, 97, 86, 0.3); }
-    #error .error .line {
-      color: #d16969; }
-    #error .error:hover {
-      background-color: rgba(203, 97, 86, 0.3); }
-  #error .warning {
-    background-color: rgba(206, 145, 114, 0.2);
-    border-color: rgba(206, 145, 114, 0.3); }
-    #error .warning .line {
-      color: #ce8f58; }
-    #error .warning:hover {
-      background-color: rgba(206, 145, 114, 0.3); }
-  #error .line {
+  .errors-content .error {
+    background-color: rgba(229, 70, 70, 0.2);
+    border-color: rgba(229, 70, 70, 0.3); }
+    .errors-content .error .line {
+      color: #e54646; }
+    .errors-content .error:hover {
+      background-color: rgba(229, 70, 70, 0.3); }
+  .errors-content .warning {
+    background-color: rgba(204, 102, 51, 0.2);
+    border-color: rgba(204, 102, 51, 0.3); }
+    .errors-content .warning .line {
+      color: #cc6633; }
+    .errors-content .warning:hover {
+      background-color: rgba(204, 102, 51, 0.3); }
+  .errors-content .line {
     color: #4ec9b0;
     -webkit-box-flex: 0;
         -ms-flex: 0 0 124px;
             flex: 0 0 124px; }
-  #error .value {
+  .errors-content .value {
     color: #569cd0;
     -webkit-box-flex: 0;
         -ms-flex: 0 0 74px;
             flex: 0 0 74px; }
-  #error .text {
+  .errors-content .text {
     color: #d4d4d4;
     -webkit-box-flex: 1;
         -ms-flex: 1 0 300px;

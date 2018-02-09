@@ -4,14 +4,15 @@
     'use strict';
 
     function onLoad() {
-        var o = 1; // important
+        var o = 1;
 
-        var content = document.getElementById('content');
-        var canvas = document.getElementById('shader');
-        var tools = {
-            pause: document.querySelector('#pause'),
-            record: document.querySelector('#record'),
-            stats: document.querySelector('#stats'),
+        var content = document.querySelector('.content');
+        var canvas = document.querySelector('.shader');
+        var buttons = {
+            pause: document.querySelector('.btn-pause'),
+            record: document.querySelector('.btn-record'),
+            stats: document.querySelector('.btn-stats'),
+            create: document.querySelector('.btn-create'),
         };
         var flags = {
             toggle: false,
@@ -27,20 +28,19 @@
         load();
 
         function load() {
+            document.querySelector('.errors').setAttribute('class', 'errors');
+            document.querySelector('.welcome').setAttribute('class', (options.uri ? 'welcome' : 'welcome active'));
             var o = window.options;
-            // var fragment = document.getElementById('fragment').innerHTML;
-            // var vertex = document.getElementById('vertex').innerHTML;
-            if (o.vertex.trim().length > 0) {
-                glsl.load(o.fragment, o.vertex);
-            } else if (o.fragment) {
-                glsl.load(o.fragment);
-            }
+            o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
+            o.fragment = o.fragment.trim().length > 0 ? o.fragment : null;
+            glsl.load(o.fragment, o.vertex);
             for (var u in o.uniforms) {
                 glsl.setUniform(u, o.uniforms[u]);
             }
             for (var t in o.textures) {
                 glsl.setUniform('u_texture_' + t, o.textures[t]);
             }
+            document.querySelector('body').setAttribute('class', (o.fragment || o.vertex ? 'ready' : 'empty'));
         }
 
         function onResize() {
@@ -55,28 +55,62 @@
 
         function togglePause() {
             flags.pause = !flags.pause;
-            console.log('pause', flags.pause);
+            // console.log('pause', flags.pause);
             if (glsl.paused) {
                 if (glsl.timePause) {
                     glsl.timePrev = new Date();
                     glsl.timeLoad += (glsl.timePrev - glsl.timePause);
                 }
                 glsl.play();
-                tools.pause.querySelector('i').setAttribute('class', 'icon-pause');
+                buttons.pause.querySelector('i').setAttribute('class', 'icon-pause');
             } else {
                 glsl.pause();
                 glsl.timePause = new Date();
-                tools.pause.querySelector('i').setAttribute('class', 'icon-play');
+                buttons.pause.querySelector('i').setAttribute('class', 'icon-play');
             }
         }
 
+        var encoder;
+
         function toggleRecord() {
             flags.record = !flags.record;
-            console.log('record', flags.record);
+            // console.log('record', flags.record);
             if (flags.record) {
-                tools.record.querySelector('i').setAttribute('class', 'icon-stop');
+                buttons.record.querySelector('i').setAttribute('class', 'icon-stop');
+                try {
+                    encoder = new Whammy.Video(20);
+                    canvas = document.querySelector('.shader');
+                    // canvas.crossOrigin = 'anonymous';
+                    encoder.add(canvas); // , 10 * 1000); // ten sec
+                    /*
+                    // frame = frame.getContext('2d').getImageData(0, 0, frame.width, frame.height);
+                    var context = frame.getContext('webgl');
+                    var pixels = new Uint8Array(context.drawingBufferWidth * context.drawingBufferHeight * 4);
+                    context.readPixels(0, 0, context.drawingBufferWidth, context.drawingBufferHeight, context.RGBA, context.UNSIGNED_BYTE, pixels);
+                    frame = pixels;
+                    */
+                } catch (e) {
+                    console.log('encoder.init.error', e);
+                }
             } else {
-                tools.record.querySelector('i').setAttribute('class', 'icon-record');
+                buttons.record.querySelector('i').setAttribute('class', 'icon-record');
+                try {
+                    if (encoder) {
+                        encoder.compile(function (output) {
+                            var blob = (window.webkitURL || window.URL).createObjectURL(output);
+                            var link = document.createElement('a');
+                            link.href = blob;
+                            link.download = "shader.webm";
+                            link.click();
+                            setTimeout(function () {
+                                (window.webkitURL || window.URL).revokeObjectURL(output);
+                            }, 100);
+                        });
+                        encoder = null;
+                    }
+                } catch (e) {
+                    console.log('encoder.compile.error', e);
+                }
             }
         }
 
@@ -87,13 +121,9 @@
 
             function statsTick() {
                 stats.update();
-                // stats.begin();
-                // monitored code goes here
-                // stats.end();
                 if (flags.stats) {
                     requestAnimationFrame(statsTick);
                 }
-                // stats.begin();
             }
             if (flags.stats) {
                 if (!statsdom) {
@@ -106,64 +136,38 @@
                     statsdom.style.visibility = 'visible';
                 }
                 requestAnimationFrame(statsTick);
-                tools.stats.setAttribute('class', 'btn active');
+                buttons.stats.setAttribute('class', 'btn active');
             } else {
                 if (statsdom) {
                     statsdom.style.visibility = 'hidden';
                 }
-                tools.stats.setAttribute('class', 'btn');
+                buttons.stats.setAttribute('class', 'btn');
             }
+        }
+
+        function createShader(e) {
+            console.log('createShader', e);
+            window.parent.postMessage({
+                command: "did-click-link",
+                data: 'command:glsl-canvas.createShader?' + JSON.stringify([options.uri]),
+            }, "file://");
         }
 
         function onMessage(event) {
             window.options = JSON.parse(event.data);
-            console.log('onMessage', window.options);
+            // console.log('onMessage', window.options);
+            // event.source.postMessage('message', event.origin);
             load();
-            // Assuming you've verified the origin of the received message (which
-            // you must do in any case), a convenient idiom for replying to a
-            // message is to call postMessage on event.source and provide
-            // event.origin as the targetOrigin.
-            // event.source.postMessage("hi there yourself!  the secret response " + "is: rheeeeet!", event.origin);
         }
 
-        tools.pause.addEventListener('mousedown', togglePause);
-        tools.record.addEventListener('mousedown', toggleRecord);
-        tools.stats.addEventListener('mousedown', toggleStats);
         document.addEventListener("dblclick", togglePause);
+        buttons.pause.addEventListener('mousedown', togglePause);
+        buttons.record.addEventListener('mousedown', toggleRecord);
+        buttons.stats.addEventListener('mousedown', toggleStats);
+        buttons.create.addEventListener('click', createShader);
         window.addEventListener("message", onMessage, false);
         window.addEventListener('resize', onResize);
         onResize();
-
-        /*
-        // Called sometime after postMessage is called
-        function receiveMessage(event) {
-            // Do we trust the sender of this message?
-            if (event.origin !== "http://example.com:8080") {
-                return;
-            }
-            // event.source is window.opener
-            // event.data is "hello there!"
-            // Assuming you've verified the origin of the received message (which
-            // you must do in any case), a convenient idiom for replying to a
-            // message is to call postMessage on event.source and provide
-            // event.origin as the targetOrigin.
-            event.source.postMessage("hi there yourself!  the secret response " + "is: rheeeeet!", event.origin);
-        }
-        window.addEventListener("message", receiveMessage, false);
-    
-        window.addEventListener('message', (() => {
-            const doScroll = throttle(line => {
-                scrollDisabled = true;
-                scrollToRevealSourceLine(line);
-            }, 50);
-            return event => {
-                const line = +event.data.line;
-                if (!isNaN(line)) {
-                    doScroll(line);
-                }
-            };
-        })(), false);
-        */
     }
 
     function onGlslError(message) {
@@ -182,30 +186,15 @@
             warnings.push(li);
             return li;
         });
-        var output = '<div id="error"><h4>glslCanvas error</h4><ul>';
+        var output = '<div class="errors-content"><h4>glslCanvas error</h4><ul>';
         output += errors.join('\n');
         output += warnings.join('\n');
         output += '</ul></div>';
-        document.getElementById('content').innerHTML = output;
+        document.querySelector('.errors').setAttribute('class', 'errors active');
+        document.querySelector('.errors').innerHTML = output;
         if (errors.length) {
             document.querySelectorAll('.error')[0].click();
         }
-        /*
-        window.parent.postMessage({
-            command: "did-click-link",
-            data: createCommandUri('extension.sendMessage', 'hi')
-        }, "file://");
-        */
     }
-
-    /*
-    function onConsoleError() {
-        console.log('onConsoleError', arguments);
-    }
-
-    console.error = onConsoleError;
-    */
-
-    // window.onload = onLoad;
     window.addEventListener('load', onLoad);
 }());
