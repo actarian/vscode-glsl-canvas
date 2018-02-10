@@ -6,7 +6,7 @@ It use [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) a javaSc
 
 *Run the command to display a fullscreen preview of your fragment shader.*
 
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/resources/example.jpg)
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview.gif)
 
 ## Uniforms
 
