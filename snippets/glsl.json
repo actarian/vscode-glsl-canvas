@@ -1,32 +1,8 @@
 {
-	"coords.mx":{
-  "prefix": "glsl.coords.mx",
-  "body": "/* Normalized mouse coordinates returns a vec2 */\nvec2 mx() {\n\treturn -1.0 + u_mouse / u_resolution.xy * 2.0;\n}",
-  "description": "Normalized mouse coordinates returns a vec2 "
-},
-
-	"coords.st":{
-  "prefix": "glsl.coords.st",
-  "body": "/* Normalized st coordinates returns a vec2 */\nvec2 st() {\n\tvec2 st = gl_FragCoord.xy / u_resolution.xy;\n\tst.y *= u_resolution.y / u_resolution.x;\n\tst.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n\treturn st;\n}",
-  "description": "Normalized st coordinates returns a vec2 "
-},
-
-	"coords.uv":{
-  "prefix": "glsl.coords.uv",
-  "body": "/* Normalized uv coordinates returns a vec2 */\nvec2 uv(vec2 st) {\n\tvec2 uv = -1.0 + st * 2.0;\n\treturn uv;\n}",
-  "description": "Normalized uv coordinates returns a vec2 "
-},
-
-	"deck.01-justice":{
-  "prefix": "glsl.deck.01-justice",
-  "body": "// Number: XI\n// Title: Justice\n// Author: Patricio Gonzalez Vivo\n\n#ifdef GL_ES\n    precision mediump float;\n#endif\n\nuniform vec2 u_resolution;\n\nvoid main() {\n    vec3 color = vec3(0.0);\n    vec2 st = gl_FragCoord.xy / u_resolution;\n\n    st = (st- 0.5) * 1.1912 + 0.5;\n    if (u_resolution.y > u_resolution.x) {\n        st.y *= u_resolution.y/u_resolution.x;\n        st.y -= (u_resolution.y*.5-u_resolution.x*.5)/u_resolution.x;\n    } else {\n        st.x *= u_resolution.x / u_resolution.y;\n        st.x -= (u_resolution.x * 0.5 - u_resolution.y * 0.5) / u_resolution.y;\n    }\n\n    color += step(0.5, st.x);\n    \n    gl_FragColor = vec4(color, 1.0);\n}",
-  "description": "deck.01-justice"
-},
-
-	"main.init":{
-  "prefix": "glsl.main.init",
-  "body": "/* Main function initializer */\n\n#ifdef GL_ES\n    precision mediump float;\n#endif\n\nuniform vec2 u_resolution;\nuniform vec2 u_mouse;\nuniform float u_time;\n\n#define PI\t\t\t\t3.14159265359\n#define TWO_PI\t\t\t6.28318530718\n#define RAD\t\t\t\t0.01745329251\n#define EPSILON\t\t\t0.001\n\nvec2 st() {\n\tvec2 st = gl_FragCoord.xy / u_resolution.xy;\n\tst.y *= u_resolution.y / u_resolution.x;\n\tst.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n\treturn st;\n}\n\nvec2 uv(vec2 st) {\n\tvec2 uv = -1.0 + st * 2.0;\n\treturn uv;\n}\n\nvec2 mx() {\n\treturn -1.0 + u_mouse / u_resolution.xy * 2.0;\n}\n\nvoid main() {\n    vec2 st = st();\n    vec2 mx = mx();\n\n    vec3 color = vec3(\n        abs(cos(st.x + mx.x)), \n        abs(sin(st.y + mx.y)), \n        abs(sin(u_time))\n    );\n\n    gl_FragColor = vec4(color, 1.0);\n}",
-  "description": "Main function initializer "
+	"main.new":{
+  "prefix": "glsl.main.new",
+  "body": "/* Main function, uniforms & utils */\n\n#ifdef GL_ES\n    precision mediump float;\n#endif\n\nuniform vec2 u_resolution;\nuniform vec2 u_mouse;\nuniform float u_time;\n\n#define PI\t\t\t\t3.14159265359\n#define TWO_PI\t\t\t6.28318530718\n#define RAD\t\t\t\t0.01745329251\n#define EPSILON\t\t\t0.001\n\nvec2 st() {\n\tvec2 st = gl_FragCoord.xy / u_resolution.xy;\n\tst.y *= u_resolution.y / u_resolution.x;\n\tst.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n\treturn st;\n}\n\nvec2 uv(vec2 st) {\n\tvec2 uv = -1.0 + st * 2.0;\n\treturn uv;\n}\n\nvec2 mx() {\n\treturn -1.0 + u_mouse / u_resolution.xy * 2.0;\n}\n\nvoid main() {\n    vec2 st = st();\n    vec2 mx = mx();\n\n    vec3 color = vec3(\n        abs(cos(st.x + mx.x)), \n        abs(sin(st.y + mx.y)), \n        abs(sin(u_time))\n    );\n\n    gl_FragColor = vec4(color, 1.0);\n}",
+  "description": "Main function, uniforms & utils "
 },
 
 	"math.2d.transform":{
@@ -37,14 +13,8 @@
 
 	"math.3d.transform":{
   "prefix": "glsl.math.3d.transform",
-  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
+  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\n\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\n\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
   "description": "Math 3D Transformations "
-},
-
-	"noises.3d.simple":{
-  "prefix": "glsl.noises.3d.simple",
-  "body": "/* Noises 3D Simple */\n/* Author  */\nfloat simple(vec3 p) {\n    float F3 =  0.3333333;\n    float G3 =  0.1666667;\n\tvec3 s = floor(p + dot(p, vec3(F3)));\n\tvec3 x = p - s + dot(s, vec3(G3));\t \n\tvec3 e = step(vec3(0.0), x - x.yzx);\n\tvec3 i1 = e*(1.0 - e.zxy);\n\tvec3 i2 = 1.0 - e.zxy*(1.0 - e);\t \t\n\tvec3 x1 = x - i1 + G3;\n\tvec3 x2 = x - i2 + 2.0*G3;\n\tvec3 x3 = x - 1.0 + 3.0*G3;\t \n\tvec4 w, d;\t \n\tw.x = dot(x, x);\n\tw.y = dot(x1, x1);\n\tw.z = dot(x2, x2);\n\tw.w = dot(x3, x3);\t \n\tw = max(0.6 - w, 0.0);\t \n\td.x = dot(random3(s), x);\n\td.y = dot(random3(s + i1), x1);\n\td.z = dot(random3(s + i2), x2);\n\td.w = dot(random3(s + 1.0), x3);\t \n\tw *= w;\n\tw *= w;\n\td *= w;\t \n\treturn dot(d, vec4(52.0));\n}",
-  "description": "Noises 3D Simple "
 },
 
 	"shapes.2d.box":{

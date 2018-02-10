@@ -69,7 +69,9 @@ body {
 		margin-left: 10px;
 	}
 	.btn-record {
-		color: $record;
+		&.active {
+			color: $record;
+		}
 	}
 }
 

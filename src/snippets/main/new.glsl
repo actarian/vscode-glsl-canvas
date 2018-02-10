@@ -1,4 +1,4 @@
-/* Main function initializer */
+/* Main function, uniforms & utils */
 
 #ifdef GL_ES
     precision mediump float;

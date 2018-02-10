@@ -7,76 +7,83 @@ import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri
 let uri = Uri.parse('glsl-preview://authority/glsl-preview');
 let provider: GlslDocumentContentProvider;
 let diagnosticCollection: vscode.DiagnosticCollection;
+let ti;
 
 export function activate(context: ExtensionContext) {
-
     provider = new GlslDocumentContentProvider(context);
     diagnosticCollection = vscode.languages.createDiagnosticCollection('glslCanvas');
-
-    let ti, doc;
-
-    vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) => {
-        clearTimeout(ti);
-        diagnosticCollection.clear();
-        ti = setTimeout(function () {
-            provider.update(uri);
-        }, 1000);
-    });
-
-    /*
-    vscode.workspace.onDidCloseTextDocument((e: vscode.TextDocument) => {
-        clearTimeout(ti);
-        if (doc.isClosed) {
-            clearTimeout(ti);
-            // console.log('onDidCloseTextDocument', e.fileName);
-        }
-    });
-    */
-
-    // subscribe to selection change and editor activation events
-    // let subscriptions: vscode.Disposable[] = [];
-    // vscode.window.onDidChangeTextEditorSelection(onDidChangeTextEditorSelection, this, context.subscriptions);
-    vscode.window.onDidChangeActiveTextEditor(onDidChangeActiveTextEditor, this, context.subscriptions);
+    //
+    vscode.workspace.onDidChangeTextDocument(onDidChangeTextDocument);
+    vscode.workspace.onDidCloseTextDocument(onDidCloseTextDocument);
     vscode.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
+    vscode.window.onDidChangeActiveTextEditor(onDidChangeActiveTextEditor);
+    // vscode.window.onDidChangeTextEditorViewColumn(onDidChangeTextEditorViewColumn);
+    // vscode.workspace.onDidOpenTextDocument(onDidOpenTextDocument);
+    vscode.commands.registerCommand('glsl-canvas.createShader', onCreateShader);
+    vscode.commands.registerCommand('glsl-canvas.revealGlslLine', onRevealLine);
+    vscode.commands.registerCommand('glsl-canvas.showDiagnostic', onShowDiagnostic);
 
-    // first opening;
-    let showCommand = vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
-        // let editor = vscode.window.activeTextEditor;
-        // if (editor && editor.document.languageId == 'glsl') {
-        // doc = editor.document;
-        // console.log(editor.document.fileName, editor.document.languageId);
+    let command = vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
         return vscode.commands.executeCommand('vscode.previewHtml', uri, ViewColumn.Two, 'glslCanvas').then((success) => {
             // success
         }, (reason) => {
             vscode.window.showErrorMessage(reason);
         });
-        // }
     });
-
-    vscode.commands.registerCommand('glsl-canvas.createShader', onCreateShader);
-    vscode.commands.registerCommand('glsl-canvas.revealGlslLine', onRevealLine);
-
     let content = vscode.workspace.registerTextDocumentContentProvider('glsl-preview', provider);
-
+    context.subscriptions.push(command, content);
     context.subscriptions.push(diagnosticCollection);
-    context.subscriptions.push(showCommand, content);
+}
 
+function currentGlslEditor(): vscode.TextEditor {
+    const editor: vscode.TextEditor = vscode.window.activeTextEditor;
+    return editor && editor.document.languageId === 'glsl' ? editor : null;
+}
+
+function currentGlslDocument(): vscode.TextDocument {
+    const editor: vscode.TextEditor = currentGlslEditor();
+    return editor ? editor.document : null;
+}
+
+function onDidChangeTextDocument(e: vscode.TextDocumentChangeEvent) {
+    // console.log('onDidChangeTextDocument', e.document.uri.path);
+    clearTimeout(ti);
+    diagnosticCollection.clear();
+    ti = setTimeout(function () {
+        provider.update(uri);
+    }, 1000);
+}
+
+function onDidCloseTextDocument(document: vscode.TextDocument) {
+    if (document.languageId === 'glsl') {
+        provider.update(uri);
+    }
 }
 
 function onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
-    // console.log('onDidChangeActiveTextEditor', editor);
-    if (editor && editor.document.languageId === 'glsl') {
+    if (currentGlslEditor()) {
         provider.update(uri);
     }
 }
 
 function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
-    const config = vscode.workspace.getConfiguration('glsl-canvas');
-    // console.log('onDidChangeConfiguration', config);
+    if (currentGlslEditor()) {
+        provider.update(uri);
+    }
 }
 
+/*
+function onDidChangeTextEditorViewColumn(e: vscode.TextEditorViewColumnChangeEvent) {
+    console.log('onDidChangeTextEditorViewColumn', e.viewColumn.toString());
+}
+
+function onDidOpenTextDocument(document: vscode.TextDocument) {
+    console.log('onDidOpenTextDocument', document.uri.path);
+}
+*/
+
 function onCreateShader(uri: vscode.Uri) {
-    console.log('glsl-canvas.createShader');
+    // console.log('onCreateShader');
     const newFile = vscode.Uri.parse('untitled:' + path.join(vscode.workspace.rootPath, 'untitled.glsl'));
     vscode.workspace.openTextDocument(newFile).then(document => {
         const edit = new vscode.WorkspaceEdit();
@@ -138,13 +145,18 @@ function onRevealLine(uri: vscode.Uri, line: number, message: string) {
     }
 }
 
+function onShowDiagnostic(uri: vscode.Uri, line: number, message: string) {
+    for (let editor of vscode.window.visibleTextEditors) {
+        if (editor.document.uri.toString() === uri.toString()) {
+            onDiagnostic(editor, line, message);
+        }
+    }
+}
+
 function onDiagnostic(editor: vscode.TextEditor, line: number, message: string = 'error') {
-    let startColumn: number = 0;
-    let endColumn: number = 0;
     let diagnosticMap: Map<string, vscode.Diagnostic[]> = new Map();
     let file = vscode.Uri.file(editor.document.fileName).toString();
     let range = editor.document.lineAt(line - 1).range;
-    // let range = new vscode.Range(line - 1, startColumn, line - 1, endColumn);
     let diagnostics = diagnosticMap.get(file);
     if (!diagnostics) {
         diagnostics = [];
@@ -157,6 +169,11 @@ function onDiagnostic(editor: vscode.TextEditor, line: number, message: string =
     });
 }
 
+export function deactivate() {
+    diagnosticCollection.clear();
+    provider = null;
+}
+
 class DocumentOptions {
     public uri: vscode.Uri;
     public fragment: string;
@@ -165,8 +182,7 @@ class DocumentOptions {
     public textures: object;
 
     constructor() {
-        const editor: vscode.TextEditor = vscode.window.activeTextEditor;
-        const document: vscode.TextDocument = editor && editor.document.languageId === 'glsl' ? editor.document : null;
+        const document: vscode.TextDocument = currentGlslDocument();
         const config = vscode.workspace.getConfiguration('glsl-canvas');
         this.uri = document ? document.uri : null;
         this.fragment = document ? document.getText() : '';
@@ -190,14 +206,14 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
 
     public provideTextDocumentContent(uri: Uri): string {
         // console.log('provideTextDocumentContent');
-        const editorConfig = vscode.workspace.getConfiguration('editor');
-        // console.log('editorConfig', editorConfig);
+        const config = vscode.workspace.getConfiguration('editor');
+        // console.log('config', config);
         let options = new DocumentOptions();
         const content = `        
             <head>
                 <link rel="stylesheet" href="file://${this.getResource('extension.min.css')}" />   
                 <style>
-                    html, body { font-family: ${editorConfig.fontFamily}; font-weight: ${editorConfig.fontWeight}; font-size: ${editorConfig.fontSize}; };
+                    html, body { font-family: ${config.fontFamily}; font-weight: ${config.fontWeight}; font-size: ${config.fontSize}; };
                 </style>
                 <link href="file://${this.getResource('fonts/styles.css')}" rel="stylesheet">
                 <script src="file://${this.getResource('vendors.min.js')}"></script>                
@@ -223,10 +239,6 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
         return content;
     }
 
-    get onDidChange(): Event<Uri> {
-        return this.onChange.event;
-    }
-
     public update(uri: Uri) {
         let options = new DocumentOptions();
         vscode.commands.executeCommand('_workbench.htmlPreview.postMessage', uri, options.serialize()).then((success) => {
@@ -241,9 +253,8 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
     private getResource(resource: string): string {
         return this.context.asAbsolutePath(path.join('resources', resource));
     }
-}
 
-export function deactivate() {
-    diagnosticCollection.clear();
-    provider = null;
+    get onDidChange(): Event<Uri> {
+        return this.onChange.event;
+    }
 }

@@ -2,7 +2,7 @@
     "name": "glsl-canvas",
     "displayName": "glsl-canvas",
     "description": "Live WebGL preview of GLSL shaders",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "publisher": "circledev",
     "license": "UNLICENSED",
     "engines": {
@@ -33,18 +33,14 @@
                 }
             }
         },
-        "commands": [
-            {
-                "command": "glsl-canvas.showGlslCanvas",
-                "title": "Show glslCanvas"
-            }
-        ],
-        "snippets": [
-            {
-                "language": "glsl",
-                "path": "./snippets/glsl.json"
-            }
-        ]
+        "commands": [{
+            "command": "glsl-canvas.showGlslCanvas",
+            "title": "Show glslCanvas"
+        }],
+        "snippets": [{
+            "language": "glsl",
+            "path": "./snippets/glsl.json"
+        }]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

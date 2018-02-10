@@ -21,6 +21,15 @@ The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse```. You c
 }
 ```
 
+You can also define custom uniforms by modifying the workspace's ```settings.json``` file. 
+```
+{
+    "glsl-canvas.uniforms": {
+        "u_strength": 1.0,
+    }
+}
+```
+
 An example of fragment shader:
 ```glsl
 // Author:
@@ -48,6 +57,21 @@ void main() {
 ## Features
 
 * Integrated support of error handling with lines hilight.
+* Play / pause functionality.
+* Recording and exporting to ```.webm``` video.
+* Activable fps counter.
+* Glsl Snippets.
+
+## Glsl Snippets
+
+| Snippet                      | Purpose                         |
+|------------------------------|---------------------------------|
+| `glsl.main.new`              | Main function, uniforms & utils |
+| `glsl.math.2d.transform`     | Math 2D Transformations         |
+| `glsl.math.3d.transform`     | Math 3D Transformations         |
+| `glsl.shapes.2d.box`         | Shape 2D box                    |
+| `glsl.shapes.2d.circle`      | Shape 2D circle                 |
+| `glsl.shapes.2d.poligon`     | Shape 2D polygon                |
 
 ## Requirements
 
@@ -55,8 +79,9 @@ void main() {
 
 ## Todo
 
-* Play / pause functionality.
-* Record button that exports to ```.webm``` video.
+* Improved snippets library.
+* Gui for changing custom uniforms at runtime.
+* Glsl code formatting.
 
 ## Contributing
 
@@ -65,6 +90,15 @@ void main() {
 
 ## Release Notes
 
+### 0.1.3
+
+* Play / pause functionality.
+* Record button that exports to ```.webm``` video.
+* Activable Fps counter.
+* Better handling of active ```.glsl``` editor.
+* Improved inline error message.
+* Minor snippets functionality.
+
 ### 0.1.1
 
-Initial release of glsl-canvas for vscode.
+* Initial release of glsl-canvas for vscode.

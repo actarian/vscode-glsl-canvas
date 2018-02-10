@@ -2,7 +2,7 @@
     "inputFiles": [
         "bower_components/glslCanvas/build/GlslCanvas.js",
         "bower_components/stats.js/build/stats.min.js",
-        "bower_components/whammy.js/whammy.js"
+        "src/captureservice.js"
     ],
     "outputFileName": "resources/vendors.js",
     "minify": {
