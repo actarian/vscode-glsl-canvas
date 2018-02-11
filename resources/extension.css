@@ -22,6 +22,9 @@ body {
   background: #1e1e1e;
   color: #d4d4d4; }
 
+.shader {
+  border: 0 solid #1e1e1e; }
+
 .tools {
   position: absolute;
   width: auto;

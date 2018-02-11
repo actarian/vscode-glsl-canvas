@@ -32,12 +32,7 @@ You can also define custom uniforms by modifying the workspace's ```settings.jso
 
 An example of fragment shader:
 ```glsl
-// Author:
-// Title:
-
-#ifdef GL_ES
-    precision mediump float;
-#endif
+precision mediump float;
 
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
@@ -97,6 +92,7 @@ void main() {
 * Activable Fps counter.
 * Better handling of active ```.glsl``` editor.
 * Improved inline error message.
+* Fix resizing issue.
 * Minor snippets functionality.
 
 ### 0.1.1

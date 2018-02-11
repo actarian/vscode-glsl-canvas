@@ -33,6 +33,10 @@ body {
 	color: $text;
 }
 
+.shader {
+	border: 0 solid $background;
+}
+
 .tools {
 	position: absolute;
 	width: auto;

@@ -4,7 +4,6 @@
     'use strict';
 
     function onLoad() {
-        var o = 1;
         var stats, statsdom;
 
         var content = document.querySelector('.content');
@@ -21,7 +20,7 @@
             stats: false,
         };
 
-        onResize();
+        resize(true);
 
         var glsl = new GlslCanvas(canvas, {
             premultipliedAlpha: false,
@@ -55,14 +54,17 @@
             document.querySelector('body').setAttribute('class', (o.fragment || o.vertex ? 'ready' : 'empty'));
         }
 
-        function onResize() {
-            var w = content.offsetWidth + o;
-            var h = content.offsetHeight + o;
+        function resize(init) {
+            var w = content.offsetWidth;
+            var h = content.offsetHeight;
             canvas.style.width = w + 'px';
             canvas.style.height = h + 'px';
-            canvas.width = w;
-            canvas.height = h;
-            o = 0;
+            if (init) {
+                canvas.width = w;
+                canvas.height = h;
+            } else {
+                glsl.resize();
+            }
         }
 
         function snapshot() {
@@ -170,6 +172,15 @@
             load();
         }
 
+        var ri;
+
+        function onResize() {
+            if (ri) {
+                clearTimeout(ri);
+            }
+            ri = setTimeout(resize, 50);
+        }
+
         document.addEventListener("dblclick", togglePause);
         buttons.pause.addEventListener('mousedown', togglePause);
         buttons.record.addEventListener('mousedown', toggleRecord);
@@ -177,7 +188,7 @@
         buttons.create.addEventListener('click', createShader);
         window.addEventListener("message", onMessage, false);
         window.addEventListener('resize', onResize);
-        onResize();
+        resize();
     }
 
     function onGlslError(message) {
