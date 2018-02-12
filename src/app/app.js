@@ -1,10 +1,10 @@
-/* global window, document, console, GlslCanvas */
+/* global window, document, console, GlslCanvas, CaptureService, Stats, dat */
 
 (function () {
     'use strict';
 
     function onLoad() {
-        var o = 1;
+        var stats, statsdom;
 
         var content = document.querySelector('.content');
         var canvas = document.querySelector('.shader');
@@ -20,10 +20,21 @@
             stats: false,
         };
 
-        onResize();
+        resize(true);
 
-        var glsl = new GlslCanvas(canvas);
+        var glsl = new GlslCanvas(canvas, {
+            premultipliedAlpha: false,
+            preserveDrawingBuffer: true,
+            backgroundColor: 'rgba(1,1,1,1)'
+        });
         glsl.on('error', onGlslError);
+
+        var service = new CaptureService();
+        service.set(canvas);
+
+        glsl.on('render', function () {
+            service.snapshotRender();
+        });
 
         load();
 
@@ -43,14 +54,47 @@
             document.querySelector('body').setAttribute('class', (o.fragment || o.vertex ? 'ready' : 'empty'));
         }
 
-        function onResize() {
-            var w = content.offsetWidth + o;
-            var h = content.offsetHeight + o;
+        function resize(init) {
+            var w = content.offsetWidth;
+            var h = content.offsetHeight;
             canvas.style.width = w + 'px';
             canvas.style.height = h + 'px';
-            canvas.width = w;
-            canvas.height = h;
-            o = 0;
+            if (init) {
+                canvas.width = w;
+                canvas.height = h;
+            } else {
+                glsl.resize();
+            }
+        }
+
+        function snapshot() {
+            glsl.forceRender = true;
+            glsl.render();
+            return service.snapshot();
+        }
+
+        function record() {
+            glsl.forceRender = true;
+            glsl.render();
+            if (service.record()) {
+                // flags.record = true;
+            }
+        }
+
+        function stop() {
+            service.stop().then(function (video) {
+                // console.log('service.stop');
+                // var filename = options.uri.path.split('/').pop().replace('.glsl', '');
+                // console.log('filename', filename);
+                var url = URL.createObjectURL(video.blob);
+                var link = document.createElement('a');
+                link.href = url;
+                link.download = 'shader' + video.extension;
+                link.click();
+                setTimeout(function () {
+                    window.URL.revokeObjectURL(output);
+                }, 100);
+            });
         }
 
         function togglePause() {
@@ -74,13 +118,15 @@
             flags.record = !flags.record;
             // console.log('record', flags.record);
             if (flags.record) {
+                buttons.record.setAttribute('class', 'btn btn-record active');
                 buttons.record.querySelector('i').setAttribute('class', 'icon-stop');
+                record();
             } else {
+                buttons.record.setAttribute('class', 'btn btn-record');
                 buttons.record.querySelector('i').setAttribute('class', 'icon-record');
+                stop();
             }
         }
-
-        var stats, statsdom;
 
         function toggleStats() {
             flags.stats = !flags.stats;
@@ -102,17 +148,17 @@
                     statsdom.style.visibility = 'visible';
                 }
                 requestAnimationFrame(statsTick);
-                buttons.stats.setAttribute('class', 'btn active');
+                buttons.stats.setAttribute('class', 'btn btn-stats active');
             } else {
                 if (statsdom) {
                     statsdom.style.visibility = 'hidden';
                 }
-                buttons.stats.setAttribute('class', 'btn');
+                buttons.stats.setAttribute('class', 'btn btn-stats');
             }
         }
 
         function createShader(e) {
-            console.log('createShader', e);
+            // console.log('createShader', e);
             window.parent.postMessage({
                 command: "did-click-link",
                 data: 'command:glsl-canvas.createShader?' + JSON.stringify([options.uri]),
@@ -126,6 +172,15 @@
             load();
         }
 
+        var ri;
+
+        function onResize() {
+            if (ri) {
+                clearTimeout(ri);
+            }
+            ri = setTimeout(resize, 50);
+        }
+
         document.addEventListener("dblclick", togglePause);
         buttons.pause.addEventListener('mousedown', togglePause);
         buttons.record.addEventListener('mousedown', toggleRecord);
@@ -133,7 +188,7 @@
         buttons.create.addEventListener('click', createShader);
         window.addEventListener("message", onMessage, false);
         window.addEventListener('resize', onResize);
-        onResize();
+        resize();
     }
 
     function onGlslError(message) {
@@ -143,24 +198,31 @@
             warnings = [];
         message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function (m, l, v, t) {
             var message = 'ERROR (' + v + ') ' + t;
-            var li = '<li><a class="error" unselectable data-line="' + Number(l) + '" href="' + encodeURI('command:glsl-canvas.revealGlslLine?' + JSON.stringify([options.uri, Number(l), message])) + '"><span class="line">ERROR line ' + Number(l) + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
+            var li = '<li><a class="error" unselectable href="' + encodeURI('command:glsl-canvas.revealGlslLine?' + JSON.stringify([options.uri, Number(l), message])) + '"><span class="line">ERROR line ' + Number(l) + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
             errors.push(li);
             return li;
         });
         message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function (m, l, v, t) {
-            var li = '<li><a class="warning" unselectable data-line="' + Number(l) + '" href="' + encodeURI('command:glsl-canvas.revealGlslLine?' + JSON.stringify([options.uri, Number(l), message])) + '"><span class="line">WARN line ' + Number(l) + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
+            var li = '<li><a class="warning" unselectable href="' + encodeURI('command:glsl-canvas.revealGlslLine?' + JSON.stringify([options.uri, Number(l), message])) + '"><span class="line">WARN line ' + Number(l) + '</span> <span class="text" title="' + t + '">' + t + '</span></a></li>';
             warnings.push(li);
             return li;
         });
-        var output = '<div class="errors-content"><h4>glslCanvas error</h4><ul>';
+        var output = '<div class="errors-content"><p>glslCanvas error</p><ul>';
         output += errors.join('\n');
         output += warnings.join('\n');
         output += '</ul></div>';
         document.querySelector('.errors').setAttribute('class', 'errors active');
         document.querySelector('.errors').innerHTML = output;
+        /*
         if (errors.length) {
-            document.querySelectorAll('.error')[0].click();
+            // document.querySelectorAll('.error')[0].click();
+            var data = document.querySelectorAll('.error')[0].getAttribute('href').split('revealGlslLine').join('showDiagnostic');
+            window.parent.postMessage({
+                command: "did-click-link",
+                data: data,
+            }, "file://");
         }
+        */
     }
     window.addEventListener('load', onLoad);
 }());

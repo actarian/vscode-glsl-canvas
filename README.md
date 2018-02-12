@@ -83,6 +83,8 @@ void main() {
 [Github Project Page](https://github.com/actarian/vscode-glsl-canvas)  
 [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=circledev.glsl-canvas)
 
+*Thank you so much for taking the time to provide feedback and review. This feedback is appreciated and very helpful.*
+
 ## Release Notes
 
 ### 0.1.3

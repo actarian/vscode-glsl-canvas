@@ -211,12 +211,13 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
         let options = new DocumentOptions();
         const content = `        
             <head>
-                <link rel="stylesheet" href="file://${this.getResource('extension.min.css')}" />   
+                <link href="file://${this.getResource('fonts/styles.css')}" rel="stylesheet">
+                <link href="file://${this.getResource('css/vendors.min.css')}" rel="stylesheet">
+                <link href="file://${this.getResource('css/app.min.css')}" rel="stylesheet"/>   
                 <style>
                     html, body { font-family: ${config.fontFamily}; font-weight: ${config.fontWeight}; font-size: ${config.fontSize}; };
                 </style>
-                <link href="file://${this.getResource('fonts/styles.css')}" rel="stylesheet">
-                <script src="file://${this.getResource('vendors.min.js')}"></script>                
+                <script src="file://${this.getResource('js/vendors.min.js')}"></script>                
             </head>
             <script>
                 var options = ${options.serialize()};
@@ -232,7 +233,7 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
                 </div>
                 <div class="errors"></div>
                 <div class="welcome"><div class="welcome-content" unselectable><p>There's no active .glsl editor</p><button class="btn-create"><span>create one</span></button></div></div>
-                <script src="file://${this.getResource('app.min.js')}"></script>
+                <script src="file://${this.getResource('js/app.min.js')}"></script>
             </body>
         `;
         // console.log('provideTextDocumentContent', content);

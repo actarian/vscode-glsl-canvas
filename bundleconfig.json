@@ -2,25 +2,35 @@
     "inputFiles": [
         "bower_components/glslCanvas/build/GlslCanvas.js",
         "bower_components/stats.js/build/stats.min.js",
-        "src/captureservice.js"
+        "bower_components/dat.gui/build/dat.gui.js"
     ],
-    "outputFileName": "resources/vendors.js",
+    "outputFileName": "resources/js/vendors.js",
     "minify": {
         "enabled": true
     }
 }, {
     "inputFiles": [
-        "resources/extension.css"
+        "bower_components/dat.gui/build/dat.gui.css"
     ],
-    "outputFileName": "resources/extension.css",
+    "outputFileName": "resources/css/vendors.css",
     "minify": {
         "enabled": true
     }
 }, {
     "inputFiles": [
-        "src/app.js"
+        "resources/css/app.css"
     ],
-    "outputFileName": "resources/app.js",
+    "outputFileName": "resources/css/app.css",
+    "minify": {
+        "enabled": true
+    }
+}, {
+    "inputFiles": [
+        "src/app/captureservice.js",
+        "src/app/guiservice.js",
+        "src/app/app.js"
+    ],
+    "outputFileName": "resources/js/app.js",
     "minify": {
         "enabled": true
     }

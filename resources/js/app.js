@@ -1,4 +1,228 @@
 /* global window, document, console, GlslCanvas */
+/* 
+Author: Brett Camper (@professorlemeza)
+URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
+*/
+
+(function () {
+    'use strict';
+
+    function CaptureService() {}
+
+    CaptureService.prototype = {
+        set: set,
+        snapshot: snapshot,
+        snapshotRender: snapshotRender,
+        record: record,
+        stop: stop,
+    };
+
+    function set(canvas) {
+        var service = this;
+        service.canvas = canvas;
+    }
+
+    var mimeTypes = [
+        'video/webm\;codecs=h264',
+        'video/webm\;codecs=vp8',
+        'video/webm\;codecs=daala',
+        'video/webm',
+        'audio/webm\;codecs=opus',
+        'audio/webm',
+        'video/mpeg',
+    ];
+
+    function getOptions() {
+        var options = {
+            videoBitsPerSecond: 2500000,
+            audioBitsPerSecond: 128000,
+            mimeType: 'video/webm',
+            extension: '.webm',
+        };
+        // MediaRecorder.isTypeSupported(mimeTypes[0])
+        return options;
+    }
+
+    function record() {
+        var service = this;
+        if (typeof window.MediaRecorder !== 'function' || !service.canvas || typeof service.canvas.captureStream !== 'function') {
+            console.log('warn: Video capture (Canvas.captureStream and/or MediaRecorder APIs) not supported by browser');
+            return false;
+        } else if (service.capture) {
+            console.log('warn: Video capture already in progress, call Scene.stopVideoCapture() first');
+            return false;
+        }
+        try {
+            var capture = {};
+            var chunks = [];
+            var stream = service.canvas.captureStream();
+            var options = {
+                mimeType: 'video/webm\;codecs=h264'
+            };
+            var recorder = new MediaRecorder(stream, options);
+            recorder.ondataavailable = function (e) {
+                if (e.data.size > 0) {
+                    chunks.push(e.data);
+                }
+                // Stopped recording? Create the final capture file blob
+                if (capture.resolve) {
+                    var blob = new Blob(chunks, {
+                        type: options.mimeType,
+                    });
+                    if (stream) {
+                        var tracks = stream.getTracks() || [];
+                        tracks.forEach(function (track) {
+                            track.stop();
+                            stream.removeTrack(track);
+                        });
+                    }
+                    stream = null;
+                    service.recorder = null;
+                    service.capture = null;
+                    capture.resolve({
+                        blob: blob,
+                        extension: '.webm',
+                    });
+                }
+            };
+            service.capture = capture;
+            service.recorder = recorder;
+            recorder.start();
+        } catch (e) {
+            service.capture = null;
+            service.recorder = null;
+            console.log('error: Scene video capture failed', e);
+            return false;
+        }
+        return true;
+    }
+
+    function stop() {
+        var service = this;
+        if (!service.capture) {
+            console.log('warn: No scene video capture in progress, call Scene.startVideoCapture() first');
+            return Promise.resolve({});
+        }
+        service.capture.promise = new Promise(function (resolve, reject) {
+            service.capture.resolve = resolve;
+            service.capture.reject = reject;
+        });
+        service.recorder.stop();
+        return service.capture.promise;
+    }
+
+    function snapshot() {
+        var service = this;
+        if (service.queue) {
+            return service.queue.promise;
+        }
+        service.queue = {};
+        service.queue.promise = new Promise(function (resolve, reject) {
+            service.queue.resolve = resolve;
+            service.queue.reject = reject;
+        });
+        return service.queue.promise;
+    }
+
+    function snapshotRender() {
+        var service = this;
+        if (service.queue) {
+            // Get data URL, convert to blob
+            // Strip host/mimetype/etc., convert base64 to binary without UTF-8 mangling
+            // Adapted from: https://gist.github.com/unconed/4370822
+            var url = service.canvas.toDataURL('image/png');
+            var bytes = atob(url.slice(22));
+            var buffer = new Uint8Array(bytes.length);
+            for (var i = 0; i < bytes.length; ++i) {
+                buffer[i] = bytes.charCodeAt(i);
+            }
+            var blob = new Blob([buffer], {
+                type: 'image/png',
+            });
+            service.queue.resolve({
+                blob: blob,
+                extension: '.png',
+            });
+            service.queue = null;
+        }
+    }
+
+    window.CaptureService = CaptureService;
+}());
+/* global window, document, console */
+
+(function () {
+    'use strict';
+
+    function GuiService(callback) {
+        this.callback = callback || function () {
+            console.log('GuiService.onChange');
+        };
+    }
+
+    GuiService.prototype = {
+        load: load,
+    };
+
+    // statics
+
+    function differs(a, b) {
+        return JSON.stringify(a) !== JSON.stringify(b);
+    }
+
+    function copy(obj) {
+        return JSON.parse(JSON.stringify(obj));
+    }
+
+    function loop(obj, params, callback) {
+        var keys = [],
+            p;
+        for (p in params) {
+            keys.push(p);
+        }
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            if (typeof params[key] == 'number') {
+                p = obj.add(params, key, params[key] * 0.5, params[key] * 2.0);
+                p.onChange(callback);
+            } else if (typeof params[key] == 'object' && Object.keys(params[key]).length > 0) {
+                p = null;
+                var folder = obj.addFolder(key);
+                loop(folder, params[key]);
+            } else {
+                p = obj.add(params, key);
+                p.onChange(callback);
+            }
+        }
+    }
+
+    // publics
+
+    function load(params) {
+        var service = this;
+        var gui = service.gui;
+        var locals = service.locals;
+        var changed = differs(params, locals);
+        if (gui && differs) {
+            gui.destroy();
+            gui = null;
+        }
+        if (!gui) {
+            gui = new dat.GUI();
+            gui.closed = true;
+        }
+        if (changed) {
+            locals = copy(params);
+            loop(gui, locals, service.callback);
+        }
+        service.gui = gui;
+        service.locals = locals;
+    }
+
+    window.GuiService = GuiService;
+
+}());
+/* global window, document, console, GlslCanvas, CaptureService, Stats, dat */
 
 (function () {
     'use strict';
