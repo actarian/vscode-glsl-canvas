@@ -80,10 +80,10 @@ function onCreateShader(uri) {
     }
     */
     const folder = vscode.workspace.rootPath || '';
-    console.log('onCreateShader', folder);
+    // console.log('onCreateShader', folder);
     const newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
     vscode.workspace.openTextDocument(newFile).then(document => {
-        console.log('document', document);
+        // console.log('document', document);
         const edit = new vscode.WorkspaceEdit();
         edit.insert(newFile, new vscode.Position(0, 0), `  
 #ifdef GL_ES
