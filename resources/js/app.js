@@ -155,23 +155,50 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
     'use strict';
 
     function GuiService(callback) {
+        this.closed = true;
+        this.hidden = true;
         this.callback = callback || function () {
             console.log('GuiService.onChange');
         };
+        this.pool = {};
     }
 
     GuiService.prototype = {
         load: load,
+        hide: hide,
+        show: show,
+        getParams: getParams,
     };
 
     // statics
 
     function differs(a, b) {
+        // console.log('differs', JSON.stringify(a), JSON.stringify(b));
         return JSON.stringify(a) !== JSON.stringify(b);
     }
 
     function copy(obj) {
         return JSON.parse(JSON.stringify(obj));
+    }
+
+    function merge(a, b) {
+        function _merge(a, b) {
+            for (var key in a) {
+                if (b.hasOwnProperty(key)) {
+                    if (typeof a[key] === 'number') {
+                        a[key] = b[key];
+                    } else if (typeof a[key] == 'object' && Object.keys(a[key]).length > 0) {
+                        _merge(a[key], b[key]);
+                    }
+                }
+            }
+        }
+        if (a) {
+            a = copy(a);
+
+            _merge(a, b);
+        }
+        return a;
     }
 
     function loop(obj, params, callback) {
@@ -188,7 +215,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             } else if (typeof params[key] == 'object' && Object.keys(params[key]).length > 0) {
                 p = null;
                 var folder = obj.addFolder(key);
-                loop(folder, params[key]);
+                loop(folder, params[key], callback);
             } else {
                 p = obj.add(params, key);
                 p.onChange(callback);
@@ -203,20 +230,53 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
         var gui = service.gui;
         var locals = service.locals;
         var changed = differs(params, locals);
-        if (gui && differs) {
+        if (gui && changed) {
+            service.closed = gui.closed;
             gui.destroy();
             gui = null;
         }
         if (!gui) {
             gui = new dat.GUI();
-            gui.closed = true;
+            gui.closed = service.closed;
+            service.gui = gui;
+            if (service.hidden) {
+                service.hide();
+            } else {
+                service.show();
+            }
         }
         if (changed) {
             locals = copy(params);
-            loop(gui, locals, service.callback);
+            service.locals = locals;
+            var pool = merge(params, service.pool);
+            service.pool = pool;
+            loop(gui, pool, service.callback);
+            service.callback();
         }
-        service.gui = gui;
-        service.locals = locals;
+    }
+
+    function hide() {
+        var service = this;
+        var gui = service.gui;
+        gui.domElement.style.display = 'none';
+        service.hidden = true;
+        // dat.GUI.toggleHide();
+    }
+
+    function show() {
+        var service = this;
+        var locals = service.locals;
+        if (Object.keys(locals).length) {
+            var gui = service.gui;
+            gui.domElement.style.display = '';
+        }
+        service.hidden = false;
+    }
+
+    function getParams() {
+        var service = this;
+        var pool = service.pool;
+        return pool;
     }
 
     window.GuiService = GuiService;
@@ -249,7 +309,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
         var glsl = new GlslCanvas(canvas, {
             premultipliedAlpha: false,
             preserveDrawingBuffer: true,
-            backgroundColor: 'rgba(1,1,1,1)'
+            backgroundColor: 'rgba(1,1,1,1)',
         });
         glsl.on('error', onGlslError);
 
@@ -258,6 +318,15 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
         glsl.on('render', function () {
             service.snapshotRender();
+        });
+
+        var guiservice = new GuiService(function () {
+            // console.log('GuiService.onUpdate');
+            var uniforms = guiservice.getParams();
+            for (var u in uniforms) {
+                // console.log(u, uniforms[u]);
+                glsl.setUniform(u, uniforms[u]);
+            }
         });
 
         load();
@@ -269,9 +338,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
             o.fragment = o.fragment.trim().length > 0 ? o.fragment : null;
             glsl.load(o.fragment, o.vertex);
-            for (var u in o.uniforms) {
-                glsl.setUniform(u, o.uniforms[u]);
-            }
+            guiservice.load(o.uniforms);
             for (var t in o.textures) {
                 glsl.setUniform('u_texture_' + t, o.textures[t]);
             }
@@ -366,17 +433,19 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
                     stats = new Stats();
                     stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
                     statsdom = stats.dom;
-                    statsdom.style.cssText = 'position:fixed;top:0;right:0;cursor:pointer;opacity:0.9;z-index:10000';
+                    // statsdom.style.cssText = 'position:fixed;top:0;right:0;cursor:pointer;opacity:0.9;z-index:10000';
                     document.body.appendChild(stats.dom);
                 } else {
                     statsdom.style.visibility = 'visible';
                 }
                 requestAnimationFrame(statsTick);
+                guiservice.show();
                 buttons.stats.setAttribute('class', 'btn btn-stats active');
             } else {
                 if (statsdom) {
                     statsdom.style.visibility = 'hidden';
                 }
+                guiservice.hide();
                 buttons.stats.setAttribute('class', 'btn btn-stats');
             }
         }
@@ -437,16 +506,6 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
         output += '</ul></div>';
         document.querySelector('.errors').setAttribute('class', 'errors active');
         document.querySelector('.errors').innerHTML = output;
-        /*
-        if (errors.length) {
-            // document.querySelectorAll('.error')[0].click();
-            var data = document.querySelectorAll('.error')[0].getAttribute('href').split('revealGlslLine').join('showDiagnostic');
-            window.parent.postMessage({
-                command: "did-click-link",
-                data: data,
-            }, "file://");
-        }
-        */
     }
     window.addEventListener('load', onLoad);
 }());

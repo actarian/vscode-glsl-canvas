@@ -74,8 +74,8 @@ void main() {
 
 ## Todo
 
-* Improved snippets library.
 * Gui for changing custom uniforms at runtime.
+* Improved snippets library.
 * Glsl code formatting.
 
 ## Contributing

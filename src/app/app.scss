@@ -212,3 +212,12 @@ body:hover {
 	-webkit-user-select: none;
 	user-select: none;
 }
+
+.dg.ac {
+	height: auto;
+	right: 0;
+	left: auto;
+	position: absolute;
+	transform: translateX(15px);
+	cursor: pointer;
+}

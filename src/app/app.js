@@ -25,7 +25,7 @@
         var glsl = new GlslCanvas(canvas, {
             premultipliedAlpha: false,
             preserveDrawingBuffer: true,
-            backgroundColor: 'rgba(1,1,1,1)'
+            backgroundColor: 'rgba(1,1,1,1)',
         });
         glsl.on('error', onGlslError);
 
@@ -34,6 +34,15 @@
 
         glsl.on('render', function () {
             service.snapshotRender();
+        });
+
+        var guiservice = new GuiService(function () {
+            // console.log('GuiService.onUpdate');
+            var uniforms = guiservice.getParams();
+            for (var u in uniforms) {
+                // console.log(u, uniforms[u]);
+                glsl.setUniform(u, uniforms[u]);
+            }
         });
 
         load();
@@ -45,9 +54,7 @@
             o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
             o.fragment = o.fragment.trim().length > 0 ? o.fragment : null;
             glsl.load(o.fragment, o.vertex);
-            for (var u in o.uniforms) {
-                glsl.setUniform(u, o.uniforms[u]);
-            }
+            guiservice.load(o.uniforms);
             for (var t in o.textures) {
                 glsl.setUniform('u_texture_' + t, o.textures[t]);
             }
@@ -142,17 +149,19 @@
                     stats = new Stats();
                     stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
                     statsdom = stats.dom;
-                    statsdom.style.cssText = 'position:fixed;top:0;right:0;cursor:pointer;opacity:0.9;z-index:10000';
+                    // statsdom.style.cssText = 'position:fixed;top:0;right:0;cursor:pointer;opacity:0.9;z-index:10000';
                     document.body.appendChild(stats.dom);
                 } else {
                     statsdom.style.visibility = 'visible';
                 }
                 requestAnimationFrame(statsTick);
+                guiservice.show();
                 buttons.stats.setAttribute('class', 'btn btn-stats active');
             } else {
                 if (statsdom) {
                     statsdom.style.visibility = 'hidden';
                 }
+                guiservice.hide();
                 buttons.stats.setAttribute('class', 'btn btn-stats');
             }
         }
@@ -213,16 +222,6 @@
         output += '</ul></div>';
         document.querySelector('.errors').setAttribute('class', 'errors active');
         document.querySelector('.errors').innerHTML = output;
-        /*
-        if (errors.length) {
-            // document.querySelectorAll('.error')[0].click();
-            var data = document.querySelectorAll('.error')[0].getAttribute('href').split('revealGlslLine').join('showDiagnostic');
-            window.parent.postMessage({
-                command: "did-click-link",
-                data: data,
-            }, "file://");
-        }
-        */
     }
     window.addEventListener('load', onLoad);
 }());
