@@ -57,7 +57,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             var chunks = [];
             var stream = service.canvas.captureStream();
             var options = {
-                mimeType: 'video/webm\;codecs=h264'
+                mimeType: 'video/webm', // 'video/webm\;codecs=h264'
             };
             var recorder = new MediaRecorder(stream, options);
             recorder.ondataavailable = function (e) {

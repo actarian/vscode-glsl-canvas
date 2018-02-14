@@ -17,7 +17,8 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   background: #1e1e1e;
   color: #d4d4d4; }
 
@@ -27,7 +28,7 @@ body {
 .tools {
   position: absolute;
   width: auto;
-  height: 40px;
+  height: 34px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -42,12 +43,13 @@ body {
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
   border-radius: 6px;
-  background: rgba(51, 51, 51, 0.7);
+  background: rgba(0, 0, 0, 0.7);
   opacity: 0;
+  -webkit-transition: opacity ease-in-out 250ms;
   transition: opacity ease-in-out 250ms; }
   .tools .btn {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
     -webkit-appearance: none;
     background: transparent;
     border: 0;
@@ -55,9 +57,10 @@ body {
     padding: 0;
     color: white;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 14px;
     -webkit-transform: scale3d(0.8, 0.8, 0.8);
             transform: scale3d(0.8, 0.8, 0.8);
+    -webkit-transition: -webkit-transform ease-in-out 150ms;
     transition: -webkit-transform ease-in-out 150ms;
     transition: transform ease-in-out 150ms;
     transition: transform ease-in-out 150ms, -webkit-transform ease-in-out 150ms; }
@@ -65,7 +68,7 @@ body {
       -webkit-transform: scale3d(1, 1, 1);
               transform: scale3d(1, 1, 1); }
   .tools .btn + .btn {
-    margin-left: 10px; }
+    margin-left: 6px; }
   .tools .btn-record.active {
     color: #e54646; }
 
@@ -114,10 +117,12 @@ body:hover .tools {
   text-decoration: none;
   outline: 0 !important;
   cursor: pointer;
+  -webkit-transition: all ease-in-out 250ms;
   transition: all ease-in-out 250ms; }
   .btn-create:hover, .btn-create:active, .btn-create:focus {
     background: #006bb3;
-    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2); }
+    -webkit-box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2); }
 
 .errors-content {
   width: calc(100% - 30px);
@@ -152,6 +157,7 @@ body:hover .tools {
     margin-bottom: 5px;
     font-size: 11px;
     cursor: pointer;
+    -webkit-transition: ease-in-out 250ms background-color;
     transition: ease-in-out 250ms background-color; }
     .errors-content .error span,
     .errors-content .warning span {

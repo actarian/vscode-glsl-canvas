@@ -190,7 +190,7 @@
             ri = setTimeout(resize, 50);
         }
 
-        document.addEventListener("dblclick", togglePause);
+        canvas.addEventListener("dblclick", togglePause);
         buttons.pause.addEventListener('mousedown', togglePause);
         buttons.record.addEventListener('mousedown', toggleRecord);
         buttons.stats.addEventListener('mousedown', toggleStats);

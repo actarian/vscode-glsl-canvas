@@ -5,7 +5,7 @@ $warning: #cc6633;
 $line: #4ec9b0;
 $value: #569cd0;
 $text: #d4d4d4;
-$tools: #333333;
+$tools: #000000; // #333333;
 $record: #e54646;
 $create: #007acc;
 html,
@@ -40,7 +40,7 @@ body {
 .tools {
 	position: absolute;
 	width: auto;
-	height: 40px;
+	height: 34px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -52,8 +52,8 @@ body {
 	opacity: 0;
 	transition: opacity ease-in-out 250ms;
 	.btn {
-		width: 40px;
-		height: 40px;
+		width: 34px;
+		height: 34px;
 		-webkit-appearance: none;
 		background: transparent;
 		border: 0;
@@ -61,7 +61,7 @@ body {
 		padding: 0;
 		color: white;
 		cursor: pointer;
-		font-size: 15px;
+		font-size: 14px;
 		transform: scale3d(0.80, 0.80, 0.80);
 		transition: transform ease-in-out 150ms;
 		&:hover,
@@ -70,7 +70,7 @@ body {
 		}
 	}
 	.btn+.btn {
-		margin-left: 10px;
+		margin-left: 6px;
 	}
 	.btn-record {
 		&.active {

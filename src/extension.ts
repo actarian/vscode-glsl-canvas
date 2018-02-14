@@ -37,7 +37,7 @@ export function activate(context: ExtensionContext) {
 
 function currentGlslEditor(): vscode.TextEditor {
     const editor: vscode.TextEditor = vscode.window.activeTextEditor;
-    return editor && (editor.document.languageId === 'glsl' || editor.document.languageId === 'plaintext') ? editor : null;
+    return editor && (editor.document.languageId === 'glsl') ? editor : null; // || editor.document.languageId === 'plaintext'
 }
 
 function currentGlslDocument(): vscode.TextDocument {
@@ -61,7 +61,7 @@ function onDidCloseTextDocument(document: vscode.TextDocument) {
 }
 
 function onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
-    console.log('onDidChangeActiveTextEditor', editor.document.uri);
+    // console.log('onDidChangeActiveTextEditor', editor.document.uri);
     if (currentGlslEditor()) {
         provider.update(uri);
     }
