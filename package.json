@@ -13,9 +13,14 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:glsl-canvas.showGlslCanvas"
+        "onCommand:glsl-canvas.showGlslCanvas",
+        "onLanguage:glsl"
     ],
     "main": "./out/extension",
+    "bugs": {
+        "url": "https://github.com/actarian/vscode-glsl-canvas/issues"
+    },
+    "homepage": "https://github.com/actarian/vscode-glsl-canvas/blob/master/README.md",
     "contributes": {
         "configuration": {
             "properties": {
@@ -40,6 +45,30 @@
         "snippets": [{
             "language": "glsl",
             "path": "./snippets/glsl.json"
+        }],
+        "languages": [{
+            "id": "glsl",
+            "aliases": [
+                "GLSL",
+                "OpenGL Shading Language",
+                "glsl"
+            ],
+            "extensions": [
+                ".vs",
+                ".fs",
+                ".gs",
+                ".comp",
+                ".vert",
+                ".tesc",
+                ".tese",
+                ".frag",
+                ".geom",
+                ".glsl",
+                ".glslv",
+                ".glslf",
+                ".glslg"
+            ],
+            "configuration": "./glsl.configuration.json"
         }]
     },
     "scripts": {
@@ -72,6 +101,10 @@
         "typescript": "^2.6.1",
         "vscode": "^1.1.6"
     },
+    "keywords": [
+        "shader",
+        "glsl"
+    ],
     "icon": "resources/img/icon.png",
     "repository": {
         "type": "git",

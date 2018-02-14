@@ -37,7 +37,7 @@ export function activate(context: ExtensionContext) {
 
 function currentGlslEditor(): vscode.TextEditor {
     const editor: vscode.TextEditor = vscode.window.activeTextEditor;
-    return editor && editor.document.languageId === 'glsl' ? editor : null;
+    return editor && (editor.document.languageId === 'glsl' || editor.document.languageId === 'plaintext') ? editor : null;
 }
 
 function currentGlslDocument(): vscode.TextDocument {
@@ -61,6 +61,7 @@ function onDidCloseTextDocument(document: vscode.TextDocument) {
 }
 
 function onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
+    console.log('onDidChangeActiveTextEditor', editor.document.uri);
     if (currentGlslEditor()) {
         provider.update(uri);
     }
@@ -83,9 +84,16 @@ function onDidOpenTextDocument(document: vscode.TextDocument) {
 */
 
 function onCreateShader(uri: vscode.Uri) {
-    // console.log('onCreateShader');
-    const newFile = vscode.Uri.parse('untitled:' + path.join(vscode.workspace.rootPath, 'untitled.glsl'));
+    /*
+    if (!vscode.workspace.rootPath) {
+        return vscode.window.showErrorMessage('No project currently open!');
+    }
+    */
+    const folder: string = vscode.workspace.rootPath || '';
+    console.log('onCreateShader', folder);
+    const newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
     vscode.workspace.openTextDocument(newFile).then(document => {
+        console.log('document', document);
         const edit = new vscode.WorkspaceEdit();
         edit.insert(newFile, new vscode.Position(0, 0),
             `  

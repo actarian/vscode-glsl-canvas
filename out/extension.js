@@ -34,7 +34,7 @@ function activate(context) {
 exports.activate = activate;
 function currentGlslEditor() {
     const editor = vscode.window.activeTextEditor;
-    return editor && editor.document.languageId === 'glsl' ? editor : null;
+    return editor && (editor.document.languageId === 'glsl' || editor.document.languageId === 'plaintext') ? editor : null;
 }
 function currentGlslDocument() {
     const editor = currentGlslEditor();
@@ -54,6 +54,7 @@ function onDidCloseTextDocument(document) {
     }
 }
 function onDidChangeActiveTextEditor(editor) {
+    console.log('onDidChangeActiveTextEditor', editor.document.uri);
     if (currentGlslEditor()) {
         provider.update(uri);
     }
@@ -73,9 +74,16 @@ function onDidOpenTextDocument(document: vscode.TextDocument) {
 }
 */
 function onCreateShader(uri) {
-    // console.log('onCreateShader');
-    const newFile = vscode.Uri.parse('untitled:' + path.join(vscode.workspace.rootPath, 'untitled.glsl'));
+    /*
+    if (!vscode.workspace.rootPath) {
+        return vscode.window.showErrorMessage('No project currently open!');
+    }
+    */
+    const folder = vscode.workspace.rootPath || '';
+    console.log('onCreateShader', folder);
+    const newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
     vscode.workspace.openTextDocument(newFile).then(document => {
+        console.log('document', document);
         const edit = new vscode.WorkspaceEdit();
         edit.insert(newFile, new vscode.Position(0, 0), `  
 #ifdef GL_ES
