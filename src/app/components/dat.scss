@@ -1,0 +1,171 @@
+@import "vars";
+$boolean: $warning;
+$function: $error;
+$number: $line;
+$string: $value;
+$input: $background;
+.dg {
+    &.ac {
+        height: auto;
+        right: 0;
+        left: auto;
+        position: absolute;
+        transform: translateX(15px);
+        cursor: pointer;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    &.main {
+        &.taller-than-window {
+            .close-button {
+                border-top-color: $background;
+            }
+        }
+        .close-button {
+            background-color: $background;
+            &:hover {
+                background-color: lighten($background, 5%);
+            }
+        }
+    }
+    &.a {
+        margin-right: 15px;
+    }
+    li.folder {
+        border-left-color: $value;
+    }
+    .property-name {
+        width: 40%;
+    }
+    .c {
+        width: 60%;
+        .slider:hover .slider-fg {
+            background: $value;
+        }
+    }
+    &.dialogue {
+        background-color: $background;
+        width: 460px;
+        padding: 15px;
+        font-size: 13px;
+        line-height: 15px;
+    }
+}
+
+.dg {
+    color: $text;
+    font: 11px inherit;
+    text-shadow: none;
+    &.main {
+        &::-webkit-scrollbar {
+            background: $background;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: lighten($background, 30%);
+        }
+    }
+    li {
+        &:not(.folder) {
+            background: $background;
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+        }
+        &.save-row {
+            background: $value;
+            .button {
+                &:hover {
+                    background-color: darken($foreground, 5%);
+                    box-shadow: none;
+                }
+            }
+        }
+        &.title {
+            background: #000 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+        }
+    }
+    .closed li.title {
+        background-image: url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlGIWqMCbWAEAOw==);
+    }
+    .c {
+        input[type=text] {
+            background: $input;
+            &:hover {
+                background: lighten($input, 5%);
+            }
+            &:focus {
+                background: lighten($input, 10%);
+                color: $text;
+            }
+        }
+        .slider {
+            background: $input;
+            &:hover {
+                background: lighten($input, 5%);
+            }
+        }
+    }
+    .cr {
+        &.boolean {
+            border-left-color: mix($background, $boolean, 80%);
+            .c {
+                .slider-fg {
+                    background: $boolean;
+                }
+                .slider:hover {
+                    .slider-fg {
+                        background: lighten($boolean, 5%);
+                    }
+                }
+            }
+        }
+        &.function {
+            border-left-color: mix($background, $function, 80%);
+            .c {
+                .slider-fg {
+                    background: $function;
+                }
+                .slider:hover {
+                    .slider-fg {
+                        background: lighten($function, 5%);
+                    }
+                }
+            }
+        }
+        &.number {
+            border-left-color: mix($background, $number, 80%);
+            input[type=text] {
+                color: $number;
+            }
+            .c {
+                .slider-fg {
+                    background: $number;
+                }
+                .slider:hover {
+                    .slider-fg {
+                        background: lighten($number, 5%);
+                    }
+                }
+            }
+        }
+        &.string {
+            border-left-color: mix($background, $string, 80%);
+            input[type=text] {
+                color: $string;
+            }
+            .c {
+                .slider-fg {
+                    background: $string;
+                }
+                .slider:hover {
+                    .slider-fg {
+                        background: lighten($string, 5%);
+                    }
+                }
+            }
+        }
+        &.function:hover,
+        &.boolean:hover {
+            background: $background;
+        }
+    }
+}

@@ -194,12 +194,12 @@ class GlslDocumentContentProvider {
         const content = `        
             <head>
                 <link href="file://${this.getResource('fonts/styles.css')}" rel="stylesheet">
-                <link href="file://${this.getResource('css/vendors.min.css')}" rel="stylesheet">
-                <link href="file://${this.getResource('css/app.min.css')}" rel="stylesheet"/>   
+                <!-- <link href="file://${this.getResource('css/vendors.min.css')}" rel="stylesheet"> -->
                 <style>
                     html, body { font-family: ${config.fontFamily}; font-weight: ${config.fontWeight}; font-size: ${config.fontSize}; };
                 </style>
-                <script src="file://${this.getResource('js/vendors.min.js')}"></script>                
+                <script src="file://${this.getResource('js/vendors.min.js')}"></script>         
+                <link href="file://${this.getResource('css/app.min.css')}" rel="stylesheet"/>          
             </head>
             <script>
                 var options = ${options.serialize()};

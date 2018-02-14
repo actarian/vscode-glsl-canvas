@@ -22,6 +22,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
         service.canvas = canvas;
     }
 
+    /*
     var mimeTypes = [
         'video/webm\;codecs=h264',
         'video/webm\;codecs=vp8',
@@ -31,17 +32,14 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
         'audio/webm',
         'video/mpeg',
     ];
-
-    function getOptions() {
-        var options = {
-            videoBitsPerSecond: 2500000,
-            audioBitsPerSecond: 128000,
-            mimeType: 'video/webm',
-            extension: '.webm',
-        };
-        // MediaRecorder.isTypeSupported(mimeTypes[0])
-        return options;
-    }
+    var options = {
+        videoBitsPerSecond: 2500000,
+        audioBitsPerSecond: 128000,
+        mimeType: 'video/webm',
+        extension: '.webm',
+    };
+    // MediaRecorder.isTypeSupported(mimeTypes[0])
+    */
 
     function record() {
         var service = this;

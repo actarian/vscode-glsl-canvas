@@ -1,13 +1,4 @@
-$background: #1e1e1e;
-$errors: #252526;
-$error: #e54646;
-$warning: #cc6633;
-$line: #4ec9b0;
-$value: #569cd0;
-$text: #d4d4d4;
-$tools: #000000; // #333333;
-$record: #e54646;
-$create: #007acc;
+@import "components/vars";
 html,
 body {
 	width: 100%;
@@ -213,11 +204,4 @@ body:hover {
 	user-select: none;
 }
 
-.dg.ac {
-	height: auto;
-	right: 0;
-	left: auto;
-	position: absolute;
-	transform: translateX(15px);
-	cursor: pointer;
-}
+@import "components/dat";
