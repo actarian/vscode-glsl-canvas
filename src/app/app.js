@@ -36,9 +36,9 @@
             service.snapshotRender();
         });
 
-        var guiservice = new GuiService(function () {
+        var guiservice = new GuiService(function (params) {
             // console.log('GuiService.onUpdate');
-            var uniforms = guiservice.getParams();
+            var uniforms = guiservice.getUniforms();
             for (var u in uniforms) {
                 // console.log(u, uniforms[u]);
                 glsl.setUniform(u, uniforms[u]);

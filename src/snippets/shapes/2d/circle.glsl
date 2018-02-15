@@ -1,7 +1,7 @@
 /* Shape 2D circle */
 
 float circle(in vec2 p, in float radius){
-    p -= vec2(0.5);
+    p -= 0.5;
     return 1.0 - smoothstep(
         radius - (radius * 0.01),
         radius + (radius * 0.01),

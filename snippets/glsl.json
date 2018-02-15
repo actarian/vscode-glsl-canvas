@@ -25,7 +25,7 @@
 
 	"shapes.2d.circle":{
   "prefix": "glsl.shapes.2d.circle",
-  "body": "/* Shape 2D circle */\n\nfloat circle(in vec2 p, in float radius){\n    p -= vec2(0.5);\n    return 1.0 - smoothstep(\n        radius - (radius * 0.01),\n        radius + (radius * 0.01),\n        dot(p, p) * 4.0\n    );\n}",
+  "body": "/* Shape 2D circle */\n\nfloat circle(in vec2 p, in float radius){\n    p -= 0.5;\n    return 1.0 - smoothstep(\n        radius - (radius * 0.01),\n        radius + (radius * 0.01),\n        dot(p, p) * 4.0\n    );\n}",
   "description": "Shape 2D circle "
 },
 

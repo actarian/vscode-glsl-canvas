@@ -1,8 +1,8 @@
 @import "vars";
-$boolean: $warning;
-$function: $error;
-$number: $line;
-$string: $value;
+$boolean: #45c4b0;
+$function: #dccd7d;
+$number: #569cd6;
+$string: #c3886f;
 $input: $background;
 .dg {
     &.ac {
