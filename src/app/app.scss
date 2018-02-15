@@ -1,4 +1,4 @@
-@import "components/vars";
+@import "services/vars";
 html,
 body {
 	width: 100%;
@@ -67,12 +67,6 @@ body {
 		&.active {
 			color: $record;
 		}
-	}
-}
-
-body:hover {
-	.tools {
-		opacity: 1;
 	}
 }
 
@@ -204,4 +198,15 @@ body:hover {
 	user-select: none;
 }
 
-@import "components/dat";
+@import "services/gui/gui";
+.dg {
+	opacity: 0;
+	transition: opacity ease-in-out 250ms;
+}
+
+body:hover {
+	.tools,
+	.dg {
+		opacity: 1;
+	}
+}

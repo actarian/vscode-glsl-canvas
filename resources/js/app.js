@@ -152,113 +152,95 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 (function () {
     'use strict';
 
-    function GuiService(callback) {
-        this.closed = true;
-        this.hidden = true;
-        this.callback = callback || function () {
-            console.log('GuiService.onChange');
+    var Parser = function () {
+
+        var Parser = {
+            set: set,
+            get: get,
         };
-        this.pool = {};
-    }
 
-    GuiService.prototype = {
-        load: load,
-        hide: hide,
-        show: show,
-        getUniforms: getUniforms,
-    };
+        function tuple(array) {
+            var tuples = {
+                2: ['x', 'y'],
+                3: ['x', 'y', 'z'],
+                4: ['r', 'g', 'b', 'a']
+            };
+            var keys = tuples[array.length];
+            var r = {};
+            array.filter(function (v, i) {
+                r[keys[i]] = v;
+            });
+            return r;
+        }
 
-    // statics
+        function enumerate(array, prefix) {
+            var r = {};
+            array.filter(function (v, i) {
+                r[prefix + i] = v;
+            });
+            return r;
+        }
 
-    function differs(a, b) {
-        // console.log('differs', JSON.stringify(a), JSON.stringify(b));
-        return JSON.stringify(a) !== JSON.stringify(b);
-    }
+        function getter(v) {
+            return function (key) {
+                return v[key];
+            };
+        }
 
-    function copy(obj) {
-        return JSON.parse(JSON.stringify(obj));
-    }
-
-    function merge(a, b) {
-        function _merge(a, b) {
-            for (var key in a) {
-                if (b.hasOwnProperty(key)) {
-                    if (typeof a[key] === 'number') {
-                        a[key] = b[key];
-                    } else if (typeof a[key] == 'object' && Object.keys(a[key]).length > 0) {
-                        _merge(a[key], b[key]);
+        function set(obj) {
+            var data = {};
+            for (var p in obj) {
+                var v = obj[p];
+                if (Array.isArray(v)) {
+                    if (v.length > 1) {
+                        switch (typeof v[0]) {
+                            case 'number':
+                                if (v.length < 5) {
+                                    data[p] = tuple(v);
+                                }
+                                break;
+                            case 'boolean':
+                                data[p] = enumerate(v, 'bool_');
+                                break;
+                            case 'string':
+                                data[p] = enumerate(v, 'texture_');
+                                break;
+                            case 'object':
+                                data[p] = enumerate(v, 'struct_');
+                                break;
+                        }
+                    } else if (v.length) {
+                        data[p] = v[0];
                     }
+                } else if (v !== undefined && v !== null) {
+                    data[p] = v;
                 }
             }
+            return data;
         }
-        if (a) {
-            a = copy(a);
 
-            _merge(a, b);
-        }
-        return a;
-    }
-
-    function tuple(array) {
-        var tuples = {
-            2: ['x', 'y'],
-            3: ['x', 'y', 'z'],
-            4: ['r', 'g', 'b', 'a']
-        };
-        var keys = tuples[array.length];
-        var r = {};
-        array.filter(function (v, i) {
-            r[keys[i]] = v;
-        });
-        return r;
-    }
-
-    function enumerate(array, prefix) {
-        var r = {};
-        array.filter(function (v, i) {
-            r[prefix + i] = v;
-        });
-        return r;
-    }
-
-    function parse(obj) {
-        var parsed = {};
-        for (var p in obj) {
-            var v = obj[p];
-            if (Array.isArray(v)) {
-                if (v.length > 1) {
-                    switch (typeof v[0]) {
-                        case 'number':
-                            if (v.length < 5) {
-                                parsed[p] = tuple(v);
-                            }
-                            break;
-                        case 'boolean':
-                            parsed[p] = enumerate(v, 'bool_');
-                            break;
-                        case 'string':
-                            parsed[p] = enumerate(v, 'texture_');
-                            break;
-                        case 'object':
-                            parsed[p] = enumerate(v, 'struct_');
-                            break;
-                    }
-                } else if (v.length) {
-                    parsed[p] = v[0];
+        function get(obj) {
+            var data = {};
+            for (var p in obj) {
+                var v = obj[p];
+                switch (typeof v) {
+                    case 'function':
+                        break;
+                    case 'number':
+                    case 'boolean':
+                    case 'string':
+                        data[p] = v;
+                        break;
+                    default:
+                        var keys = Object.keys(v);
+                        data[p] = keys.map(getter(v));
+                        break;
                 }
-            } else if (v !== undefined && v !== null) {
-                parsed[p] = v;
             }
+            // console.log('Parser.get', data);
+            return data;
         }
-        return parsed;
-    }
 
-    function unparse(obj) {
-        var unparsed = {};
-        for (var p in obj) {
-            var v = obj[p];
-            parsed[p] = v;
-        }
         /*
         float                                   <--- typeof U === 'number'
         bool                                    <--- typeof U === 'boolean'
@@ -276,112 +258,165 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             TODO: assume matrix for (typeof == Float32Array && length == 16)
         TODO: support other non-float types? (int, etc.)
         */
-        return unparsed;
-    }
 
-    function loop(obj, params, callback) {
-        var keys = [],
-            p;
-        for (p in params) {
-            keys.push(p);
+        return Parser;
+
+    }();
+
+    var GuiService = function () {
+
+        function GuiService(callback) {
+            this.closed = true;
+            this.hidden = true;
+            this.callback = callback || function () {
+                console.log('GuiService.onChange');
+            };
+            this.pool = {};
         }
-        keys.filter(function (key) {
-            var value = params[key];
-            if (typeof value === 'number') {
-                p = obj.add(params, key, 0.0, 1.0);
-                p.onChange(callback);
-            } else if (typeof value === 'object' && Object.keys(value).length > 0) {
-                p = null;
-                var folder = obj.addFolder(key);
-                loop(folder, value, callback);
-            } else {
-                p = obj.add(params, key);
-                p.onChange(callback);
+
+        GuiService.prototype = {
+            load: load,
+            hide: hide,
+            show: show,
+            uniforms: uniforms,
+        };
+
+        // statics
+
+        function differs(a, b) {
+            // console.log('differs', JSON.stringify(a), JSON.stringify(b));
+            return JSON.stringify(a) !== JSON.stringify(b);
+        }
+
+        function copy(obj) {
+            return JSON.parse(JSON.stringify(obj));
+        }
+
+        function merge(a, b) {
+            function _merge(a, b) {
+                for (var key in a) {
+                    if (b.hasOwnProperty(key)) {
+                        if (typeof a[key] === 'number') {
+                            a[key] = b[key];
+                        } else if (typeof a[key] == 'object' && Object.keys(a[key]).length > 0) {
+                            _merge(a[key], b[key]);
+                        }
+                    }
+                }
             }
-        });
-    }
+            if (a) {
+                a = copy(a);
 
-    function randomize(obj, params, callback) {
+                _merge(a, b);
+            }
+            return a;
+        }
 
-        function _randomize(obj, params) {
-            obj.__controllers.filter(function (c) {
-                if (typeof c.initialValue === 'number' && typeof c.__min === 'number' && typeof c.__max === 'number') {
-                    var value = c.__min + (c.__max - c.__min) * Math.random();
-                    params[c.property] = value;
-                    c.updateDisplay();
+        function loop(obj, params, callback) {
+            var keys = [],
+                p;
+            for (p in params) {
+                keys.push(p);
+            }
+            keys.filter(function (key) {
+                var value = params[key];
+                if (typeof value === 'number') {
+                    p = obj.add(params, key, 0.0, 1.0);
+                    p.onChange(callback);
+                } else if (typeof value === 'object' && Object.keys(value).length > 0) {
+                    p = null;
+                    var folder = obj.addFolder(key);
+                    loop(folder, value, callback);
+                } else {
+                    p = obj.add(params, key);
+                    p.onChange(callback);
                 }
             });
-            for (var f in obj.__folders) {
-                _randomize(obj.__folders[f], params[f]);
+        }
+
+        function randomize(obj, params, callback) {
+
+            function _randomize(obj, params) {
+                obj.__controllers.filter(function (c) {
+                    if (typeof c.initialValue === 'number' && typeof c.__min === 'number' && typeof c.__max === 'number') {
+                        var value = c.__min + (c.__max - c.__min) * Math.random();
+                        params[c.property] = value;
+                        c.updateDisplay();
+                    }
+                });
+                for (var f in obj.__folders) {
+                    _randomize(obj.__folders[f], params[f]);
+                }
             }
+            _randomize(obj, params);
+            callback();
         }
-        _randomize(obj, params);
-        callback();
-    }
 
-    // publics
+        // publics
 
-    function load(params) {
-        var service = this;
-        var gui = service.gui;
-        var locals = service.locals;
-        var changed = differs(params, locals);
-        if (gui && changed) {
-            service.closed = gui.closed;
-            gui.destroy();
-            gui = null;
-        }
-        if (!gui) {
-            gui = new dat.GUI();
-            gui.closed = service.closed;
-            service.gui = gui;
-            if (service.hidden) {
-                service.hide();
-            } else {
-                service.show();
-            }
-        }
-        if (changed) {
-            locals = copy(params);
-            service.locals = locals;
-            var parsed = parse(params);
-            var pool = merge(parsed, service.pool);
-            service.pool = pool;
-            var _callback = function () {
-                service.callback(pool);
-            };
-            loop(gui, pool, _callback);
-            pool.randomize = function () {
-                randomize(gui, pool, _callback);
-            };
-            gui.add(pool, 'randomize');
-            _callback();
-        }
-    }
-
-    function hide() {
-        var service = this;
-        var gui = service.gui;
-        gui.domElement.style.display = 'none';
-        service.hidden = true;
-        // dat.GUI.toggleHide();
-    }
-
-    function show() {
-        var service = this;
-        var locals = service.locals;
-        if (Object.keys(locals).length) {
+        function load(params) {
+            var service = this;
             var gui = service.gui;
-            gui.domElement.style.display = '';
+            var locals = service.locals;
+            var changed = differs(params, locals);
+            if (gui && changed) {
+                service.closed = gui.closed;
+                gui.destroy();
+                gui = null;
+            }
+            if (!gui) {
+                gui = new dat.GUI();
+                gui.closed = service.closed;
+                service.gui = gui;
+                if (service.hidden) {
+                    service.hide();
+                } else {
+                    service.show();
+                }
+            }
+            if (changed) {
+                locals = copy(params);
+                service.locals = locals;
+                var pool = Parser.set(params);
+                pool = merge(pool, service.pool);
+                service.pool = pool;
+                var _callback = function () {
+                    service.callback(pool);
+                };
+                loop(gui, pool, _callback);
+                pool.randomize = function () {
+                    randomize(gui, pool, _callback);
+                };
+                gui.add(pool, 'randomize');
+            }
         }
-        service.hidden = false;
-    }
 
-    function getUniforms() {
-        var service = this;
-        var pool = service.pool;
-        return unparse(pool);
-    }
+        function hide() {
+            var service = this;
+            var gui = service.gui;
+            gui.domElement.style.display = 'none';
+            service.hidden = true;
+            // dat.GUI.toggleHide();
+        }
+
+        function show() {
+            var service = this;
+            var locals = service.locals;
+            if (Object.keys(locals).length) {
+                var gui = service.gui;
+                gui.domElement.style.display = '';
+            }
+            service.hidden = false;
+        }
+
+        function uniforms() {
+            var service = this;
+            var pool = service.pool;
+            return Parser.get(pool);
+        }
+
+        return GuiService;
+    }();
 
     window.GuiService = GuiService;
 
@@ -424,13 +459,10 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             service.snapshotRender();
         });
 
-        var guiservice = new GuiService(function (params) {
-            // console.log('GuiService.onUpdate');
-            var uniforms = guiservice.getUniforms();
-            for (var u in uniforms) {
-                // console.log(u, uniforms[u]);
-                glsl.setUniform(u, uniforms[u]);
-            }
+        var gui = new GuiService(function (params) {
+            var uniforms = gui.uniforms();
+            // console.log('GuiService.onUpdate', uniforms);
+            glsl.setUniforms(uniforms);
         });
 
         load();
@@ -442,10 +474,11 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
             o.fragment = o.fragment.trim().length > 0 ? o.fragment : null;
             glsl.load(o.fragment, o.vertex);
-            guiservice.load(o.uniforms);
             for (var t in o.textures) {
                 glsl.setUniform('u_texture_' + t, o.textures[t]);
             }
+            gui.load(o.uniforms);
+            glsl.setUniforms(gui.uniforms());
             document.querySelector('body').setAttribute('class', (o.fragment || o.vertex ? 'ready' : 'empty'));
         }
 
@@ -543,13 +576,13 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
                     statsdom.style.visibility = 'visible';
                 }
                 requestAnimationFrame(statsTick);
-                guiservice.show();
+                gui.show();
                 buttons.stats.setAttribute('class', 'btn btn-stats active');
             } else {
                 if (statsdom) {
                     statsdom.style.visibility = 'hidden';
                 }
-                guiservice.hide();
+                gui.hide();
                 buttons.stats.setAttribute('class', 'btn btn-stats');
             }
         }

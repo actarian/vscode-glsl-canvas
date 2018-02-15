@@ -26,8 +26,8 @@
     }
 }, {
     "inputFiles": [
-        "src/app/captureservice.js",
-        "src/app/guiservice.js",
+        "src/app/services/capture/capture.service.js",
+        "src/app/services/gui/gui.service.js",
         "src/app/app.js"
     ],
     "outputFileName": "resources/js/app.js",

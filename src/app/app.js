@@ -36,13 +36,10 @@
             service.snapshotRender();
         });
 
-        var guiservice = new GuiService(function (params) {
-            // console.log('GuiService.onUpdate');
-            var uniforms = guiservice.getUniforms();
-            for (var u in uniforms) {
-                // console.log(u, uniforms[u]);
-                glsl.setUniform(u, uniforms[u]);
-            }
+        var gui = new GuiService(function (params) {
+            var uniforms = gui.uniforms();
+            // console.log('GuiService.onUpdate', uniforms);
+            glsl.setUniforms(uniforms);
         });
 
         load();
@@ -54,10 +51,11 @@
             o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
             o.fragment = o.fragment.trim().length > 0 ? o.fragment : null;
             glsl.load(o.fragment, o.vertex);
-            guiservice.load(o.uniforms);
             for (var t in o.textures) {
                 glsl.setUniform('u_texture_' + t, o.textures[t]);
             }
+            gui.load(o.uniforms);
+            glsl.setUniforms(gui.uniforms());
             document.querySelector('body').setAttribute('class', (o.fragment || o.vertex ? 'ready' : 'empty'));
         }
 
@@ -155,13 +153,13 @@
                     statsdom.style.visibility = 'visible';
                 }
                 requestAnimationFrame(statsTick);
-                guiservice.show();
+                gui.show();
                 buttons.stats.setAttribute('class', 'btn btn-stats active');
             } else {
                 if (statsdom) {
                     statsdom.style.visibility = 'hidden';
                 }
-                guiservice.hide();
+                gui.hide();
                 buttons.stats.setAttribute('class', 'btn btn-stats');
             }
         }
