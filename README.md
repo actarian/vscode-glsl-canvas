@@ -48,11 +48,11 @@ Types supported are ```float```,  ```vec2```,  ```vec3``` and ```vec4```. Vector
 
 By clicking the option button you can view and modify at runtime uniforms via the [dat.gui](https://github.com/dataarts/dat.gui) interface.
 
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview-half.gif)
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview-gui-half.gif)
 
 ## Fragment shader
 
-An example of fragment shader. Copy paste this code in an empty `.glsl` file:
+An example of fragment shader. You can copy paste this code in an empty `.glsl` file:
 
 ```glsl
 precision mediump float;

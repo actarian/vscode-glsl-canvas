@@ -63,3 +63,5 @@ _README.md
 snippets/glsl-example.json
 
 .DS_Store
+src/_preview-half.gif
+src/preview.jpg
