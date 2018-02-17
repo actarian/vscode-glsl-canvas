@@ -56,7 +56,12 @@
             }
             gui.load(o.uniforms);
             glsl.setUniforms(gui.uniforms());
-            document.querySelector('body').setAttribute('class', (o.fragment || o.vertex ? 'ready' : 'empty'));
+            if (o.fragment || o.vertex) {
+                document.querySelector('body').setAttribute('class', 'ready');
+            } else {
+                document.querySelector('body').setAttribute('class', 'empty');
+                removeStats();
+            }
         }
 
         function resize(init) {
@@ -156,12 +161,17 @@
                 gui.show();
                 buttons.stats.setAttribute('class', 'btn btn-stats active');
             } else {
-                if (statsdom) {
-                    statsdom.style.visibility = 'hidden';
-                }
-                gui.hide();
-                buttons.stats.setAttribute('class', 'btn btn-stats');
+                removeStats();
             }
+        }
+
+        function removeStats() {
+            if (statsdom) {
+                statsdom.style.visibility = 'hidden';
+            }
+            gui.hide();
+            buttons.stats.setAttribute('class', 'btn btn-stats');
+            flags.stats = false;
         }
 
         function createShader(e) {
