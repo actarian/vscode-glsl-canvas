@@ -443,7 +443,8 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             stats: false,
         };
 
-        var trails = new Array(10).fill([0.0, 0.0]);
+        var mx = new Float32Array([0.0, 0.0]);
+        var trails = new Array(10).fill(new Float32Array([0.0, 0.0]));
 
         resize(true);
 
@@ -459,13 +460,19 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
         glsl.on('render', function () {
             service.snapshotRender();
+            updateTrails();
         });
 
-        var gui = new GuiService(function (params) {
+        function onUpdateUniforms(params) {
             var uniforms = gui.uniforms();
             // console.log('GuiService.onUpdate', uniforms);
+            // uniforms.u_trails = trails;
+            // uniforms.u_trail_0 = trails[0];
             glsl.setUniforms(uniforms);
-        });
+            // console.log('onUpdateUniforms', uniforms);
+        }
+
+        var gui = new GuiService(onUpdateUniforms);
 
         load();
 
@@ -479,7 +486,6 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             for (var t in o.textures) {
                 glsl.setUniform('u_texture_' + t, o.textures[t]);
             }
-            o.uniforms.u_trails = trails;
             gui.load(o.uniforms);
             glsl.setUniforms(gui.uniforms());
             if (o.fragment || o.vertex) {
@@ -624,25 +630,59 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             ri = setTimeout(resize, 50);
         }
 
-        var mi;
+        function fastUpdate(method, type, name, value) {
+            try {
+                var u = glsl.uniforms[name] = glsl.uniforms[name] || {};
+                u.name = name;
+                u.value = value;
+                u.type = type;
+                u.method = 'uniform' + method;
+                u.location = glsl.gl.getUniformLocation(glsl.program, name);
+                glsl.gl[u.method].apply(glsl.gl, [u.location].concat(u.value));
+            } catch (e) {
+                console.log('fastUpdate', e);
+            }
+        }
 
-        function move(e) {
-            console.log(e.target, e.x, e.y);
-            trails = trails.map(function (vec2, i) {
-                vec2[0] += (e.x - vec2[0]) / (20 / i);
-                vec2[1] += (e.x - vec2[1]) / (20 / i);
-                return vec2;
-            });
+        function updateTrails() {
+            var i = 0,
+                t = trails.length;
+            while (i < t) {
+                var e = (i > 0 ? trails[i - 1] : mx);
+                var v = trails[i];
+                var friction = 1.0 / (20.0 * (i + 1));
+                v[0] += (e[0] - v[0]) * friction;
+                v[1] += (e[1] - v[1]) * friction;
+                fastUpdate('2fv', 'vec2', 'u_trails[' + i + ']', v);
+                i++;
+            }
+            glsl.forceRender = true;
+            /*
+            fastUpdate('2fv', 'vec2', 'u_trails[10]', trails);
+            console.log('parseUniforms', parseUniforms({
+                u_trails: value
+            }));
+            */
+            // onUpdateUniforms();
+            // uniforms.u_trails = trails;
+            // glsl.setUniform('u_trails', trails);
+            // console.log('onUpdateUniforms', trails[0][0], trails[0][1]);
+        }
 
+        var ui;
+
+        function updateUniforms(e) {
+            if (ui) {
+                clearTimeout(ui);
+            }
+            ui = setTimeout(function () {
+                onUpdateUniforms();
+            }, 1000 / 25);
         }
 
         function onMove(e) {
-            if (mi) {
-                clearTimeout(mi);
-            }
-            mi = setTimeout(function () {
-                move(e);
-            }, 1000 / 25);
+            mx[0] = e.x;
+            mx[1] = content.offsetHeight - e.y;
         }
 
         canvas.addEventListener("dblclick", togglePause);
