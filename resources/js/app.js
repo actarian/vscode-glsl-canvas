@@ -443,6 +443,8 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             stats: false,
         };
 
+        var trails = new Array(10).fill([0.0, 0.0]);
+
         resize(true);
 
         var glsl = new GlslCanvas(canvas, {
@@ -477,6 +479,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             for (var t in o.textures) {
                 glsl.setUniform('u_texture_' + t, o.textures[t]);
             }
+            o.uniforms.u_trails = trails;
             gui.load(o.uniforms);
             glsl.setUniforms(gui.uniforms());
             if (o.fragment || o.vertex) {
@@ -621,13 +624,36 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             ri = setTimeout(resize, 50);
         }
 
+        var mi;
+
+        function move(e) {
+            console.log(e.target, e.x, e.y);
+            trails = trails.map(function (vec2, i) {
+                vec2[0] += (e.x - vec2[0]) / (20 / i);
+                vec2[1] += (e.x - vec2[1]) / (20 / i);
+                return vec2;
+            });
+
+        }
+
+        function onMove(e) {
+            if (mi) {
+                clearTimeout(mi);
+            }
+            mi = setTimeout(function () {
+                move(e);
+            }, 1000 / 25);
+        }
+
         canvas.addEventListener("dblclick", togglePause);
+        canvas.addEventListener('mousemove', onMove);
         buttons.pause.addEventListener('mousedown', togglePause);
         buttons.record.addEventListener('mousedown', toggleRecord);
         buttons.stats.addEventListener('mousedown', toggleStats);
         buttons.create.addEventListener('click', createShader);
         window.addEventListener("message", onMessage, false);
         window.addEventListener('resize', onResize);
+
         resize();
     }
 
@@ -654,5 +680,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
         document.querySelector('.errors').setAttribute('class', 'errors active');
         document.querySelector('.errors').innerHTML = output;
     }
+
     window.addEventListener('load', onLoad);
+
 }());
