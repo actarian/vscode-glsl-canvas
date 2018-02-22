@@ -21,7 +21,10 @@
         };
 
         var mx = new Float32Array([0.0, 0.0]);
-        var trails = new Array(10).fill(new Float32Array([0.0, 0.0]));
+        var _trails = [];
+        var trails = new Array(10).fill(null).map(function () {
+            return new Float32Array([0.0, 0.0]);
+        });
 
         resize(true);
 
@@ -221,18 +224,36 @@
             }
         }
 
+        var ti = 0;
+
         function updateTrails() {
             var i = 0,
                 t = trails.length;
+            var tx = _trails.length ? _trails[0] : mx;
             while (i < t) {
-                var e = (i > 0 ? trails[i - 1] : mx);
+                var e = (i > 0 ? trails[i - 1] : tx);
                 var v = trails[i];
-                var friction = 1.0 / (20.0 * (i + 1));
+                var friction = 1.0 / (5.0 + i);
                 v[0] += (e[0] - v[0]) * friction;
                 v[1] += (e[1] - v[1]) * friction;
                 fastUpdate('2fv', 'vec2', 'u_trails[' + i + ']', v);
                 i++;
             }
+            if (_trails.length) {
+                _trails.shift();
+            }
+            /*
+            var d = trails[0];
+            if (_trails.length && Math.abs(d.x - tx.x) < 2 && Math.abs(d.y - tx.y) < 2) {
+                _trails.shift();
+            }
+            */
+            /*
+            ti++;
+            if (ti % 10 === 0 && _trails.length > 0) {
+                _trails.shift();
+            }
+            */
             glsl.forceRender = true;
             /*
             fastUpdate('2fv', 'vec2', 'u_trails[10]', trails);
@@ -246,6 +267,47 @@
             // console.log('onUpdateUniforms', trails[0][0], trails[0][1]);
         }
 
+        var getNow = Date.now || function () {
+            return new Date().getTime();
+        };
+
+        function throttle(func, wait, options) {
+            // Returns a function, that, when invoked, will only be triggered at most once
+            // during a given window of time. Normally, the throttled function will run
+            // as much as it can, without ever going more than once per `wait` duration;
+            // but if you'd like to disable the execution on the leading edge, pass
+            // `{leading: false}`. To disable execution on the trailing edge, ditto.
+            var context, args, result;
+            var timeout = null;
+            var previous = 0;
+            if (!options) options = {};
+            var later = function () {
+                previous = options.leading === false ? 0 : getNow();
+                timeout = null;
+                result = func.apply(context, args);
+                if (!timeout) context = args = null;
+            };
+            return function () {
+                var now = getNow();
+                if (!previous && options.leading === false) previous = now;
+                var remaining = wait - (now - previous);
+                context = this;
+                args = arguments;
+                if (remaining <= 0 || remaining > wait) {
+                    if (timeout) {
+                        clearTimeout(timeout);
+                        timeout = null;
+                    }
+                    previous = now;
+                    result = func.apply(context, args);
+                    if (!timeout) context = args = null;
+                } else if (!timeout && options.trailing !== false) {
+                    timeout = setTimeout(later, remaining);
+                }
+                return result;
+            };
+        }
+
         var ui;
 
         function updateUniforms(e) {
@@ -257,9 +319,14 @@
             }, 1000 / 25);
         }
 
+        var trailPush = throttle(function () {
+            _trails.push(new Float32Array(mx));
+        }, 1000 / 60);
+
         function onMove(e) {
             mx[0] = e.x;
             mx[1] = content.offsetHeight - e.y;
+            trailPush();
         }
 
         canvas.addEventListener("dblclick", togglePause);
