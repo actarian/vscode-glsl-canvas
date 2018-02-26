@@ -28,6 +28,7 @@
     "inputFiles": [
         "src/app/services/capture/capture.service.js",
         "src/app/services/gui/gui.service.js",
+        "src/app/services/trails/trails.service.js",
         "src/app/app.js"
     ],
     "outputFileName": "resources/js/app.js",
