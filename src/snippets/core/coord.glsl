@@ -1,16 +1,4 @@
-/* Main function, uniforms & utils */
-#ifdef GL_ES
-    precision mediump float;
-#endif
-
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
-
-#define PI_TWO			1.570796326794897
-#define PI				3.141592653589793
-#define TWO_PI			6.283185307179586
-
+/* Coordinate and unit utils */
 vec2 coord(in vec2 p) {
 	p = p / u_resolution.xy;
     // correct aspect ratio
@@ -38,14 +26,3 @@ vec2 pix(in float x, in float y) { return vec2(x * rx, y * rx); }
 float swing (float size) { return (1.0 + cos(u_time)) / 2.0 * pix(size); }
 vec2 swing (in float x, in float y) { return (1.0 + cos(u_time)) / 2.0 * pix(x, y); }
 vec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }
-
-void main() {
-    
-    vec3 color = vec3(
-        abs(cos(st.x + mx.x)), 
-        abs(sin(st.y + mx.y)), 
-        abs(sin(u_time))
-    );
-
-    gl_FragColor = vec4(color, 1.0);
-}

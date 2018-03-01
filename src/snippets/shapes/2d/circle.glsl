@@ -1,10 +1,9 @@
 /* Shape 2D circle */
-
-float circle(in vec2 p, in float radius){
-    p -= 0.5;
-    return 1.0 - smoothstep(
-        radius - (radius * 0.01),
-        radius + (radius * 0.01),
-        dot(p, p) * 4.0
-    );
+float circle(in vec2 p, in float size) {
+    float d = length(p) * 2.0;
+    return 1.0 - smoothstep(size - rx, size + rx, d);
+}
+float circle(in vec2 p, in float size, float t) {
+    float d = length(abs(p)) - size / 2.0;
+    return 1.0 - smoothstep(t - rx, t + rx, abs(d));
 }
