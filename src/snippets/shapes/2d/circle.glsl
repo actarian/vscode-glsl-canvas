@@ -5,5 +5,5 @@ float circle(in vec2 p, in float size) {
 }
 float circle(in vec2 p, in float size, float t) {
     float d = length(abs(p)) - size / 2.0;
-    return 1.0 - smoothstep(t - rx, t + rx, abs(d));
+    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));
 }

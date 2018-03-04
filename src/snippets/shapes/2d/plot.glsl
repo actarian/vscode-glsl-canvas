@@ -7,4 +7,4 @@ float plot(in vec2 p, in float t, in float a) {
     return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(p.x));
 }
 float plot(in vec2 p, in float t) { return plot (p, t, 0.0); }
-float plot(in vec2 p) { return plot (p, rx, 0.0); }
+float plot(in vec2 p) { return plot (p, 1.0, 0.0); }

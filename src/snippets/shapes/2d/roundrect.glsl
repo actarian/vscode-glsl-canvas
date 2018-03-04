@@ -7,5 +7,5 @@ float roundrect(in vec2 p, in vec2 size, in float radius) {
 float roundrect(in vec2 p, in vec2 size, in float radius, in float t) {
     radius *= 2.0; size /= 2.0; size -= radius;
     float d = length(max(abs(p), size) - size) - radius;
-    return 1.0 - smoothstep(t - rx, t + rx, abs(d));
+    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));
 }

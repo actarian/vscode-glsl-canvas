@@ -3,31 +3,15 @@
 This snippets collection is built with intention to help to understand 2D and 3D WebGL shader programming.
 Start typing `glsl.` and select your snippet.
 
-## Colors
+## Animation
 
-| Snippet                      | Purpose                         |
-|------------------------------|---------------------------------|
-| `glsl.colors`                | Colors palette                  |
+| Snippet                      | Purpose                               |
+|------------------------------|---------------------------------------|
+| `glsl.animation`             | Staggered animations                  |
 
-List of vec3 colors palette. `BLACK`, `WHITE`, `RED`, `GREEN`, `BLUE`, `YELLOW`, `CYAN`, `MAGENTA`, `ORANGE`, `PURPLE`, `LIME`, `ACQUA`, `VIOLET`, `AZUR`. 
-
-
-```glsl
-    ...
-    vec3 color = mix(CYAN, MAGENTA, animation.pow);
-    ...
-```
-
-## Core
-
-| Snippet                      | Purpose                         |
-|------------------------------|---------------------------------|
-| `glsl.core.animation`        | Main function, uniforms & utils |
-| `glsl.core.coord`            | Main function, uniforms & utils |
-| `glsl.core.object`           | Main function, uniforms & utils |
-| `glsl.core.tile`             | Main function, uniforms & utils |
-
-Animation snippet usage example. Start typing `glsl.core.animation`
+Global struct for staggered animation. Start typing `glsl.animation`.
+You can define the loop `totalTime` with optional offset 
+and use `between` method with duration and optional negative or positive offset.
 
 ```glsl
     ...
@@ -41,13 +25,51 @@ Animation snippet usage example. Start typing `glsl.core.animation`
     ...
 ```
 
+[Playground](http://thebookofshaders.com/edit.php?log=180303091427)
+
 -----------
 
-## Ease
+## Colors
+
+| Snippet                      | Purpose                         |
+|------------------------------|---------------------------------|
+| `glsl.colors`                | Colors palette                  |
+
+List of vec3 colors palette. `BLACK`, `WHITE`, `RED`, `GREEN`, `BLUE`, `YELLOW`, `CYAN`, `MAGENTA`, `ORANGE`, `PURPLE`, `LIME`, `ACQUA`, `VIOLET`, `AZUR`. 
+
+```glsl
+    ...
+    vec3 color = mix(CYAN, MAGENTA, animation.pow);
+    ...
+```
+
+## Coords
+
+The function define `st` and `mx` vec2 with aspect ratio correction. 
+Add coords function at the start of file for use globally. 
+
+| Snippet                      | Purpose                         |
+|------------------------------|---------------------------------|
+| `glsl.coords`                | Pixel units utility functions   |
+
+-----------
+
+```glsl
+    ...
+    color = mix(color, BLACK, circle(mx - st, 0.1));
+    ...
+```
+
+[Playground](http://thebookofshaders.com/edit.php?log=180302165324)
+
+-----------
+
+## Easing
 
 Easing `in`, `out` and `inOut` equations to convert linear input 0.0-1.0 range 
-to correspondent eased values between 0.0 and 1.0.
-You can use them together with stepper animation.
+to correspondent eased values between 0.0 and 1.0. You can use them together with stepper animation.
+Adapted from [Robert Penner](http://robertpenner.com/easing/)
+ easing equations.
 
 | Snippet                      | Purpose                         |
 |------------------------------|---------------------------------|
@@ -72,6 +94,8 @@ Easing function snippet usage example. Start typing `glsl.ease.bounce.out`
     ...
 ```
 
+[Playground](http://thebookofshaders.com/edit.php?log=180303091427)
+
 -----------
 
 ## Main
@@ -84,15 +108,34 @@ Main function, uniforms & utils.
 
 -----------
 
+## Object
+
+| Snippet                      | Purpose                               |
+|------------------------------|---------------------------------------|
+| `glsl.core.object`           | Object struct with distance and color |
+
+Simple global struct for keep distance and color values. 
+
+```glsl
+    ...
+    object.color = RED;
+    object.distance = circle(vec2(0.0), 0.3);
+    ...
+```
+
+-----------
+
 ## Shapes 2D
 
 Different 2D shapes functions with fill and outline version.
 
 | Snippet                      | Purpose                         |
 |------------------------------|---------------------------------|
+| `glsl.shapes.2d.arc`         | Shape 2D arc                    |
 | `glsl.shapes.2d.circle`      | Shape 2D circle                 |
 | `glsl.shapes.2d.grid`        | Shape 2D grid                   |
 | `glsl.shapes.2d.line`        | Shape 2D line                   |
+| `glsl.shapes.2d.pie`         | Shape 2D pie                    |
 | `glsl.shapes.2d.plot`        | Shape 2D plot                   |
 | `glsl.shapes.2d.poly`        | Shape 2D poly                   |
 | `glsl.shapes.2d.rect`        | Shape 2D rect                   |
@@ -100,6 +143,10 @@ Different 2D shapes functions with fill and outline version.
 
 ```glsl
     ...
+    // arc fill (pos, angle, radians, size)
+    float d = arc(vec2(0.0), 0.0, PI_TWO, 0.5);
+    // arc outline (pos, angle, radians, size, thickness)
+    float d = arc(vec2(0.0), 0.0, PI_TWO, 0.5, 0.01);
     // circle fill (pos, diameter)
     float d = circle(vec2(0.0), 0.5);
     // circle outline (pos, diameter, thickness)
@@ -108,6 +155,10 @@ Different 2D shapes functions with fill and outline version.
     float d = grid(0.1);
     // line (a, b, thickness)
     float d = line(vec2(0.0), vec2(0.5), 0.01);
+    // pie fill (pos, angle, radians, size)
+    float d = pie(vec2(0.0), 0.0, PI_TWO, 0.5);
+    // pie outline (pos, angle, radians, size, thickness)
+    float d = pie(vec2(0.0), 0.0, PI_TWO, 0.5, 0.01);
     // plot outline (pos, thickness, angle)
     float d = plot(vec2(0.0), 0.01, PI);
     // poly fill (pos, size, sides)
@@ -124,5 +175,45 @@ Different 2D shapes functions with fill and outline version.
     float d = roundrect(vec2(0.0), 0.3, 0.05, 0.01);
     ...
 ```
+
+[Playground](http://thebookofshaders.com/edit.php?log=1520061191715)
+
+-----------
+
+## Tile 2D
+
+Tiling function for pattern replication.
+
+| Snippet                      | Purpose                         |
+|------------------------------|---------------------------------|
+| `glsl.modifiers.tile`        | Tiling function                 |
+
+```glsl
+    ...
+    float d = roundrect(vec2(0.0), 0.3, 0.05, 0.01);
+    ...
+```
+
+[Playground](http://thebookofshaders.com/edit.php?log=1520061191715)
+
+-----------
+
+## Units
+
+Pixel units utility functions. Use `pos(0.0, 0.0)` for positioning and `pix(1.0)` for sizes.  
+
+| Snippet                      | Purpose                         |
+|------------------------------|---------------------------------|
+| `glsl.units`                 | Pixel units utility functions   |
+
+-----------
+
+```glsl
+    ...
+    float d = rect(pos(0.0, 0.0), pix(150.0, 150.0), pix(1.0));
+    ...
+```
+
+[Playground](http://thebookofshaders.com/edit.php?log=180302165324)
 
 -----------

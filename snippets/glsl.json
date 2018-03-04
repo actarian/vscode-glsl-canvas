@@ -1,56 +1,50 @@
 {
+	"animation":{
+  "prefix": "glsl.animation",
+  "body": "/* Staggered animation */\nstruct Animation { float time; float pow; };\nAnimation animation = Animation(0.0, 0.0);\nvoid totalTime(in float t, in float offset) { animation.time = mod(u_time + offset, t); }\nvoid totalTime(in float t) { totalTime(t, 0.0); }\nbool between(in float duration, in float offset) {\n    float p = (animation.time - offset) / duration;\n    animation.pow = p;\n    animation.time -= (duration + offset);\n    return (p >= 0.0 && p <= 1.0);\n}\nbool between(in float duration) { return between(duration, 0.0); }",
+  "description": "Staggered animation "
+},
+
 	"colors":{
   "prefix": "glsl.colors",
   "body": "/* Color palette */\n#define BLACK           vec3(0.0, 0.0, 0.0)\n#define WHITE           vec3(1.0, 1.0, 1.0)\n#define RED             vec3(1.0, 0.0, 0.0)\n#define GREEN           vec3(0.0, 1.0, 0.0)\n#define BLUE            vec3(0.0, 0.0, 1.0)\n#define YELLOW          vec3(1.0, 1.0, 0.0)\n#define CYAN            vec3(0.0, 1.0, 1.0)\n#define MAGENTA         vec3(1.0, 0.0, 1.0)\n#define ORANGE          vec3(1.0, 0.5, 0.0)\n#define PURPLE          vec3(1.0, 0.0, 0.5)\n#define LIME            vec3(0.5, 1.0, 0.0)\n#define ACQUA           vec3(0.0, 1.0, 0.5)\n#define VIOLET          vec3(0.5, 0.0, 1.0)\n#define AZUR            vec3(0.0, 0.5, 1.0)",
   "description": "Color palette "
 },
 
-	"core.animation":{
-  "prefix": "glsl.core.animation",
-  "body": "/* Staggered animation */\nstruct Animation { float time; float pow; };\nAnimation animation = Animation(0.0, 0.0);\nvoid totalTime(in float t, in float d) { animation.time = mod(u_time + d, t); }\nvoid totalTime(in float t) { totalTime(t, 0.0); }\nbool between(in float duration) {\n    float p = animation.time / duration;\n    animation.pow = p;\n    animation.time -= duration;\n    return (p >= 0.0 && p <= 1.0);\n}",
-  "description": "Staggered animation "
-},
-
-	"core.coord":{
-  "prefix": "glsl.core.coord",
-  "body": "/* Coordinate and unit utils */\nvec2 coord(in vec2 p) {\n\tp = p / u_resolution.xy;\n    // correct aspect ratio\n    if (u_resolution.x > u_resolution.y) {\n        p.x *= u_resolution.x / u_resolution.y;\n        p.x += (u_resolution.y - u_resolution.x) / u_resolution.y / 2.0;\n    } else {\n        p.y *= u_resolution.y / u_resolution.x;\n\t    p.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n    }\n    // centering\n    p -= 0.5;\n    p *= vec2(-1.0, 1.0);\n\treturn p;\n}\n#define rx 1.0 / min(u_resolution.x, u_resolution.y)\n#define uv gl_FragCoord.xy / u_resolution.xy\n#define st coord(gl_FragCoord.xy)\n#define mx coord(u_mouse)\nvec2 pos(in float x, in float y) { return st + vec2(x * rx, y * rx); }\nvec2 pos(in float x) { return pos(x, x); }\nvec2 pos(in vec2 p) { return pos(p.x, p.y); }\nfloat pix(in float x) { return x * rx; }\nvec2 pix(in float x, in float y) { return vec2(x * rx, y * rx); }\nfloat swing (float size) { return (1.0 + cos(u_time)) / 2.0 * pix(size); }\nvec2 swing (in float x, in float y) { return (1.0 + cos(u_time)) / 2.0 * pix(x, y); }\nvec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }",
+	"coords":{
+  "prefix": "glsl.coords",
+  "body": "/* Coordinate and unit utils */\nvec2 coord(in vec2 p) {\n\tp = p / u_resolution.xy;\n    // correct aspect ratio\n    if (u_resolution.x > u_resolution.y) {\n        p.x *= u_resolution.x / u_resolution.y;\n        p.x += (u_resolution.y - u_resolution.x) / u_resolution.y / 2.0;\n    } else {\n        p.y *= u_resolution.y / u_resolution.x;\n\t    p.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n    }\n    // centering\n    p -= 0.5;\n    p *= vec2(-1.0, 1.0);\n\treturn p;\n}\n#define rx 1.0 / min(u_resolution.x, u_resolution.y)\n#define uv gl_FragCoord.xy / u_resolution.xy\n#define st coord(gl_FragCoord.xy)\n#define mx coord(u_mouse)\nvec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }",
   "description": "Coordinate and unit utils "
 },
 
-	"core.object":{
-  "prefix": "glsl.core.object",
-  "body": "/* Object struct */\nstruct Object { float distance; vec3 color; };\nObject object = Object(1000000.0, vec3(0.0));",
-  "description": "Object struct "
-},
-
-	"core.tile":{
-  "prefix": "glsl.core.tile",
-  "body": "/* Tiling function */\nvec2 tile(in vec2 p, vec2 size) { return fract(mod(p + size / 2.0, size)) - (size / 2.0); }\nvec2 tile(in vec2 p, float size) { return tile(p, vec2(size)); }",
-  "description": "Tiling function "
-},
-
-	"main.new":{
-  "prefix": "glsl.main.new",
-  "body": "/* Main function, uniforms & utils */\n#ifdef GL_ES\n    precision mediump float;\n#endif\n\nuniform vec2 u_resolution;\nuniform vec2 u_mouse;\nuniform float u_time;\n\n#define PI_TWO\t\t\t1.570796326794897\n#define PI\t\t\t\t3.141592653589793\n#define TWO_PI\t\t\t6.283185307179586\n\nvec2 coord(in vec2 p) {\n\tp = p / u_resolution.xy;\n    // correct aspect ratio\n    if (u_resolution.x > u_resolution.y) {\n        p.x *= u_resolution.x / u_resolution.y;\n        p.x += (u_resolution.y - u_resolution.x) / u_resolution.y / 2.0;\n    } else {\n        p.y *= u_resolution.y / u_resolution.x;\n\t    p.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n    }\n    // centering\n    p -= 0.5;\n    p *= vec2(-1.0, 1.0);\n\treturn p;\n}\n#define rx 1.0 / min(u_resolution.x, u_resolution.y)\n#define uv gl_FragCoord.xy / u_resolution.xy\n#define st coord(gl_FragCoord.xy)\n#define mx coord(u_mouse)\nvec2 pos(in float x, in float y) { return st + vec2(x * rx, y * rx); }\nvec2 pos(in float x) { return pos(x, x); }\nvec2 pos(in vec2 p) { return pos(p.x, p.y); }\nfloat pix(in float x) { return x * rx; }\nvec2 pix(in float x, in float y) { return vec2(x * rx, y * rx); }\nfloat swing (float size) { return (1.0 + cos(u_time)) / 2.0 * pix(size); }\nvec2 swing (in float x, in float y) { return (1.0 + cos(u_time)) / 2.0 * pix(x, y); }\nvec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }\n\nvoid main() {\n    \n    vec3 color = vec3(\n        abs(cos(st.x + mx.x)), \n        abs(sin(st.y + mx.y)), \n        abs(sin(u_time))\n    );\n\n    gl_FragColor = vec4(color, 1.0);\n}",
+	"main":{
+  "prefix": "glsl.main",
+  "body": "/* Main function, uniforms & utils */\n#ifdef GL_ES\n    precision mediump float;\n#endif\n\nuniform vec2 u_resolution;\nuniform vec2 u_mouse;\nuniform float u_time;\n\n#define PI_TWO\t\t\t1.570796326794897\n#define PI\t\t\t\t3.141592653589793\n#define TWO_PI\t\t\t6.283185307179586\n\n/* Coordinate and unit utils */\nvec2 coord(in vec2 p) {\n\tp = p / u_resolution.xy;\n    // correct aspect ratio\n    if (u_resolution.x > u_resolution.y) {\n        p.x *= u_resolution.x / u_resolution.y;\n        p.x += (u_resolution.y - u_resolution.x) / u_resolution.y / 2.0;\n    } else {\n        p.y *= u_resolution.y / u_resolution.x;\n\t    p.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n    }\n    // centering\n    p -= 0.5;\n    p *= vec2(-1.0, 1.0);\n\treturn p;\n}\n#define rx 1.0 / min(u_resolution.x, u_resolution.y)\n#define uv gl_FragCoord.xy / u_resolution.xy\n#define st coord(gl_FragCoord.xy)\n#define mx coord(u_mouse)\nvec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }\n/* Pixel units conversion */\nvec2 pos(in float x, in float y) { return st + vec2(x * rx, y * rx); }\nvec2 pos(in float x) { return pos(x, x); }\nvec2 pos(in vec2 p) { return pos(p.x, p.y); }\nfloat pix(in float x) { return x * rx; }\nvec2 pix(in float x, in float y) { return vec2(x * rx, y * rx); }\n\nvoid main() {\n    \n    vec3 color = vec3(\n        abs(cos(st.x + mx.x)), \n        abs(sin(st.y + mx.y)), \n        abs(sin(u_time))\n    );\n\n    gl_FragColor = vec4(color, 1.0);\n}",
   "description": "Main function, uniforms & utils "
 },
 
-	"ease.back.in":{
-  "prefix": "glsl.ease.back.in",
-  "body": "/* Easing Back In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBackIn(float t) {\n    float s = 1.70158;\n    return t * t * ((s + 1.0) * t - s);\n}",
-  "description": "Easing Back In equation "
+	"object":{
+  "prefix": "glsl.object",
+  "body": "/* Object struct */\nstruct Object { float distance; vec3 color; };\nObject object = Object(0.0, vec3(0.0));",
+  "description": "Object struct "
 },
 
-	"ease.back.inOut":{
-  "prefix": "glsl.ease.back.inOut",
-  "body": "/* Easing Back InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBackInOut(float t) {\n    float s = 1.70158;\n    if ((t / 2.0) < 1.0) return 0.5 * (t * t * (((s *= (1.525)) + 1.0) * t - s));\n    return 0.5 * ((t -= 2.0) * t * (((s *= (1.525)) + 1.0) * t + s) + 2.0);\n}",
-  "description": "Easing Back InOut equation "
+	"units":{
+  "prefix": "glsl.units",
+  "body": "/* Pixel units conversion */\nvec2 pos(in float x, in float y) { return st + vec2(x * rx, y * rx); }\nvec2 pos(in float x) { return pos(x, x); }\nvec2 pos(in vec2 p) { return pos(p.x, p.y); }\nfloat pix(in float x) { return x * rx; }\nvec2 pix(in float x, in float y) { return vec2(x * rx, y * rx); }",
+  "description": "Pixel units conversion "
 },
 
-	"ease.back.out":{
-  "prefix": "glsl.ease.back.out",
-  "body": "/* Easing Back Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBackOut(float t) {\n    float s = 1.70158;\n    return ((t = t - 1.0) * t * ((s + 1.0) * t + s) + 1.0);\n}",
-  "description": "Easing Back Out equation "
+	"modifiers.swing":{
+  "prefix": "glsl.modifiers.swing",
+  "body": "/* Swing function */\nfloat swing (float size) { return (1.0 + cos(u_time)) / 2.0 * pix(size); }\nvec2 swing (in float x, in float y) { return (1.0 + cos(u_time)) / 2.0 * pix(x, y); }",
+  "description": "Swing function "
+},
+
+	"modifiers.tile":{
+  "prefix": "glsl.modifiers.tile",
+  "body": "/* Tiling function */\nvec2 tile(in vec2 p, vec2 size) { return fract(mod(p + size / 2.0, size)) - (size / 2.0); }\nvec2 tile(in vec2 p, float size) { return tile(p, vec2(size)); }",
+  "description": "Tiling function "
 },
 
 	"ease.bounce.in":{
@@ -69,6 +63,24 @@
   "prefix": "glsl.ease.bounce.out",
   "body": "/* Easing Bounce Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}",
   "description": "Easing Bounce Out equation "
+},
+
+	"ease.back.in":{
+  "prefix": "glsl.ease.back.in",
+  "body": "/* Easing Back In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBackIn(float t) {\n    float s = 1.70158;\n    return t * t * ((s + 1.0) * t - s);\n}",
+  "description": "Easing Back In equation "
+},
+
+	"ease.back.inOut":{
+  "prefix": "glsl.ease.back.inOut",
+  "body": "/* Easing Back InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBackInOut(float t) {\n    float s = 1.70158;\n    if ((t / 2.0) < 1.0) return 0.5 * (t * t * (((s *= (1.525)) + 1.0) * t - s));\n    return 0.5 * ((t -= 2.0) * t * (((s *= (1.525)) + 1.0) * t + s) + 2.0);\n}",
+  "description": "Easing Back InOut equation "
+},
+
+	"ease.back.out":{
+  "prefix": "glsl.ease.back.out",
+  "body": "/* Easing Back Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBackOut(float t) {\n    float s = 1.70158;\n    return ((t = t - 1.0) * t * ((s + 1.0) * t + s) + 1.0);\n}",
+  "description": "Easing Back Out equation "
 },
 
 	"ease.circular.in":{
@@ -107,24 +119,6 @@
   "description": "Easing Cubic Out equation "
 },
 
-	"ease.expo.in":{
-  "prefix": "glsl.ease.expo.in",
-  "body": "/* Easing Expo In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeExpoIn(float t) {\n    return (t == 0.0) ? 0.0 : pow(2.0, 10.0 * (t - 1.0));\n}",
-  "description": "Easing Expo In equation "
-},
-
-	"ease.expo.inOut":{
-  "prefix": "glsl.ease.expo.inOut",
-  "body": "/* Easing Expo InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeExpoInOut(float t) {\n    if (t == 0.0) return 0.0;\n    if (t == 1.0) return 1.0;\n    if ((t / 2.0) < 1.0) return 0.5 * pow(2.0, 10.0 * (t - 1.0));\n    return 0.5 * (-pow(2.0, -10.0 * --t) + 2.0);\n}",
-  "description": "Easing Expo InOut equation "
-},
-
-	"ease.expo.out":{
-  "prefix": "glsl.ease.expo.out",
-  "body": "/* Easing Expo Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeExpoOut(float t) {\n    return (t == 1.0) ? 1.0 : (-pow(2.0, -10.0 * t) + 1.0);\n}",
-  "description": "Easing Expo Out equation "
-},
-
 	"ease.elastic.in":{
   "prefix": "glsl.ease.elastic.in",
   "body": "/* Easing Elastic In equation */\n/* Adapted from Robert Penner easing equations */\n#define TWO_PI\t\t\t6.283185307179586\nfloat easeElasticIn(float t) {\n    if (t == 0.0) { return 0.0; }\n    if (t == 1.0) { return 1.0; }\n    float p = 0.3;\n    float a = 1.0; \n    float s = p / 4.0;\n    return -(a * pow(2.0, 10.0 * (t -= 1.0)) * sin((t - s) * TWO_PI / p));\n}",
@@ -141,6 +135,24 @@
   "prefix": "glsl.ease.elastic.out",
   "body": "/* Easing Elastic Out equation */\n/* Adapted from Robert Penner easing equations */\n#define TWO_PI\t\t\t6.283185307179586\nfloat easeElasticOut(float t) {\n    if (t == 0.0) { return 0.0; }\n    if (t == 1.0) { return 1.0; }\n    float p = 0.3;\n    float a = 1.0; \n    float s = p / 4.0;\n    return (a * pow(2.0, -10.0 * t) * sin((t - s) * TWO_PI / p) + 1.0);\n}",
   "description": "Easing Elastic Out equation "
+},
+
+	"ease.expo.in":{
+  "prefix": "glsl.ease.expo.in",
+  "body": "/* Easing Expo In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeExpoIn(float t) {\n    return (t == 0.0) ? 0.0 : pow(2.0, 10.0 * (t - 1.0));\n}",
+  "description": "Easing Expo In equation "
+},
+
+	"ease.expo.inOut":{
+  "prefix": "glsl.ease.expo.inOut",
+  "body": "/* Easing Expo InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeExpoInOut(float t) {\n    if (t == 0.0) return 0.0;\n    if (t == 1.0) return 1.0;\n    if ((t / 2.0) < 1.0) return 0.5 * pow(2.0, 10.0 * (t - 1.0));\n    return 0.5 * (-pow(2.0, -10.0 * --t) + 2.0);\n}",
+  "description": "Easing Expo InOut equation "
+},
+
+	"ease.expo.out":{
+  "prefix": "glsl.ease.expo.out",
+  "body": "/* Easing Expo Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeExpoOut(float t) {\n    return (t == 1.0) ? 1.0 : (-pow(2.0, -10.0 * t) + 1.0);\n}",
+  "description": "Easing Expo Out equation "
 },
 
 	"ease.quad.in":{
@@ -179,24 +191,6 @@
   "description": "Easing Quart Out equation "
 },
 
-	"ease.sine.in":{
-  "prefix": "glsl.ease.sine.in",
-  "body": "/* Easing Sine In equation */\n/* Adapted from Robert Penner easing equations */\n#define PI_TWO\t\t\t1.570796326794897\nfloat easeSineIn(float t) {\n    return -1.0 * cos(t * PI_TWO) + 1.0;\n}",
-  "description": "Easing Sine In equation "
-},
-
-	"ease.sine.inOut":{
-  "prefix": "glsl.ease.sine.inOut",
-  "body": "/* Easing Sine InOut equation */\n/* Adapted from Robert Penner easing equations */\n#define PI\t\t\t\t3.141592653589793\nfloat easeSineInOut(float t) {\n    return -0.5 * (cos(PI * t) - 1.0);\n}",
-  "description": "Easing Sine InOut equation "
-},
-
-	"ease.sine.out":{
-  "prefix": "glsl.ease.sine.out",
-  "body": "/* Easing Sine Out equation */\n/* Adapted from Robert Penner easing equations */\n#define PI_TWO\t\t\t1.570796326794897\nfloat easeSineOut(float t) {\n    return sin(t * PI_TWO);\n}",
-  "description": "Easing Sine Out equation "
-},
-
 	"ease.quint.in":{
   "prefix": "glsl.ease.quint.in",
   "body": "/* Easing Quint In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintIn(float t) {\n    return t * t * t * t * t;\n}",
@@ -215,10 +209,22 @@
   "description": "Easing Quint Out equation "
 },
 
-	"math.3d.transform":{
-  "prefix": "glsl.math.3d.transform",
-  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\n\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\n\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
-  "description": "Math 3D Transformations "
+	"ease.sine.in":{
+  "prefix": "glsl.ease.sine.in",
+  "body": "/* Easing Sine In equation */\n/* Adapted from Robert Penner easing equations */\n#define PI_TWO\t\t\t1.570796326794897\nfloat easeSineIn(float t) {\n    return -1.0 * cos(t * PI_TWO) + 1.0;\n}",
+  "description": "Easing Sine In equation "
+},
+
+	"ease.sine.inOut":{
+  "prefix": "glsl.ease.sine.inOut",
+  "body": "/* Easing Sine InOut equation */\n/* Adapted from Robert Penner easing equations */\n#define PI\t\t\t\t3.141592653589793\nfloat easeSineInOut(float t) {\n    return -0.5 * (cos(PI * t) - 1.0);\n}",
+  "description": "Easing Sine InOut equation "
+},
+
+	"ease.sine.out":{
+  "prefix": "glsl.ease.sine.out",
+  "body": "/* Easing Sine Out equation */\n/* Adapted from Robert Penner easing equations */\n#define PI_TWO\t\t\t1.570796326794897\nfloat easeSineOut(float t) {\n    return sin(t * PI_TWO);\n}",
+  "description": "Easing Sine Out equation "
 },
 
 	"math.2d.transform":{
@@ -227,10 +233,10 @@
   "description": "Math 2D Transformations "
 },
 
-	"shapes.2d.box":{
-  "prefix": "glsl.shapes.2d.box",
-  "body": "/* Shape 2D Box */\n\nfloat box(in vec2 p, in vec2 size){\n    size = vec2(0.5) - size * 0.5;\n    vec2 uv = smoothstep(\n        size,\n        size + vec2(0.001),\n        p\n    );\n    uv *= smoothstep(\n        size,\n        size + vec2(0.001),\n        vec2(1.0) - p\n    );\n    return uv.x * uv.y;\n}",
-  "description": "Shape 2D Box "
+	"math.3d.transform":{
+  "prefix": "glsl.math.3d.transform",
+  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\n\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\n\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
+  "description": "Math 3D Transformations "
 },
 
 	"shapes.2d.circle":{
@@ -241,7 +247,7 @@
 
 	"shapes.2d.grid":{
   "prefix": "glsl.shapes.2d.grid",
-  "body": "/* Shape 2D grid */\n#define PI_TWO\t\t\t1.570796326794897\nmat2 rotate2d(float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}\nfloat plot(in vec2 p, in float t, in float a) {\n    p *= rotate2d(a);\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(p.x));\n}\nfloat plot(in vec2 p, in float t) { return plot (p, t, 0.0); }\nfloat plot(in vec2 p) { return plot (p, 1.0, 0.0); }\nfloat line(in vec2 a, in vec2 b, float size) {\n    vec2 ba = a - b;\n    float d = clamp(dot(a, ba) / dot(ba, ba), 0.0, 1.0);\n    d = length(a - ba * d);\n    return smoothstep(size + rx, size - rx, d);\n}\nfloat grid(in float size) {\n    float d = 0.0;\n    d += plot(tile(st, size), pix(1.0));\n    d += plot(tile(st, size), pix(1.0), PI_TWO);\n    d *= 0.1;\n    vec2 p = tile(st, vec2(size * 5.0, size * 5.0));\n    float s = size / 10.0;\n    float g = 0.0;\n    g += line(p + vec2(-s, 0.0), p + vec2(s, 0.0), pix(1.0));\n    g += line(p + vec2(0.0, -s), p + vec2(0.0, s), pix(1.0));\n    return d + g;\n}",
+  "body": "/* Shape 2D grid */\n#define PI_TWO\t\t\t1.570796326794897\nmat2 rotate2d(float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}\nfloat plot(in vec2 p, in float t, in float a) {\n    p *= rotate2d(a);\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(p.x));\n}\nfloat plot(in vec2 p, in float t) { return plot (p, t, 0.0); }\nfloat plot(in vec2 p) { return plot (p, 1.0, 0.0); }\nfloat line(in vec2 a, in vec2 b, float size) {\n    vec2 ba = a - b;\n    float d = clamp(dot(a, ba) / dot(ba, ba), 0.0, 1.0);\n    d = length(a - ba * d);\n    return smoothstep(size + rx, size - rx, d);\n}\nvec2 tile(in vec2 p, vec2 size) { return fract(mod(p + size / 2.0, size)) - (size / 2.0); }\nvec2 tile(in vec2 p, float size) { return tile(p, vec2(size)); }\nfloat grid(in float size) {\n    float d = 0.0;\n    d += plot(tile(st, size), pix(1.0));\n    d += plot(tile(st, size), pix(1.0), PI_TWO);\n    d *= 0.1;\n    vec2 p = tile(st, vec2(size * 5.0, size * 5.0));\n    float s = size / 10.0;\n    float g = 0.0;\n    g += line(p + vec2(-s, 0.0), p + vec2(s, 0.0), pix(1.0));\n    g += line(p + vec2(0.0, -s), p + vec2(0.0, s), pix(1.0));\n    return d + g;\n}",
   "description": "Shape 2D grid "
 },
 
@@ -253,7 +259,7 @@
 
 	"shapes.2d.plot":{
   "prefix": "glsl.shapes.2d.plot",
-  "body": "/* Shape 2D plot */\nmat2 rotate2d(float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}\nfloat plot(in vec2 p, in float t, in float a) {\n    p *= rotate2d(a);\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(p.x));\n}\nfloat plot(in vec2 p, in float t) { return plot (p, t, 0.0); }\nfloat plot(in vec2 p) { return plot (p, 1.0, 0.0); }",
+  "body": "/* Shape 2D plot */\nmat2 rotate2d(float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}\nfloat plot(in vec2 p, in float t, in float a) {\n    p *= rotate2d(a);\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(p.x));\n}\nfloat plot(in vec2 p, in float t) { return plot (p, t, 0.0); }\nfloat plot(in vec2 p) { return plot (p, rx, 0.0); }",
   "description": "Shape 2D plot "
 },
 
@@ -263,15 +269,9 @@
   "description": "Shape 2D poly "
 },
 
-	"shapes.2d.polygon":{
-  "prefix": "glsl.shapes.2d.polygon",
-  "body": "/* Shape 2D polygon */\n#define PI\t\t\t\t3.14159265359\n#define TWO_PI\t\t\t6.28318530718\n\nfloat polygon(vec2 p, int sides) {\n    p -= 0.5;\n    p *= 30.0;\n    float a = atan(p.x, p.y) + PI;\n    float r = TWO_PI / float(sides);\n    float d = cos(floor(0.5 + a / r) * r - a) * length(p);\n    return smoothstep(0.6, 0.61, d);\n}",
-  "description": "Shape 2D polygon "
-},
-
 	"shapes.2d.rect":{
   "prefix": "glsl.shapes.2d.rect",
-  "body": "/* Shape 2D rect */\nfloat rect(in vec2 p, in vec2 size) {\n    size /= 2.0;\n    float d = length(max(abs(p) -size, 0.0));\n    return 1.0 - smoothstep(0.0, 0.0 + rx * 2.0, d);\n}\nfloat rect(in vec2 p, in vec2 size, in float t) {\n    size /= 2.0;\n    float d = length(max(abs(p), size - t) - size + t) - t * 2.0;\n    return 1.0 - smoothstep(t - rx, t + rx, abs(d));\n}",
+  "body": "/* Shape 2D rect */\nfloat rect(in vec2 p, in vec2 size) {\n    size /= 2.0;\n    float d = length(max(abs(p) -size, 0.0));\n    return 1.0 - smoothstep(0.0, 0.0 + rx * 2.0, d);\n}\nfloat rect(in vec2 p, in vec2 size, in float t) {\n    size /= 2.0;\n    float d = length(max(abs(p), size - t) - size + t) - t - rx;\n    return 1.0 - smoothstep(t - rx, t + rx, abs(d));\n}",
   "description": "Shape 2D rect "
 },
 
