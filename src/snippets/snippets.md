@@ -139,40 +139,51 @@ Different 2D shapes functions with fill and outline version.
 | `glsl.shapes.2d.plot`        | Shape 2D plot                   |
 | `glsl.shapes.2d.poly`        | Shape 2D poly                   |
 | `glsl.shapes.2d.rect`        | Shape 2D rect                   |
+| `glsl.shapes.2d.rectline`    | Shape 2D rectline               |
 | `glsl.shapes.2d.roundrect`   | Shape 2D roundrect              |
+| `glsl.shapes.2d.spiral`      | Shape 2D spiral                 |
+| `glsl.shapes.2d.star`        | Shape 2D star                   |
 
 ```glsl
     ...
     // arc fill (pos, angle, radians, size)
     float d = arc(vec2(0.0), 0.0, PI_TWO, 0.5);
     // arc outline (pos, angle, radians, size, thickness)
-    float d = arc(vec2(0.0), 0.0, PI_TWO, 0.5, 0.01);
+    float d = arc(vec2(0.0), 0.0, PI_TWO, 0.5, 0.04);
     // circle fill (pos, diameter)
     float d = circle(vec2(0.0), 0.5);
     // circle outline (pos, diameter, thickness)
-    float d = circle(vec2(0.0), 0.5, 0.01);
+    float d = circle(vec2(0.0), 0.5, 0.04);
     // grid (size)
     float d = grid(0.1);
     // line (a, b, thickness)
-    float d = line(vec2(0.0), vec2(0.5), 0.01);
+    float d = line(vec2(0.0), vec2(0.5), 0.04);
     // pie fill (pos, angle, radians, size)
     float d = pie(vec2(0.0), 0.0, PI_TWO, 0.5);
     // pie outline (pos, angle, radians, size, thickness)
-    float d = pie(vec2(0.0), 0.0, PI_TWO, 0.5, 0.01);
-    // plot outline (pos, thickness, angle)
-    float d = plot(vec2(0.0), 0.01, PI);
+    float d = pie(vec2(0.0), 0.0, PI_TWO, 0.5, 0.04);
+    // plot outline (pos, y, thickness)
+    float d = plot(vec2(0.0), 0.1, 0.04);
     // poly fill (pos, size, sides)
     float d = poly(vec2(0.0), 0.3, 3);
     // poly outline (pos, size, sides, thickness)
-    float d = poly(vec2(0.0), 0.3, 3, 0.01);
+    float d = poly(vec2(0.0), 0.3, 3, 0.04);
     // rect fill (pos, size)
     float d = rect(vec2(0.0), 0.3);
     // rect outline (pos, size, thickness)
-    float d = rect(vec2(0.0), 0.3, 0.01);
+    float d = rect(vec2(0.0), 0.3, 0.04);
+    // rectline outline (pos, thickness, angle)
+    float d = rectline(vec2(0.0), 0.04, PI);
     // roundrect fill (pos, size, radius)
     float d = roundrect(vec2(0.0), 0.3, 0.05);
     // roundrect outline (pos, size, radius, thickness)
-    float d = roundrect(vec2(0.0), 0.3, 0.05, 0.01);
+    float d = roundrect(vec2(0.0), 0.3, 0.05, 0.04);
+    // spiral (pos, turns)
+    float d = spiral(vec2(0.0), 1.0);
+    // star fill (pos, size, points)
+    float d = roundrect(vec2(0.0), 0.3, 6);
+    // star outline (pos, size, points, thickness)
+    float d = roundrect(vec2(0.0), 0.3, 6, 0.04);
     ...
 ```
 

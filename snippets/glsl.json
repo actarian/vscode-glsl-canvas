@@ -47,24 +47,6 @@
   "description": "Tiling function "
 },
 
-	"ease.bounce.in":{
-  "prefix": "glsl.ease.bounce.in",
-  "body": "/* Easing Bounce In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}",
-  "description": "Easing Bounce In equation "
-},
-
-	"ease.bounce.inOut":{
-  "prefix": "glsl.ease.bounce.inOut",
-  "body": "/* Easing Bounce InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}\nfloat easeBounceInOut(float t) {\n    if (t < 0.5) return easeBounceIn(t * 2.0) * 0.5;\n    else return easeBounceOut(t * 2.0 - 1.0) * 0.5 + 0.5;\n}",
-  "description": "Easing Bounce InOut equation "
-},
-
-	"ease.bounce.out":{
-  "prefix": "glsl.ease.bounce.out",
-  "body": "/* Easing Bounce Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}",
-  "description": "Easing Bounce Out equation "
-},
-
 	"ease.back.in":{
   "prefix": "glsl.ease.back.in",
   "body": "/* Easing Back In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBackIn(float t) {\n    float s = 1.70158;\n    return t * t * ((s + 1.0) * t - s);\n}",
@@ -81,6 +63,24 @@
   "prefix": "glsl.ease.back.out",
   "body": "/* Easing Back Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBackOut(float t) {\n    float s = 1.70158;\n    return ((t = t - 1.0) * t * ((s + 1.0) * t + s) + 1.0);\n}",
   "description": "Easing Back Out equation "
+},
+
+	"ease.bounce.in":{
+  "prefix": "glsl.ease.bounce.in",
+  "body": "/* Easing Bounce In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}",
+  "description": "Easing Bounce In equation "
+},
+
+	"ease.bounce.inOut":{
+  "prefix": "glsl.ease.bounce.inOut",
+  "body": "/* Easing Bounce InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}\nfloat easeBounceInOut(float t) {\n    if (t < 0.5) return easeBounceIn(t * 2.0) * 0.5;\n    else return easeBounceOut(t * 2.0 - 1.0) * 0.5 + 0.5;\n}",
+  "description": "Easing Bounce InOut equation "
+},
+
+	"ease.bounce.out":{
+  "prefix": "glsl.ease.bounce.out",
+  "body": "/* Easing Bounce Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}",
+  "description": "Easing Bounce Out equation "
 },
 
 	"ease.circular.in":{
@@ -239,46 +239,70 @@
   "description": "Math 3D Transformations "
 },
 
+	"shapes.2d.arc":{
+  "prefix": "glsl.shapes.2d.arc",
+  "body": "/* Shape 2D arc */\n#define TWO_PI\t\t\t6.283185307179586\nfloat pi = atan(1.0) * 4.0;\nfloat tau = atan(1.0) * 8.0;\nfloat arc(in vec2 p, in float s, in float e, in float size) {\n    s = mod(s, TWO_PI);\n    e = mod(s + e, TWO_PI);\n    float a = mod(atan(p.y, p.x), TWO_PI);\n    a = abs(step(s, a) - step(e, a));\n    a = s < e ? a : 1.0 - a;\n    float d = length(p);\n    d = smoothstep(d - rx, d + rx, size / 2.0 * a);\n    return d;\n}\nfloat arc(in vec2 p, in float s, in float e, in float size, in float t) {\n    e += s;\n    float o = (s / 2.0 + e / 2.0 - pi);\n\tfloat a = mod(atan(p.y, p.x) - o, tau) + o;\n\ta = clamp(a, min(s, e), max(s, e));\n\tfloat d = distance(p, size / 2.0 * vec2(cos(a), sin(a)));\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));\n}",
+  "description": "Shape 2D arc "
+},
+
 	"shapes.2d.circle":{
   "prefix": "glsl.shapes.2d.circle",
-  "body": "/* Shape 2D circle */\nfloat circle(in vec2 p, in float size) {\n    float d = length(p) * 2.0;\n    return 1.0 - smoothstep(size - rx, size + rx, d);\n}\nfloat circle(in vec2 p, in float size, float t) {\n    float d = length(abs(p)) - size / 2.0;\n    return 1.0 - smoothstep(t - rx, t + rx, abs(d));\n}",
+  "body": "/* Shape 2D circle */\nfloat circle(in vec2 p, in float size) {\n    float d = length(p) * 2.0;\n    return 1.0 - smoothstep(size - rx, size + rx, d);\n}\nfloat circle(in vec2 p, in float size, float t) {\n    float d = length(abs(p)) - size / 2.0;\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));\n}",
   "description": "Shape 2D circle "
 },
 
 	"shapes.2d.grid":{
   "prefix": "glsl.shapes.2d.grid",
-  "body": "/* Shape 2D grid */\n#define PI_TWO\t\t\t1.570796326794897\nmat2 rotate2d(float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}\nfloat plot(in vec2 p, in float t, in float a) {\n    p *= rotate2d(a);\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(p.x));\n}\nfloat plot(in vec2 p, in float t) { return plot (p, t, 0.0); }\nfloat plot(in vec2 p) { return plot (p, 1.0, 0.0); }\nfloat line(in vec2 a, in vec2 b, float size) {\n    vec2 ba = a - b;\n    float d = clamp(dot(a, ba) / dot(ba, ba), 0.0, 1.0);\n    d = length(a - ba * d);\n    return smoothstep(size + rx, size - rx, d);\n}\nvec2 tile(in vec2 p, vec2 size) { return fract(mod(p + size / 2.0, size)) - (size / 2.0); }\nvec2 tile(in vec2 p, float size) { return tile(p, vec2(size)); }\nfloat grid(in float size) {\n    float d = 0.0;\n    d += plot(tile(st, size), pix(1.0));\n    d += plot(tile(st, size), pix(1.0), PI_TWO);\n    d *= 0.1;\n    vec2 p = tile(st, vec2(size * 5.0, size * 5.0));\n    float s = size / 10.0;\n    float g = 0.0;\n    g += line(p + vec2(-s, 0.0), p + vec2(s, 0.0), pix(1.0));\n    g += line(p + vec2(0.0, -s), p + vec2(0.0, s), pix(1.0));\n    return d + g;\n}",
+  "body": "/* Shape 2D grid */\n#define PI_TWO\t\t\t1.570796326794897\nmat2 rotate2d(float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}\nvec2 tile(in vec2 p, vec2 size) { return fract(mod(p + size / 2.0, size)) - (size / 2.0); }\nvec2 tile(in vec2 p, float size) { return tile(p, vec2(size)); }\nfloat line(in vec2 a, in vec2 b, float t) {\n    vec2 ba = a - b;\n    float d = clamp(dot(a, ba) / dot(ba, ba), 0.0, 1.0);\n    d = length(a - ba * d);\n    return smoothstep(t / 2.0 + rx, t / 2.0 - rx, d);\n}\nfloat plot(in vec2 p, in float t, in float a) {\n    p *= rotate2d(a);\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(p.x));\n}\nfloat plot(in vec2 p, in float t) { return plot (p, t, 0.0); }\nfloat plot(in vec2 p) { return plot (p, 1.0, 0.0); }\nfloat grid(in float size) {\n    float d = 0.0;\n    d += plot(tile(st, size), 0.002);\n    d += plot(tile(st, size), 0.002, PI_TWO);\n    d *= 0.1;\n    vec2 p = tile(st, vec2(size * 5.0, size * 5.0));\n    float s = size / 10.0;\n    float g = 0.0;\n    g += line(p + vec2(-s, 0.0), p + vec2(s, 0.0), 0.004);\n    g += line(p + vec2(0.0, -s), p + vec2(0.0, s), 0.004);\n    return d + g;\n}",
   "description": "Shape 2D grid "
 },
 
 	"shapes.2d.line":{
   "prefix": "glsl.shapes.2d.line",
-  "body": "/* Shape 2D line */\nfloat line(in vec2 a, in vec2 b, float size) {\n    vec2 ba = a - b;\n    float d = clamp(dot(a, ba) / dot(ba, ba), 0.0, 1.0);\n    d = length(a - ba * d);\n    return smoothstep(size + rx, size - rx, d);\n}",
+  "body": "/* Shape 2D line */\nfloat line(in vec2 a, in vec2 b, float t) {\n    vec2 ba = a - b;\n    float d = clamp(dot(a, ba) / dot(ba, ba), 0.0, 1.0);\n    d = length(a - ba * d);\n    return smoothstep(t / 2.0 + rx, t / 2.0 - rx, d);\n}",
   "description": "Shape 2D line "
+},
+
+	"shapes.2d.pie":{
+  "prefix": "glsl.shapes.2d.pie",
+  "body": "/* Shape 2D pie */\n#define TWO_PI\t\t\t6.283185307179586\nfloat pie(in vec2 p, in float s, in float e, in float size) {\n    s = mod(s, TWO_PI);\n    e = mod(s + e, TWO_PI);\n    float a = mod(atan(p.y, p.x), TWO_PI);\n    a = abs(step(s, a) - step(e, a));\n    a = s < e ? a : 1.0 - a;\n    float d = length(p);\n    d = smoothstep(d - rx, d + rx, size / 2.0 * a);\n    return d;\n}\nfloat pie(in vec2 p, in float s, in float e, in float size, in float t) {\n    s = mod(s, TWO_PI);\n    e = mod(s + e, TWO_PI);\n    float a = mod(atan(p.y, p.x), TWO_PI);\n    a = abs(step(s, a) - step(e, a));\n    a = s < e ? a : 1.0 - a;\n    float d = length(p * a) - size / 2.0;\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));\n}",
+  "description": "Shape 2D pie "
 },
 
 	"shapes.2d.plot":{
   "prefix": "glsl.shapes.2d.plot",
-  "body": "/* Shape 2D plot */\nmat2 rotate2d(float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}\nfloat plot(in vec2 p, in float t, in float a) {\n    p *= rotate2d(a);\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(p.x));\n}\nfloat plot(in vec2 p, in float t) { return plot (p, t, 0.0); }\nfloat plot(in vec2 p) { return plot (p, rx, 0.0); }",
+  "body": "/* Shape 2D plot */\nmat2 rotate2d(float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}\nfloat plot(in vec2 p, in float t, in float a) {\n    p *= rotate2d(a);\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(p.x));\n}\nfloat plot(in vec2 p, in float t) { return plot (p, t, 0.0); }\nfloat plot(in vec2 p) { return plot (p, 1.0, 0.0); }",
   "description": "Shape 2D plot "
 },
 
 	"shapes.2d.poly":{
   "prefix": "glsl.shapes.2d.poly",
-  "body": "/* Shape 2D poly */\n#define PI\t\t\t\t3.141592653589793\n#define TWO_PI\t\t\t6.283185307179586\nfloat poly(in vec2 p, in float size, in int sides) {\n    float a = atan(p.x, p.y) + PI;\n    float r = TWO_PI / float(sides);\n    float d = cos(floor(0.5 + a / r) * r - a) * length(max(abs(p) * 1.0, 0.0));\n    return 1.0 - smoothstep(size / 2.0 - rx, size / 2.0 + rx, d);\n}\nfloat poly(in vec2 p, in float size, in int sides, in float t) {\n    float a = atan(p.x, p.y) + PI;\n    float r = TWO_PI / float(sides);\n    float d = cos(floor(0.5 + a / r) * r - a) * length(max(abs(p) * 1.0, 0.0)) - size / 2.0;\n    return 1.0 - smoothstep(t - rx, t + rx, abs(d));\n}",
+  "body": "/* Shape 2D poly */\n#define PI\t\t\t\t3.141592653589793\n#define TWO_PI\t\t\t6.283185307179586\nfloat poly(in vec2 p, in float size, in int sides) {\n    float a = atan(p.x, p.y) + PI;\n    float r = TWO_PI / float(sides);\n    float d = cos(floor(0.5 + a / r) * r - a) * length(max(abs(p) * 1.0, 0.0));\n    return 1.0 - smoothstep(size / 2.0 - rx, size / 2.0 + rx, d);\n}\nfloat poly(in vec2 p, in float size, in int sides, in float t) {\n    float a = atan(p.x, p.y) + PI;\n    float r = TWO_PI / float(sides);\n    float d = cos(floor(0.5 + a / r) * r - a) * length(max(abs(p) * 1.0, 0.0)) - size / 2.0;\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));\n}",
   "description": "Shape 2D poly "
 },
 
 	"shapes.2d.rect":{
   "prefix": "glsl.shapes.2d.rect",
-  "body": "/* Shape 2D rect */\nfloat rect(in vec2 p, in vec2 size) {\n    size /= 2.0;\n    float d = length(max(abs(p) -size, 0.0));\n    return 1.0 - smoothstep(0.0, 0.0 + rx * 2.0, d);\n}\nfloat rect(in vec2 p, in vec2 size, in float t) {\n    size /= 2.0;\n    float d = length(max(abs(p), size - t) - size + t) - t - rx;\n    return 1.0 - smoothstep(t - rx, t + rx, abs(d));\n}",
+  "body": "/* Shape 2D rect */\nfloat rect(in vec2 p, in vec2 size) {\n    float d = length(max(abs(p) - size / 2.0, 0.0));\n    return 1.0 - smoothstep(0.0, 0.0 + rx * 2.0, d);\n}\nfloat rect(in vec2 p, in vec2 size, in float t) {\n    size /= 2.0;\n    float d = length(max(abs(p), size - t) - size + t) - t - rx;\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));\n}",
   "description": "Shape 2D rect "
 },
 
 	"shapes.2d.roundrect":{
   "prefix": "glsl.shapes.2d.roundrect",
-  "body": "/* Shape 2D roundrect */\nfloat roundrect(in vec2 p, in vec2 size, in float radius) {\n    radius *= 2.0; size /= 2.0;\n    float d = length(max(abs(p) -size + radius, 0.0)) - radius;\n    return 1.0 - smoothstep(0.0, 0.0 + rx * 2.0, d);\n}\nfloat roundrect(in vec2 p, in vec2 size, in float radius, in float t) {\n    radius *= 2.0; size /= 2.0; size -= radius;\n    float d = length(max(abs(p), size) - size) - radius;\n    return 1.0 - smoothstep(t - rx, t + rx, abs(d));\n}",
+  "body": "/* Shape 2D roundrect */\nfloat roundrect(in vec2 p, in vec2 size, in float radius) {\n    radius *= 2.0; size /= 2.0;\n    float d = length(max(abs(p) -size + radius, 0.0)) - radius;\n    return 1.0 - smoothstep(0.0, rx * 2.0, d);\n}\nfloat roundrect(in vec2 p, in vec2 size, in float radius, in float t) {\n    radius *= 2.0; size /= 2.0; size -= radius;\n    float d = length(max(abs(p), size) - size) - radius;\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));\n}",
   "description": "Shape 2D roundrect "
+},
+
+	"shapes.2d.spiral":{
+  "prefix": "glsl.shapes.2d.spiral",
+  "body": "/* Shape 2D spiral */\nfloat spiral(in vec2 p, in float turn) {    \n    float r = dot(p, p);\n    float a = atan(p.y, p.x);\n    float d = abs(sin(fract(log(r) * (turn / 5.0) + a * 0.159)));\n    return 1.0 - smoothstep(0.5 - rx, 0.5 + rx, d);\n}",
+  "description": "Shape 2D spiral "
+},
+
+	"shapes.2d.star":{
+  "prefix": "glsl.shapes.2d.star",
+  "body": "/* Shape 2D star */\nfloat star(in vec2 p, in float size, in int sides) {    \n    float r = 0.5; float s = float(sides); float m = 0.5 / s;\n    float segment = atan(p.y, p.x) / TWO_PI * s;    \n    float a = ((floor(segment) + r) / s + mix(m, -m, step(r, fract(segment)))) * TWO_PI;\n    float d = abs(dot(vec2(cos(a), sin(a)), p)) + m - size / 2.0;\n    return 1.0 - smoothstep(0.0, rx * 2.0, d);\n}\nfloat star(in vec2 p, in float size, in int sides, float t) {    \n    float r = 0.5; float s = max(5.0, float(sides)); float m = 0.5 / s;\n    float segment = atan(p.y, p.x) / TWO_PI * s;    \n    float a = ((floor(segment) + r) / s + mix(m, -m, step(r, fract(segment)))) * TWO_PI;\n    float d = abs(dot(vec2(cos(a), sin(a)), p)) + m - size / 2.0;\n    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));\n}",
+  "description": "Shape 2D star "
 }
 
 }
