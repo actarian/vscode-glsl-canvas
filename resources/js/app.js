@@ -632,7 +632,10 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             o.fragment = o.fragment.trim().length > 0 ? o.fragment : null;
             glsl.load(o.fragment, o.vertex);
             for (var t in o.textures) {
-                glsl.setUniform('u_texture_' + t, o.textures[t]);
+                glsl.uniformTexture('u_texture_' + t, o.textures[t], {
+                    filtering: 'mipmap',
+                    repeat: true,
+                });
             }
             gui.load(o.uniforms);
             glsl.setUniforms(gui.uniforms());

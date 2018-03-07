@@ -11,16 +11,16 @@ float line(in vec2 a, in vec2 b, float t) {
     d = length(a - ba * d);
     return smoothstep(t / 2.0 + rx, t / 2.0 - rx, d);
 }
-float plot(in vec2 p, in float t, in float a) {
+float rectline(in vec2 p, in float t, in float a) {
     p *= rotate2d(a);
     return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(p.x));
 }
-float plot(in vec2 p, in float t) { return plot (p, t, 0.0); }
-float plot(in vec2 p) { return plot (p, 1.0, 0.0); }
+float rectline(in vec2 p, in float t) { return rectline (p, t, 0.0); }
+float rectline(in vec2 p) { return rectline (p, 1.0, 0.0); }
 float grid(in float size) {
     float d = 0.0;
-    d += plot(tile(st, size), 0.002);
-    d += plot(tile(st, size), 0.002, PI_TWO);
+    d += rectline(tile(st, size), 0.002);
+    d += rectline(tile(st, size), 0.002, PI_TWO);
     d *= 0.1;
     vec2 p = tile(st, vec2(size * 5.0, size * 5.0));
     float s = size / 10.0;
