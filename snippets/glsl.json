@@ -13,13 +13,13 @@
 
 	"coords":{
   "prefix": "glsl.coords",
-  "body": "/* Coordinate and unit utils */\nvec2 coord(in vec2 p) {\n\tp = p / u_resolution.xy;\n    // correct aspect ratio\n    if (u_resolution.x > u_resolution.y) {\n        p.x *= u_resolution.x / u_resolution.y;\n        p.x += (u_resolution.y - u_resolution.x) / u_resolution.y / 2.0;\n    } else {\n        p.y *= u_resolution.y / u_resolution.x;\n\t    p.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n    }\n    // centering\n    p -= 0.5;\n    p *= vec2(-1.0, 1.0);\n\treturn p;\n}\n#define rx 1.0 / min(u_resolution.x, u_resolution.y)\n#define uv gl_FragCoord.xy / u_resolution.xy\n#define st coord(gl_FragCoord.xy)\n#define mx coord(u_mouse)\nvec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }",
+  "body": "/* Coordinate and unit utils */\nvec2 coord(in vec2 p) {\n\tp = p / u_resolution.xy;\n    // correct aspect ratio\n    if (u_resolution.x > u_resolution.y) {\n        p.x *= u_resolution.x / u_resolution.y;\n        p.x += (u_resolution.y - u_resolution.x) / u_resolution.y / 2.0;\n    } else {\n        p.y *= u_resolution.y / u_resolution.x;\n\t    p.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n    }\n    // centering\n    p -= 0.5;\n    p *= vec2(-1.0, 1.0);\n\treturn p;\n}\n#define rx 1.0 / min(u_resolution.x, u_resolution.y)\n#define uv gl_FragCoord.xy / u_resolution.xy\n#define st coord(gl_FragCoord.xy)\n#define mx coord(u_mouse)",
   "description": "Coordinate and unit utils "
 },
 
 	"drawing":{
   "prefix": "glsl.drawing",
-  "body": "/* Signed distance drawing methods */\nfloat fill(in float d) { return 1.0 - smoothstep(0.0, rx * 2.0, d); }\nfloat stroke(in float d, in float t) { return 1.0 - smoothstep(t - rx * 1.5, t + rx * 1.5, abs(d)); }\n\n/* Field Adapted from https://www.shadertoy.com/view/XsyGRW */\nvec3 field(float d) {\n    const vec3 c1 = mix(WHITE, YELLOW, 0.4);\n    const vec3 c2 = mix(WHITE, AZUR, 0.7);\n    const vec3 c3 = mix(WHITE, ORANGE, 0.9);\n    const vec3 c4 = BLACK;\n    float d0 = abs(stroke(mod(d + 0.1, 0.2) - 0.1, 0.004));\n    float d1 = abs(stroke(mod(d + 0.025, 0.05) - 0.025, 0.004));\n    float d2 = abs(stroke(d, 0.004));\n    float f = clamp(d * 0.85, 0.0, 1.0);\n    vec3 gradient = mix(c1, c2, f);\n    gradient = mix(gradient, c4, 1.0 - clamp(1.25 - d * 0.25, 0.0, 1.0));\n    gradient = mix(gradient, c3, fill(d));\n    gradient = mix(gradient, c4, max(d2 * 0.85, max(d0 * 0.25, d1 * 0.06125)) * clamp(1.25 - d, 0.0, 1.0));\n    return gradient;\n}",
+  "body": "/* Signed distance drawing methods */\nfloat fill(in float d) { return 1.0 - smoothstep(0.0, rx * 2.0, d); }\nfloat stroke(in float d, in float t) { return 1.0 - smoothstep(t - rx * 1.5, t + rx * 1.5, abs(d)); }\nvec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }\n/* Field Adapted from https://www.shadertoy.com/view/XsyGRW */\nvec3 field(float d) {\n    const vec3 c1 = mix(WHITE, YELLOW, 0.4);\n    const vec3 c2 = mix(WHITE, AZUR, 0.7);\n    const vec3 c3 = mix(WHITE, ORANGE, 0.9);\n    const vec3 c4 = BLACK;\n    float d0 = abs(stroke(mod(d + 0.1, 0.2) - 0.1, 0.004));\n    float d1 = abs(stroke(mod(d + 0.025, 0.05) - 0.025, 0.004));\n    float d2 = abs(stroke(d, 0.004));\n    float f = clamp(d * 0.85, 0.0, 1.0);\n    vec3 gradient = mix(c1, c2, f);\n    gradient = mix(gradient, c4, 1.0 - clamp(1.25 - d * 0.25, 0.0, 1.0));\n    gradient = mix(gradient, c3, fill(d));\n    gradient = mix(gradient, c4, max(d2 * 0.85, max(d0 * 0.25, d1 * 0.06125)) * clamp(1.25 - d, 0.0, 1.0));\n    return gradient;\n}",
   "description": "Signed distance drawing methods "
 },
 
@@ -185,24 +185,6 @@
   "description": "Easing Quad Out equation "
 },
 
-	"ease.quart.in":{
-  "prefix": "glsl.ease.quart.in",
-  "body": "/* Easing Quart In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartIn(float t) {\n    return t * t * t * t;\n}",
-  "description": "Easing Quart In equation "
-},
-
-	"ease.quart.inOut":{
-  "prefix": "glsl.ease.quart.inOut",
-  "body": "/* Easing Quart InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartInOut(float t) {\n    if ((t / 2.0) < 1.0) return 0.5 * t * t * t * t;\n    return -0.5 * ((t -= 2.0) * t * t * t - 2.0);\n}",
-  "description": "Easing Quart InOut equation "
-},
-
-	"ease.quart.out":{
-  "prefix": "glsl.ease.quart.out",
-  "body": "/* Easing Quart Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartOut(float t) {\n    return -1.0 * ((t = t - 1.0) * t * t * t - 1.0);\n}",
-  "description": "Easing Quart Out equation "
-},
-
 	"ease.quint.in":{
   "prefix": "glsl.ease.quint.in",
   "body": "/* Easing Quint In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintIn(float t) {\n    return t * t * t * t * t;\n}",
@@ -219,6 +201,24 @@
   "prefix": "glsl.ease.quint.out",
   "body": "/* Easing Quint Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintOut(float t) {\n    return ((t = t - 1.0) * t * t * t * t + 1.0);\n}",
   "description": "Easing Quint Out equation "
+},
+
+	"ease.quart.in":{
+  "prefix": "glsl.ease.quart.in",
+  "body": "/* Easing Quart In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartIn(float t) {\n    return t * t * t * t;\n}",
+  "description": "Easing Quart In equation "
+},
+
+	"ease.quart.inOut":{
+  "prefix": "glsl.ease.quart.inOut",
+  "body": "/* Easing Quart InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartInOut(float t) {\n    if ((t / 2.0) < 1.0) return 0.5 * t * t * t * t;\n    return -0.5 * ((t -= 2.0) * t * t * t - 2.0);\n}",
+  "description": "Easing Quart InOut equation "
+},
+
+	"ease.quart.out":{
+  "prefix": "glsl.ease.quart.out",
+  "body": "/* Easing Quart Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartOut(float t) {\n    return -1.0 * ((t = t - 1.0) * t * t * t - 1.0);\n}",
+  "description": "Easing Quart Out equation "
 },
 
 	"ease.sine.in":{
@@ -243,6 +243,12 @@
   "prefix": "glsl.math.2d.transform",
   "body": "/* Math 2D Transformations */\nmat2 rotate2d(in float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}",
   "description": "Math 2D Transformations "
+},
+
+	"math.3d.transform":{
+  "prefix": "glsl.math.3d.transform",
+  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\n\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\n\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
+  "description": "Math 3D Transformations "
 },
 
 	"shapes.2d.arc":{
@@ -321,12 +327,6 @@
   "prefix": "glsl.shapes.2d.star",
   "body": "/* Shape 2D star */\nfloat sStar(in vec2 p, in float size, in int sides) {    \n    float r = 0.5; float s = max(5.0, float(sides)); float m = 0.5 / s; float x = PI_TWO / s * (2.0 - mod(s, 2.0)); \n    float segment = (atan(p.y, p.x) - x) / TWO_PI * s;    \n    float a = ((floor(segment) + r) / s + mix(m, -m, step(r, fract(segment)))) * TWO_PI;\n    float d = abs(dot(vec2(cos(a + x), sin(a + x)), p)) + m;\n    return (d - rx) * 2.0 - size;\n}\nfloat star(in vec2 p, in float size, in int sides) {\n    float d = sStar(p, size, sides);\n    return fill(d);\n}\nfloat star(in vec2 p, in float size, in int sides, float t) {    \n    float d = sStar(p, size, sides);\n    return stroke(d, t);\n}",
   "description": "Shape 2D star "
-},
-
-	"math.3d.transform":{
-  "prefix": "glsl.math.3d.transform",
-  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\n\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\n\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
-  "description": "Math 3D Transformations "
 }
 
 }

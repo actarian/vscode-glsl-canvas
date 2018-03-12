@@ -18,4 +18,3 @@ vec2 coord(in vec2 p) {
 #define uv gl_FragCoord.xy / u_resolution.xy
 #define st coord(gl_FragCoord.xy)
 #define mx coord(u_mouse)
-vec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }

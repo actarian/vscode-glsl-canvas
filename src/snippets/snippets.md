@@ -25,7 +25,7 @@ and use `between` method with duration and optional negative or positive offset.
     ...
 ```
 
-[Playground](http://thebookofshaders.com/edit.php?log=180303091427)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=animation)
 
 -----------
 
@@ -45,7 +45,7 @@ Blend functions by [Inigo Quilez](http://www.iquilezles.org/).
     ...
 ```
 
-[Playground](http://thebookofshaders.com/edit.php?log=1520061191715)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=blend)
 
 -----------
 
@@ -65,7 +65,7 @@ Boolean functions for `union`, `intersect` and `difference` shapes.
     ...
 ```
 
-[Playground](http://thebookofshaders.com/edit.php?log=1520061191715)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=boolean)
 
 -----------
 
@@ -82,6 +82,8 @@ List of vec3 colors palette. `BLACK`, `WHITE`, `RED`, `GREEN`, `BLUE`, `YELLOW`,
     vec3 color = mix(CYAN, MAGENTA, animation.pow);
     ...
 ```
+
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=colors)
 
 ## Coords
 
@@ -100,7 +102,7 @@ Add coords function at the start of file for use globally.
     ...
 ```
 
-[Playground](http://thebookofshaders.com/edit.php?log=180302165324)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=coords)
 
 -----------
 
@@ -122,7 +124,7 @@ Signed distance drawing methods `fill`, `stroke` and `field`.
     ...
 ```
 
-[Playground](http://thebookofshaders.com/edit.php?log=180302165324)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=drawing)
 
 -----------
 
@@ -156,7 +158,7 @@ Easing function snippet usage example. Start typing `glsl.ease.bounce.out`
     ...
 ```
 
-[Playground](http://thebookofshaders.com/edit.php?log=180303091427)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=easing)
 
 -----------
 
@@ -252,7 +254,7 @@ Various 2D shapes functions with `fill` and `stroke` version.
     ...
 ```
 
-[Playground](http://thebookofshaders.com/edit.php?log=1520061191715)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=shapes)
 
 -----------
 
@@ -275,7 +277,7 @@ Various 2D shapes functions with `fill` and `stroke` version.
     ...
 ```
 
-[Playground](http://thebookofshaders.com/edit.php?log=1520061191715)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=fields)
 
 -----------
 
@@ -293,7 +295,7 @@ Tiling function for pattern replication.
     ...
 ```
 
-[Playground](http://thebookofshaders.com/edit.php?log=1520061191715)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=tile)
 
 -----------
 
@@ -313,6 +315,6 @@ Pixel units utility functions. Use `pos(0.0, 0.0)` for positioning and `pix(1.0)
     ...
 ```
 
-[Playground](http://thebookofshaders.com/edit.php?log=180302165324)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=units)
 
 -----------
