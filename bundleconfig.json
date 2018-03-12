@@ -35,4 +35,20 @@
     "minify": {
         "enabled": true
     }
+}, {
+    "inputFiles": [
+        "bower_components/glslEditor/build/glslEditor.css"
+    ],
+    "outputFileName": "docs/css/vendors.css",
+    "minify": {
+        "enabled": true
+    }
+}, {
+    "inputFiles": [
+        "bower_components/glslEditor/build/glslEditor.js"
+    ],
+    "outputFileName": "docs/js/vendors.js",
+    "minify": {
+        "enabled": true
+    }
 }]

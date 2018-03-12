@@ -1,15 +1,15 @@
 /* Shape 2D poly */
-#define PI				3.141592653589793
-#define TWO_PI			6.283185307179586
-float poly(in vec2 p, in float size, in int sides) {
+float sPoly(in vec2 p, in float size, in int sides) {
     float a = atan(p.x, p.y) + PI;
     float r = TWO_PI / float(sides);
     float d = cos(floor(0.5 + a / r) * r - a) * length(max(abs(p) * 1.0, 0.0));
-    return 1.0 - smoothstep(size / 2.0 - rx, size / 2.0 + rx, d);
+    return d * 2.0 - size;
+}
+float poly(in vec2 p, in float size, in int sides) {
+    float d = sPoly(p, size, sides);
+    return fill(d);
 }
 float poly(in vec2 p, in float size, in int sides, in float t) {
-    float a = atan(p.x, p.y) + PI;
-    float r = TWO_PI / float(sides);
-    float d = cos(floor(0.5 + a / r) * r - a) * length(max(abs(p) * 1.0, 0.0)) - size / 2.0;
-    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));
+    float d = sPoly(p, size, sides);
+    return stroke(d, t);
 }

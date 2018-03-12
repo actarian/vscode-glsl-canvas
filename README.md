@@ -84,14 +84,43 @@ void main() {
 
 ## Glsl Snippets
 
-| Snippet                      | Purpose                         |
-|------------------------------|---------------------------------|
-| `glsl.main.new`              | Main function, uniforms & utils |
-| `glsl.math.2d.transform`     | Math 2D Transformations         |
-| `glsl.math.3d.transform`     | Math 3D Transformations         |
-| `glsl.shapes.2d.box`         | Shape 2D box                    |
-| `glsl.shapes.2d.circle`      | Shape 2D circle                 |
-| `glsl.shapes.2d.poligon`     | Shape 2D polygon                |
+| Snippet                      | Purpose                               |
+|------------------------------|---------------------------------------|
+| `glsl.animation`             | Staggered animations                  |
+| `glsl.modifiers.blend`       | Blend functions                       |
+| `glsl.modifiers.boolean`     | Boolean functions                     |
+| `glsl.colors`                | Colors palette                        |
+| `glsl.coords`                | Pixel units utility functions         |
+| `glsl.drawing`               | Signed distance drawing methods       |
+| `glsl.ease.back.in`          | Ease equation back in                 |
+| `glsl.ease.bounce.in`        | Ease equation bounce in               |
+| `glsl.ease.circular.in`      | Ease equation circular in             |
+| `glsl.ease.cubic.in`         | Ease equation cubic in                |
+| `glsl.ease.elastic.in`       | Ease equation elastic in              |
+| `glsl.ease.expo.in`          | Ease equation expo in                 |
+| `glsl.ease.quad.in`          | Ease equation quad in                 |
+| `glsl.ease.quart.in`         | Ease equation quart in                |
+| `glsl.ease.quint.in`         | Ease equation quint in                |
+| `glsl.ease.sine.in`          | Ease equation sine in                 |
+| `glsl.main.new`              | Main function, uniforms & utils       |
+| `glsl.core.object`           | Object struct with distance and color |
+| `glsl.shapes.2d.arc`         | Shape 2D arc                          |
+| `glsl.shapes.2d.circle`      | Shape 2D circle                       |
+| `glsl.shapes.2d.grid`        | Shape 2D grid                         |
+| `glsl.shapes.2d.hex`         | Shape 2D hexagon                      |
+| `glsl.shapes.2d.line`        | Shape 2D line                         |
+| `glsl.shapes.2d.pie`         | Shape 2D pie                          |
+| `glsl.shapes.2d.plot`        | Shape 2D plot                         |
+| `glsl.shapes.2d.poly`        | Shape 2D poly                         |
+| `glsl.shapes.2d.rect`        | Shape 2D rect                         |
+| `glsl.shapes.2d.roundrect`   | Shape 2D roundrect                    |
+| `glsl.shapes.2d.segment`     | Shape 2D segment                      |
+| `glsl.shapes.2d.spiral`      | Shape 2D spiral                       |
+| `glsl.shapes.2d.star`        | Shape 2D star                         |
+| `glsl.modifiers.tile`        | Tiling function                       |
+| `glsl.units`                 | Pixel units utility functions         |
+
+Snippets library documentation and playgrounds [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/src/snippets/snippets.md).
 
 ## Requirements
 

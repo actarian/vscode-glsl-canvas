@@ -20,12 +20,52 @@ and use `between` method with duration and optional negative or positive offset.
     // condition between 0.0-2.0 seconds
     if (between(2.0)) {
         // here you can use animation.pow as 0.0-1.0 linear stepper range
-        st.x += animation.pow
+        p.x += animation.pow
     }
     ...
 ```
 
 [Playground](http://thebookofshaders.com/edit.php?log=180303091427)
+
+-----------
+
+## Blend
+
+Blend functions by [Inigo Quilez](http://www.iquilezles.org/).
+
+| Snippet                      | Purpose                         |
+|------------------------------|---------------------------------|
+| `glsl.modifiers.blend`       | Blend functions                 |
+
+```glsl
+    ...
+    float d = sBlendExpo(sCircle(p - 0.1, 0.3), sCircle(p + 0.1, 0.3), 0.5);
+    float d = sBlendPoly(sCircle(p - 0.1, 0.3), sCircle(p + 0.1, 0.3), 0.5);
+    float d = sBlendPower(sCircle(p - 0.1, 0.3), sCircle(p + 0.1, 0.3), 0.5);
+    ...
+```
+
+[Playground](http://thebookofshaders.com/edit.php?log=1520061191715)
+
+-----------
+
+## Boolean
+
+Boolean functions for `union`, `intersect` and `difference` shapes.
+
+| Snippet                      | Purpose                         |
+|------------------------------|---------------------------------|
+| `glsl.modifiers.boolean`     | Boolean functions               |
+
+```glsl
+    ...
+    float d = sUnion(sCircle(p - 0.1, 0.3), sCircle(p + 0.1, 0.3));
+    float d = sIntersect(sCircle(p - 0.1, 0.3), sCircle(p + 0.1, 0.3));
+    float d = sDifference(sCircle(p - 0.1, 0.3), sCircle(p + 0.1, 0.3));
+    ...
+```
+
+[Playground](http://thebookofshaders.com/edit.php?log=1520061191715)
 
 -----------
 
@@ -57,6 +97,28 @@ Add coords function at the start of file for use globally.
 ```glsl
     ...
     color = mix(color, BLACK, circle(mx - st, 0.1));
+    ...
+```
+
+[Playground](http://thebookofshaders.com/edit.php?log=180302165324)
+
+-----------
+
+## Drawing
+
+Signed distance drawing methods `fill`, `stroke` and `field`. 
+
+| Snippet                      | Purpose                         |
+|------------------------------|---------------------------------|
+| `glsl.drawing`               | Signed distance drawing methods |
+
+-----------
+
+```glsl
+    ...
+    color = mix(color, RED, fill(d));
+    color = mix(color, BLACK, stroke(d, 0.004));
+    color = field(d);
     ...
 ```
 
@@ -119,7 +181,7 @@ Simple global struct for keep distance and color values.
 ```glsl
     ...
     object.color = RED;
-    object.distance = circle(vec2(0.0), 0.3);
+    object.distance = circle(p, 0.3);
     ...
 ```
 
@@ -127,63 +189,66 @@ Simple global struct for keep distance and color values.
 
 ## Shapes 2D
 
-Different 2D shapes functions with fill and outline version.
+Various 2D shapes functions with `fill` and `stroke` version.
 
 | Snippet                      | Purpose                         |
 |------------------------------|---------------------------------|
 | `glsl.shapes.2d.arc`         | Shape 2D arc                    |
 | `glsl.shapes.2d.circle`      | Shape 2D circle                 |
 | `glsl.shapes.2d.grid`        | Shape 2D grid                   |
+| `glsl.shapes.2d.hex`         | Shape 2D hexagon                |
 | `glsl.shapes.2d.line`        | Shape 2D line                   |
 | `glsl.shapes.2d.pie`         | Shape 2D pie                    |
 | `glsl.shapes.2d.plot`        | Shape 2D plot                   |
 | `glsl.shapes.2d.poly`        | Shape 2D poly                   |
 | `glsl.shapes.2d.rect`        | Shape 2D rect                   |
-| `glsl.shapes.2d.rectline`    | Shape 2D rectline               |
 | `glsl.shapes.2d.roundrect`   | Shape 2D roundrect              |
+| `glsl.shapes.2d.segment`     | Shape 2D segment                |
 | `glsl.shapes.2d.spiral`      | Shape 2D spiral                 |
 | `glsl.shapes.2d.star`        | Shape 2D star                   |
 
 ```glsl
     ...
-    // arc fill (pos, angle, radians, size)
-    float d = arc(vec2(0.0), 0.0, PI_TWO, 0.5);
-    // arc outline (pos, angle, radians, size, thickness)
-    float d = arc(vec2(0.0), 0.0, PI_TWO, 0.5, 0.04);
-    // circle fill (pos, diameter)
-    float d = circle(vec2(0.0), 0.5);
-    // circle outline (pos, diameter, thickness)
-    float d = circle(vec2(0.0), 0.5, 0.04);
+    // arc stroke (pos, size, angle, radians, thickness)
+    float d = arc(p, 0.3, 0.0, PI_TWO, 0.004);
+    // circle fill (pos, size)
+    float d = circle(p, 0.3);
+    // circle stroke (pos, size, thickness)
+    float d = circle(p, 0.3, 0.004);
+    // hex fill (pos, size)
+    float d = hex(p, 0.3);
+    // hex fill (pos, size)
+    float d = hex(p, 0.3, 0.004);
     // grid (size)
     float d = grid(0.1);
-    // line (a, b, thickness)
-    float d = line(vec2(0.0), vec2(0.5), 0.04);
-    // pie fill (pos, angle, radians, size)
-    float d = pie(vec2(0.0), 0.0, PI_TWO, 0.5);
-    // pie outline (pos, angle, radians, size, thickness)
-    float d = pie(vec2(0.0), 0.0, PI_TWO, 0.5, 0.04);
-    // plot outline (pos, y, thickness)
-    float d = plot(vec2(0.0), 0.1, 0.04);
+    // line stroke (pos, thickness, angle)
+    float d = line(p, 0.004, PI);
+    // pie fill (pos, size, angle, radians)
+    float d = pie(p, 0.3, 0.0, PI_TWO);
+    // pie stroke (pos, size, angle, radians, thickness)
+    float d = pie(p, 0.3, 0.004, 0.0, PI_TWO);
+    // plot stroke (pos, y, thickness)
+    float d = plot(p, -p.x, 0.004);
     // poly fill (pos, size, sides)
-    float d = poly(vec2(0.0), 0.3, 3);
-    // poly outline (pos, size, sides, thickness)
-    float d = poly(vec2(0.0), 0.3, 3, 0.04);
+    float d = poly(p, 0.3, 3);
+    // poly stroke (pos, size, sides, thickness)
+    float d = poly(p, 0.3, 3, 0.004);
     // rect fill (pos, size)
-    float d = rect(vec2(0.0), 0.3);
-    // rect outline (pos, size, thickness)
-    float d = rect(vec2(0.0), 0.3, 0.04);
-    // rectline outline (pos, thickness, angle)
-    float d = rectline(vec2(0.0), 0.04, PI);
-    // roundrect fill (pos, size, radius)
-    float d = roundrect(vec2(0.0), 0.3, 0.05);
-    // roundrect outline (pos, size, radius, thickness)
-    float d = roundrect(vec2(0.0), 0.3, 0.05, 0.04);
+    float d = rect(p, 0.3);
+    // rect stroke (pos, size, thickness)
+    float d = rect(p, 0.3, 0.004);
+    // roundrect fill (pos, size, corner)
+    float d = roundrect(p, 0.3, 0.05);
+    // roundrect stroke (pos, size, corner, thickness)
+    float d = roundrect(p, 0.3, 0.05, 0.004);
+    // segment (a, b, thickness)
+    float d = segment(p, p + vec2(0.15), 0.004);
     // spiral (pos, turns)
-    float d = spiral(vec2(0.0), 1.0);
+    float d = spiral(p, 1.0);
     // star fill (pos, size, points)
-    float d = roundrect(vec2(0.0), 0.3, 6);
-    // star outline (pos, size, points, thickness)
-    float d = roundrect(vec2(0.0), 0.3, 6, 0.04);
+    float d = roundrect(p, 0.3, 6);
+    // star stroke (pos, size, points, thickness)
+    float d = roundrect(p, 0.3, 6, 0.004);
     ...
 ```
 
@@ -191,7 +256,30 @@ Different 2D shapes functions with fill and outline version.
 
 -----------
 
-## Tile 2D
+#### Signed Distance Functions
+
+```glsl
+    ...
+    d = sArc(p, 0.3, 0.0, PI_TWO);
+    d = sCircle(p, 0.3);
+    d = sHex(p, 0.3);    
+    d = sLine(p, PI_TWO / 2.0);
+    d = sSegment(p - vec2(0.15), p + vec2(0.15));    
+    d = sPie(p, 0.3, 0.0, PI_TWO);
+    d = sPlot(p, -p.x);
+    d = sPoly(p, 0.3, 3);
+    d = sRect(p, vec2(0.3));
+    d = sRoundrect(p, vec2(0.3), 0.05);
+    d = sSpiral(p, 1.0);
+    d = sStar(p, 0.5, 6);
+    ...
+```
+
+[Playground](http://thebookofshaders.com/edit.php?log=1520061191715)
+
+-----------
+
+## Tile
 
 Tiling function for pattern replication.
 
@@ -201,7 +289,7 @@ Tiling function for pattern replication.
 
 ```glsl
     ...
-    float d = roundrect(vec2(0.0), 0.3, 0.05, 0.01);
+    float d = roundrect(p, 0.3, 0.05, 0.01);
     ...
 ```
 

@@ -1,10 +1,14 @@
 /* Shape 2D rect */
+float sRect(in vec2 p, in vec2 size) {    
+    float d = max(abs(p.x / size.x), abs(p.y / size.y)) * 2.0;
+    float m = max(size.x, size.y);
+    return d * m - m;
+}
 float rect(in vec2 p, in vec2 size) {
-    float d = length(max(abs(p) - size / 2.0, 0.0));
-    return 1.0 - smoothstep(0.0, 0.0 + rx * 2.0, d);
+    float d = sRect(p, size);
+    return fill(d);
 }
 float rect(in vec2 p, in vec2 size, in float t) {
-    size /= 2.0;
-    float d = length(max(abs(p), size - t) - size + t) - t - rx;
-    return 1.0 - smoothstep(t / 2.0 - rx, t / 2.0 + rx, abs(d));
+    float d = sRect(p, size);
+    return stroke(d, t);
 }

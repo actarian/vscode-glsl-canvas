@@ -1,5 +1,7 @@
 .vscode/**
 .vscode-test/**
+bower_components/**
+docs/**
 out/test/**
 out/**/*.map
 src/**

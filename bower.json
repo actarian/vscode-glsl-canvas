@@ -20,6 +20,7 @@
   ],
   "dependencies": {
     "glslCanvas": "https://github.com/patriciogonzalezvivo/glslCanvas.git#0.0.25",
+    "glslEditor": "https://github.com/patriciogonzalezvivo/glslEditor.git#0.0.16",
     "stats.js": "https://github.com/mrdoob/stats.js.git#r17",
     "dat.gui": "https://github.com/dataarts/dat.gui.git#0.6.5"
   }
