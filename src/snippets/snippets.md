@@ -92,7 +92,7 @@ Add coords function at the start of file for use globally.
 
 | Snippet                      | Purpose                         |
 |------------------------------|---------------------------------|
-| `glsl.coords`                | Pixel units utility functions   |
+| `glsl.coords`                | Coordinate and unit utils       |
 
 -----------
 
@@ -291,7 +291,7 @@ Tiling function for pattern replication.
 
 ```glsl
     ...
-    float d = roundrect(p, 0.3, 0.05, 0.01);
+    vec2 p = tile(st, vec2(0.2, 0.2));
     ...
 ```
 
