@@ -19,13 +19,13 @@
 
 	"drawing":{
   "prefix": "glsl.drawing",
-  "body": "/* Signed distance drawing methods */\nfloat fill(in float d) { return 1.0 - smoothstep(0.0, rx * 2.0, d); }\nfloat stroke(in float d, in float t) { return 1.0 - smoothstep(t - rx * 1.5, t + rx * 1.5, abs(d)); }\nvec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }\n/* Field Adapted from https://www.shadertoy.com/view/XsyGRW */\nvec3 field(float d) {\n    const vec3 c1 = mix(WHITE, YELLOW, 0.4);\n    const vec3 c2 = mix(WHITE, AZUR, 0.7);\n    const vec3 c3 = mix(WHITE, ORANGE, 0.9);\n    const vec3 c4 = BLACK;\n    float d0 = abs(stroke(mod(d + 0.1, 0.2) - 0.1, 0.004));\n    float d1 = abs(stroke(mod(d + 0.025, 0.05) - 0.025, 0.004));\n    float d2 = abs(stroke(d, 0.004));\n    float f = clamp(d * 0.85, 0.0, 1.0);\n    vec3 gradient = mix(c1, c2, f);\n    gradient = mix(gradient, c4, 1.0 - clamp(1.25 - d * 0.25, 0.0, 1.0));\n    gradient = mix(gradient, c3, fill(d));\n    gradient = mix(gradient, c4, max(d2 * 0.85, max(d0 * 0.25, d1 * 0.06125)) * clamp(1.25 - d, 0.0, 1.0));\n    return gradient;\n}",
+  "body": "/* Signed distance drawing methods */\nfloat fill(in float d) { return 1.0 - smoothstep(0.0, rx * 2.0, d); }\nfloat stroke(in float d, in float t) { return 1.0 - smoothstep(t - rx * 1.5, t + rx * 1.5, abs(d)); }\nvec3 draw(in sampler2D t, in vec2 pos, in vec2 w) { vec2 s = w / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }\n/* Field Adapted from https://www.shadertoy.com/view/XsyGRW */\nvec3 field(float d) {\n    const vec3 c1 = mix(WHITE, YELLOW, 0.4);\n    const vec3 c2 = mix(WHITE, AZUR, 0.7);\n    const vec3 c3 = mix(WHITE, ORANGE, 0.9);\n    const vec3 c4 = BLACK;\n    float d0 = abs(stroke(mod(d + 0.1, 0.2) - 0.1, 0.004));\n    float d1 = abs(stroke(mod(d + 0.025, 0.05) - 0.025, 0.004));\n    float d2 = abs(stroke(d, 0.004));\n    float f = clamp(d * 0.85, 0.0, 1.0);\n    vec3 gradient = mix(c1, c2, f);\n    gradient = mix(gradient, c4, 1.0 - clamp(1.25 - d * 0.25, 0.0, 1.0));\n    gradient = mix(gradient, c3, fill(d));\n    gradient = mix(gradient, c4, max(d2 * 0.85, max(d0 * 0.25, d1 * 0.06125)) * clamp(1.25 - d, 0.0, 1.0));\n    return gradient;\n}",
   "description": "Signed distance drawing methods "
 },
 
 	"main":{
   "prefix": "glsl.main",
-  "body": "/* Main function, uniforms & utils */\n#ifdef GL_ES\n    precision mediump float;\n#endif\n\nuniform vec2 u_resolution;\nuniform vec2 u_mouse;\nuniform float u_time;\n\n#define PI_TWO\t\t\t1.570796326794897\n#define PI\t\t\t\t3.141592653589793\n#define TWO_PI\t\t\t6.283185307179586\n\n/* Coordinate and unit utils */\nvec2 coord(in vec2 p) {\n\tp = p / u_resolution.xy;\n    // correct aspect ratio\n    if (u_resolution.x > u_resolution.y) {\n        p.x *= u_resolution.x / u_resolution.y;\n        p.x += (u_resolution.y - u_resolution.x) / u_resolution.y / 2.0;\n    } else {\n        p.y *= u_resolution.y / u_resolution.x;\n\t    p.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n    }\n    // centering\n    p -= 0.5;\n    p *= vec2(-1.0, 1.0);\n\treturn p;\n}\n#define rx 1.0 / min(u_resolution.x, u_resolution.y)\n#define uv gl_FragCoord.xy / u_resolution.xy\n#define st coord(gl_FragCoord.xy)\n#define mx coord(u_mouse)\nvec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }\n/* Pixel units conversion */\nvec2 pos(in float x, in float y) { return st + vec2(x * rx, y * rx); }\nvec2 pos(in float x) { return pos(x, x); }\nvec2 pos(in vec2 p) { return pos(p.x, p.y); }\nfloat pix(in float x) { return x * rx; }\nvec2 pix(in float x, in float y) { return vec2(x * rx, y * rx); }\n\nvoid main() {\n    \n    vec3 color = vec3(\n        abs(cos(st.x + mx.x)), \n        abs(sin(st.y + mx.y)), \n        abs(sin(u_time))\n    );\n\n    gl_FragColor = vec4(color, 1.0);\n}",
+  "body": "/* Main function, uniforms & utils */\n#ifdef GL_ES\n    precision mediump float;\n#endif\n\nuniform vec2 u_resolution;\nuniform vec2 u_mouse;\nuniform float u_time;\n\n#define PI_TWO\t\t\t1.570796326794897\n#define PI\t\t\t\t3.141592653589793\n#define TWO_PI\t\t\t6.283185307179586\n\n/* Coordinate and unit utils */\nvec2 coord(in vec2 p) {\n\tp = p / u_resolution.xy;\n    // correct aspect ratio\n    if (u_resolution.x > u_resolution.y) {\n        p.x *= u_resolution.x / u_resolution.y;\n        p.x += (u_resolution.y - u_resolution.x) / u_resolution.y / 2.0;\n    } else {\n        p.y *= u_resolution.y / u_resolution.x;\n\t    p.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;\n    }\n    // centering\n    p -= 0.5;\n    p *= vec2(-1.0, 1.0);\n\treturn p;\n}\n#define rx 1.0 / min(u_resolution.x, u_resolution.y)\n#define uv gl_FragCoord.xy / u_resolution.xy\n#define st coord(gl_FragCoord.xy)\n#define mx coord(u_mouse)\n\nvoid main() {\n    vec3 color = vec3(\n        abs(cos(st.x + mx.x)), \n        abs(sin(st.y + mx.y)), \n        abs(sin(u_time))\n    );\n\n    gl_FragColor = vec4(color, 1.0);\n}",
   "description": "Main function, uniforms & utils "
 },
 
@@ -37,8 +37,8 @@
 
 	"units":{
   "prefix": "glsl.units",
-  "body": "/* Pixel units conversion */\nvec2 pos(in float x, in float y) { return st + vec2(x * rx, y * rx); }\nvec2 pos(in float x) { return pos(x, x); }\nvec2 pos(in vec2 p) { return pos(p.x, p.y); }\nfloat pix(in float x) { return x * rx; }\nvec2 pix(in float x, in float y) { return vec2(x * rx, y * rx); }",
-  "description": "Pixel units conversion "
+  "body": "/* Pixel unit conversion function */\nvec2 pos(in float x, in float y) { return st + vec2(x * rx, y * rx); }\nvec2 pos(in float x) { return pos(x, x); }\nvec2 pos(in vec2 p) { return pos(p.x, p.y); }\nfloat size(in float x) { return x * rx; }\nvec2 size(in float x, in float y) { return vec2(x * rx, y * rx); }",
+  "description": "Pixel unit conversion function "
 },
 
 	"modifiers.blend":{
@@ -55,8 +55,20 @@
 
 	"modifiers.tile":{
   "prefix": "glsl.modifiers.tile",
-  "body": "/* Tiling function */\nvec2 tile(in vec2 p, vec2 size) { return fract(mod(p + size / 2.0, size)) - (size / 2.0); }\nvec2 tile(in vec2 p, float size) { return tile(p, vec2(size)); }",
+  "body": "/* Tiling function */\nvec2 tile(in vec2 p, vec2 w) { return fract(mod(p + w / 2.0, w)) - (w / 2.0); }\nvec2 tile(in vec2 p, float w) { return tile(p, vec2(w)); }",
   "description": "Tiling function "
+},
+
+	"math.2d.transform":{
+  "prefix": "glsl.math.2d.transform",
+  "body": "/* Math 2D Transformations */\nmat2 rotate2d(in float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}",
+  "description": "Math 2D Transformations "
+},
+
+	"math.3d.transform":{
+  "prefix": "glsl.math.3d.transform",
+  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\n\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\n\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
+  "description": "Math 3D Transformations "
 },
 
 	"ease.back.in":{
@@ -185,24 +197,6 @@
   "description": "Easing Quad Out equation "
 },
 
-	"ease.quint.in":{
-  "prefix": "glsl.ease.quint.in",
-  "body": "/* Easing Quint In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintIn(float t) {\n    return t * t * t * t * t;\n}",
-  "description": "Easing Quint In equation "
-},
-
-	"ease.quint.inOut":{
-  "prefix": "glsl.ease.quint.inOut",
-  "body": "/* Easing Quint InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintInOut(float t) {\n    if ((t / 2.0) < 1.0) return 0.5 * t * t * t * t * t;\n    return 0.5 * ((t -= 2.0) * t * t * t * t + 2.0);\n}",
-  "description": "Easing Quint InOut equation "
-},
-
-	"ease.quint.out":{
-  "prefix": "glsl.ease.quint.out",
-  "body": "/* Easing Quint Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintOut(float t) {\n    return ((t = t - 1.0) * t * t * t * t + 1.0);\n}",
-  "description": "Easing Quint Out equation "
-},
-
 	"ease.quart.in":{
   "prefix": "glsl.ease.quart.in",
   "body": "/* Easing Quart In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartIn(float t) {\n    return t * t * t * t;\n}",
@@ -219,6 +213,24 @@
   "prefix": "glsl.ease.quart.out",
   "body": "/* Easing Quart Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartOut(float t) {\n    return -1.0 * ((t = t - 1.0) * t * t * t - 1.0);\n}",
   "description": "Easing Quart Out equation "
+},
+
+	"ease.quint.in":{
+  "prefix": "glsl.ease.quint.in",
+  "body": "/* Easing Quint In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintIn(float t) {\n    return t * t * t * t * t;\n}",
+  "description": "Easing Quint In equation "
+},
+
+	"ease.quint.inOut":{
+  "prefix": "glsl.ease.quint.inOut",
+  "body": "/* Easing Quint InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintInOut(float t) {\n    if ((t / 2.0) < 1.0) return 0.5 * t * t * t * t * t;\n    return 0.5 * ((t -= 2.0) * t * t * t * t + 2.0);\n}",
+  "description": "Easing Quint InOut equation "
+},
+
+	"ease.quint.out":{
+  "prefix": "glsl.ease.quint.out",
+  "body": "/* Easing Quint Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintOut(float t) {\n    return ((t = t - 1.0) * t * t * t * t + 1.0);\n}",
+  "description": "Easing Quint Out equation "
 },
 
 	"ease.sine.in":{
@@ -239,39 +251,27 @@
   "description": "Easing Sine Out equation "
 },
 
-	"math.2d.transform":{
-  "prefix": "glsl.math.2d.transform",
-  "body": "/* Math 2D Transformations */\nmat2 rotate2d(in float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}",
-  "description": "Math 2D Transformations "
-},
-
-	"math.3d.transform":{
-  "prefix": "glsl.math.3d.transform",
-  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\n\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\n\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
-  "description": "Math 3D Transformations "
-},
-
 	"shapes.2d.arc":{
   "prefix": "glsl.shapes.2d.arc",
-  "body": "/* Shape 2D arc */\nfloat sArc(in vec2 p, in float size, in float s, in float e) {\n    e += s;\n    float o = (s + e - PI);\n\tfloat a = mod(atan(p.y, p.x) - o, TWO_PI) + o;\n\ta = clamp(a, min(s, e), max(s, e));\n    vec2 r = vec2(cos(a), sin(a));\n\tfloat d = distance(p, size * 0.5 * r);\n    return d * 2.0;\n}\nfloat arc(in vec2 p, in float size, in float s, in float e, in float t) {\n    float d = sArc(p, size, s, e);\n    return stroke(d, t);\n}",
+  "body": "/* Shape 2D arc */\nfloat sArc(in vec2 p, in float w, in float s, in float e) {\n    e += s;\n    float o = (s + e - PI);\n\tfloat a = mod(atan(p.y, p.x) - o, TWO_PI) + o;\n\ta = clamp(a, min(s, e), max(s, e));\n    vec2 r = vec2(cos(a), sin(a));\n\tfloat d = distance(p, w * 0.5 * r);\n    return d * 2.0;\n}\nfloat arc(in vec2 p, in float w, in float s, in float e, in float t) {\n    float d = sArc(p, w, s, e);\n    return stroke(d, t);\n}",
   "description": "Shape 2D arc "
 },
 
 	"shapes.2d.circle":{
   "prefix": "glsl.shapes.2d.circle",
-  "body": "/* Shape 2D circle */\nfloat sCircle(in vec2 p, in float size) {\n    return length(p) * 2.0 - size;\n}\nfloat circle(in vec2 p, in float size) {\n    float d = sCircle(p, size);\n    return fill(d);\n}\nfloat circle(in vec2 p, in float size, float t) {\n    float d = sCircle(p, size);\n    return stroke(d, t);\n}",
+  "body": "/* Shape 2D circle */\nfloat sCircle(in vec2 p, in float w) {\n    return length(p) * 2.0 - w;\n}\nfloat circle(in vec2 p, in float w) {\n    float d = sCircle(p, w);\n    return fill(d);\n}\nfloat circle(in vec2 p, in float w, float t) {\n    float d = sCircle(p, w);\n    return stroke(d, t);\n}",
   "description": "Shape 2D circle "
 },
 
 	"shapes.2d.grid":{
   "prefix": "glsl.shapes.2d.grid",
-  "body": "/* Shape 2D grid */\nvec2 tile(in vec2 p, vec2 size) { return fract(mod(p + size / 2.0, size)) - (size / 2.0); }\nvec2 tile(in vec2 p, float size) { return tile(p, vec2(size)); }\nfloat sLine(in vec2 a, in vec2 b) {\n    vec2 p = b - a;\n    float d = abs(dot(normalize(vec2(p.y, -p.x)), a));\n    return d * 2.0;\n}\nfloat line(in vec2 a, in vec2 b) {\n    float d = sLine(a, b);\n    return fill(d);\n}\nfloat line(in vec2 a, in vec2 b, in float t) {\n    float d = sLine(a, b);\n    return stroke(d, t);\n}\nfloat sSegment(in vec2 a, in vec2 b) {\n    vec2 ba = a - b;\n    float d = clamp(dot(a, ba) / dot(ba, ba), 0.0, 1.0);\n    return length(a - ba * d) * 2.0;\n}\nfloat segment(in vec2 a, in vec2 b, float t) {\n    float d = sSegment(a, b);\n    return stroke(d, t);\n}\nfloat grid(in float size) {\n    vec2 p = tile(st, size);\n    float d = 0.0;\n    d += line(p, p + vec2(0.0, 0.1), 0.002);\n    d += line(p, p + vec2(0.1, 0.0), 0.002);\n    d *= 0.2;\n    p = tile(st, vec2(size * 5.0));\n    float s = size / 10.0;\n    float g = 0.0;\n    g += segment(p + vec2(-s, 0.0), p + vec2(s, 0.0), 0.004);\n    g += segment(p + vec2(0.0, -s), p + vec2(0.0, s), 0.004);\n    return d + g;\n}",
+  "body": "/* Shape 2D grid */\nvec2 tile(in vec2 p, vec2 w) { return fract(mod(p + w / 2.0, w)) - (w / 2.0); }\nvec2 tile(in vec2 p, float w) { return tile(p, vec2(w)); }\nfloat sLine(in vec2 a, in vec2 b) {\n    vec2 p = b - a;\n    float d = abs(dot(normalize(vec2(p.y, -p.x)), a));\n    return d * 2.0;\n}\nfloat line(in vec2 a, in vec2 b) {\n    float d = sLine(a, b);\n    return fill(d);\n}\nfloat line(in vec2 a, in vec2 b, in float t) {\n    float d = sLine(a, b);\n    return stroke(d, t);\n}\nfloat line(in vec2 p, in float a, in float t) {\n    vec2 b = p + vec2(sin(a), cos(a));\n    return line(p, b, t);\n}\nfloat sSegment(in vec2 a, in vec2 b) {\n    vec2 ba = a - b;\n    float d = clamp(dot(a, ba) / dot(ba, ba), 0.0, 1.0);\n    return length(a - ba * d) * 2.0;\n}\nfloat segment(in vec2 a, in vec2 b, float t) {\n    float d = sSegment(a, b);\n    return stroke(d, t);\n}\nfloat grid(in vec2 p, in float w) {\n    vec2 l = tile(p, w);\n    float d = 0.0;\n    d += line(l, l + vec2(0.0, 0.1), 0.002);\n    d += line(l, l + vec2(0.1, 0.0), 0.002);\n    d *= 0.2;\n    p = tile(p, vec2(w * 5.0));\n    float s = w / 10.0;\n    float g = 0.0;\n    g += segment(p + vec2(-s, 0.0), p + vec2(s, 0.0), 0.004);\n    g += segment(p + vec2(0.0, -s), p + vec2(0.0, s), 0.004);\n    return d + g;\n}",
   "description": "Shape 2D grid "
 },
 
 	"shapes.2d.hex":{
   "prefix": "glsl.shapes.2d.hex",
-  "body": "/* Shape 2D hexagon */\nfloat sHex(in vec2 p, in float size) {\n    vec2 q = abs(p);\n    float d = max((q.x * 0.866025 + q.y * 0.5), q.y) - size * 0.5; // * 0.4330125\n    return d * 2.0;\n}\nfloat hex(in vec2 p, in float size) {    \n    float d = sHex(p, size);\n    return fill(d);\n}\nfloat hex(in vec2 p, in float size, in float t) {\n    float d = sHex(p, size);\n    return stroke(d, t);    \n}",
+  "body": "/* Shape 2D hexagon */\nfloat sHex(in vec2 p, in float w) {\n    vec2 q = abs(p);\n    float d = max((q.x * 0.866025 + q.y * 0.5), q.y) - w * 0.5; // * 0.4330125\n    return d * 2.0;\n}\nfloat hex(in vec2 p, in float w) {    \n    float d = sHex(p, w);\n    return fill(d);\n}\nfloat hex(in vec2 p, in float w, in float t) {\n    float d = sHex(p, w);\n    return stroke(d, t);    \n}",
   "description": "Shape 2D hexagon "
 },
 
@@ -283,7 +283,7 @@
 
 	"shapes.2d.pie":{
   "prefix": "glsl.shapes.2d.pie",
-  "body": "/* Shape 2D pie */\nfloat sPie(in vec2 p, in float size, in float s, in float e) {\n    s = mod(s, TWO_PI);\n    e = mod(s + e, TWO_PI);\n    float a = mod(atan(p.y, p.x), TWO_PI);\n    a = abs(step(s, a) - step(e, a));\n    a = s < e ? a : 1.0 - a;\n    float d = length(p);\n    return 1.0 - (a - d * 2.0) - size;\n}\nfloat pie(in vec2 p, in float size, in float s, in float e) {    \n    float d = sPie(p, size, s, e);\n    return fill(d);\n}\nfloat pie(in vec2 p, in float size, in float s, in float e, in float t) {\n    float d = sPie(p, size, s, e);\n    return stroke(d, t);    \n}",
+  "body": "/* Shape 2D pie */\nfloat sPie(in vec2 p, in float w, in float s, in float e) {\n    s = mod(s, TWO_PI);\n    e = mod(s + e, TWO_PI);\n    float a = mod(atan(p.y, p.x), TWO_PI);\n    a = abs(step(s, a) - step(e, a));\n    a = s < e ? a : 1.0 - a;\n    float d = length(p);\n    return 1.0 - (a - d * 2.0) - w;\n}\nfloat pie(in vec2 p, in float w, in float s, in float e) {    \n    float d = sPie(p, w, s, e);\n    return fill(d);\n}\nfloat pie(in vec2 p, in float w, in float s, in float e, in float t) {\n    float d = sPie(p, w, s, e);\n    return stroke(d, t);    \n}",
   "description": "Shape 2D pie "
 },
 
@@ -295,19 +295,19 @@
 
 	"shapes.2d.poly":{
   "prefix": "glsl.shapes.2d.poly",
-  "body": "/* Shape 2D poly */\nfloat sPoly(in vec2 p, in float size, in int sides) {\n    float a = atan(p.x, p.y) + PI;\n    float r = TWO_PI / float(sides);\n    float d = cos(floor(0.5 + a / r) * r - a) * length(max(abs(p) * 1.0, 0.0));\n    return d * 2.0 - size;\n}\nfloat poly(in vec2 p, in float size, in int sides) {\n    float d = sPoly(p, size, sides);\n    return fill(d);\n}\nfloat poly(in vec2 p, in float size, in int sides, in float t) {\n    float d = sPoly(p, size, sides);\n    return stroke(d, t);\n}",
+  "body": "/* Shape 2D poly */\nfloat sPoly(in vec2 p, in float w, in int sides) {\n    float a = atan(p.x, p.y) + PI;\n    float r = TWO_PI / float(sides);\n    float d = cos(floor(0.5 + a / r) * r - a) * length(max(abs(p) * 1.0, 0.0));\n    return d * 2.0 - w;\n}\nfloat poly(in vec2 p, in float w, in int sides) {\n    float d = sPoly(p, w, sides);\n    return fill(d);\n}\nfloat poly(in vec2 p, in float w, in int sides, in float t) {\n    float d = sPoly(p, w, sides);\n    return stroke(d, t);\n}",
   "description": "Shape 2D poly "
 },
 
 	"shapes.2d.rect":{
   "prefix": "glsl.shapes.2d.rect",
-  "body": "/* Shape 2D rect */\nfloat sRect(in vec2 p, in vec2 size) {    \n    float d = max(abs(p.x / size.x), abs(p.y / size.y)) * 2.0;\n    float m = max(size.x, size.y);\n    return d * m - m;\n}\nfloat rect(in vec2 p, in vec2 size) {\n    float d = sRect(p, size);\n    return fill(d);\n}\nfloat rect(in vec2 p, in vec2 size, in float t) {\n    float d = sRect(p, size);\n    return stroke(d, t);\n}",
+  "body": "/* Shape 2D rect */\nfloat sRect(in vec2 p, in vec2 w) {    \n    float d = max(abs(p.x / w.x), abs(p.y / w.y)) * 2.0;\n    float m = max(w.x, w.y);\n    return d * m - m;\n}\nfloat rect(in vec2 p, in vec2 w) {\n    float d = sRect(p, w);\n    return fill(d);\n}\nfloat rect(in vec2 p, in vec2 w, in float t) {\n    float d = sRect(p, w);\n    return stroke(d, t);\n}",
   "description": "Shape 2D rect "
 },
 
 	"shapes.2d.roundrect":{
   "prefix": "glsl.shapes.2d.roundrect",
-  "body": "/* Shape 2D roundrect */\nfloat sRoundrect(in vec2 p, in vec2 size, in float corner) {\n    vec2 s = size * 0.5 - corner;\n    float m = max(s.x, s.y);\n    float d = length(max(abs(p) - s, 0.00001)) * m / corner;\n    return (d - m) / m * corner * 2.0;\n}\nfloat roundrect(in vec2 p, in vec2 size, in float corner) {\n    float d = sRoundrect(p, size, corner);\n    return fill(d);\n}\nfloat roundrect(in vec2 p, in vec2 size, in float corner, in float t) {\n    float d = sRoundrect(p, size, corner);\n    return stroke(d, t);\n}",
+  "body": "/* Shape 2D roundrect */\nfloat sRoundrect(in vec2 p, in vec2 w, in float corner) {\n    vec2 s = w * 0.5 - corner;\n    float m = max(s.x, s.y);\n    float d = length(max(abs(p) - s, 0.00001)) * m / corner;\n    return (d - m) / m * corner * 2.0;\n}\nfloat roundrect(in vec2 p, in vec2 w, in float corner) {\n    float d = sRoundrect(p, w, corner);\n    return fill(d);\n}\nfloat roundrect(in vec2 p, in vec2 w, in float corner, in float t) {\n    float d = sRoundrect(p, w, corner);\n    return stroke(d, t);\n}",
   "description": "Shape 2D roundrect "
 },
 
@@ -325,7 +325,7 @@
 
 	"shapes.2d.star":{
   "prefix": "glsl.shapes.2d.star",
-  "body": "/* Shape 2D star */\nfloat sStar(in vec2 p, in float size, in int sides) {    \n    float r = 0.5; float s = max(5.0, float(sides)); float m = 0.5 / s; float x = PI_TWO / s * (2.0 - mod(s, 2.0)); \n    float segment = (atan(p.y, p.x) - x) / TWO_PI * s;    \n    float a = ((floor(segment) + r) / s + mix(m, -m, step(r, fract(segment)))) * TWO_PI;\n    float d = abs(dot(vec2(cos(a + x), sin(a + x)), p)) + m;\n    return (d - rx) * 2.0 - size;\n}\nfloat star(in vec2 p, in float size, in int sides) {\n    float d = sStar(p, size, sides);\n    return fill(d);\n}\nfloat star(in vec2 p, in float size, in int sides, float t) {    \n    float d = sStar(p, size, sides);\n    return stroke(d, t);\n}",
+  "body": "/* Shape 2D star */\nfloat sStar(in vec2 p, in float w, in int sides) {    \n    float r = 0.5; float s = max(5.0, float(sides)); float m = 0.5 / s; float x = PI_TWO / s * (2.0 - mod(s, 2.0)); \n    float segment = (atan(p.y, p.x) - x) / TWO_PI * s;    \n    float a = ((floor(segment) + r) / s + mix(m, -m, step(r, fract(segment)))) * TWO_PI;\n    float d = abs(dot(vec2(cos(a + x), sin(a + x)), p)) + m;\n    return (d - rx) * 2.0 - w;\n}\nfloat star(in vec2 p, in float w, in int sides) {\n    float d = sStar(p, w, sides);\n    return fill(d);\n}\nfloat star(in vec2 p, in float w, in int sides, float t) {    \n    float d = sStar(p, w, sides);\n    return stroke(d, t);\n}",
   "description": "Shape 2D star "
 }
 

@@ -6,17 +6,11 @@ void main() {
 
     vec3 color = BLACK;
     
-    float a = sCircle(p - cos(u_time) * 0.2, 0.3);
-    float b = sCircle(p + cos(u_time) * 0.2, 0.3);
+    float a = circle(p - cos(u_time) * 0.2, 0.3, 0.1);
+    float b = circle(p + cos(u_time) * 0.2, 0.3, 0.1);
 
-    float d = 0.0;
-    d = sUnion(a, b);
-    // d = sIntersect(a, b);
-    // d = sDifference(a, b);
-
-    color = field(d);
-    color = mix(BLACK, WHITE, fill(d));
-    // color = mix(BLACK, WHITE, stroke(d, 0.01));
+    color += mix(BLACK, RED, a);
+    color += mix(BLACK, BLUE, b);
 
     gl_FragColor = vec4(color, 1.0);
 }

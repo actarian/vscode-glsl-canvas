@@ -14,9 +14,9 @@ void main() {
     // d = sBlendPoly(a, b, 0.5);
     // d = sBlendPower(a, b, 3.0);
 
-    color = field(d);
-    // color = mix(BLACK, WHITE, fill(d));
+    color = mix(BLACK, WHITE, fill(d));
     // color = mix(BLACK, WHITE, stroke(d, 0.01));
-
+    // color = field(d);
+    
     gl_FragColor = vec4(color, 1.0);
 }

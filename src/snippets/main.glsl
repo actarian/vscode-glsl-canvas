@@ -31,16 +31,8 @@ vec2 coord(in vec2 p) {
 #define uv gl_FragCoord.xy / u_resolution.xy
 #define st coord(gl_FragCoord.xy)
 #define mx coord(u_mouse)
-vec3 draw(in sampler2D t, in vec2 pos, in vec2 size) { vec2 s = size / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }
-/* Pixel units conversion */
-vec2 pos(in float x, in float y) { return st + vec2(x * rx, y * rx); }
-vec2 pos(in float x) { return pos(x, x); }
-vec2 pos(in vec2 p) { return pos(p.x, p.y); }
-float pix(in float x) { return x * rx; }
-vec2 pix(in float x, in float y) { return vec2(x * rx, y * rx); }
 
 void main() {
-    
     vec3 color = vec3(
         abs(cos(st.x + mx.x)), 
         abs(sin(st.y + mx.y)), 

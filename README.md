@@ -12,7 +12,7 @@ It use [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) a javaSc
 
 ## Uniforms
 
-The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse```. You can define the texture channels (```u_texture_0```, ```u_texture_1```, ...) by modifying the workspace's ```settings.json``` file. 
+The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse``` and ```u_trails[10]```. You can define the texture channels (```u_texture_0```, ```u_texture_1```, ...) by modifying the workspace's ```settings.json``` file. 
 ```
 {
     "glsl-canvas.textures": {
@@ -22,6 +22,16 @@ The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse```. You c
     }
 }
 ```
+
+## u_trails[10]
+
+```u_trails[10]``` is a vec2 array with stored inertia mouse positions for mouse trailing effects.
+
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=trails)
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview-trail.gif)
+
+-----------
 
 ## Custom Uniforms
 
@@ -62,13 +72,13 @@ uniform vec2 u_mouse;
 uniform float u_time;
 
 void main() {
-    vec2 st = gl_FragCoord.xy/u_resolution.xy;
-    st.x *= u_resolution.x/u_resolution.y;
+    vec2 st = gl_FragCoord.xy / u_resolution.xy;
+    st.x *= u_resolution.x / u_resolution.y;
 
-    vec3 color = vec3(0.);
-    color = vec3(st.x,st.y,abs(sin(u_time)));
+    vec3 color = vec3(0.0);
+    color = vec3(st.x, st.y, abs(sin(u_time)));
 
-    gl_FragColor = vec4(color,1.0);
+    gl_FragColor = vec4(color, 1.0);
 }
 ```
 
@@ -81,6 +91,8 @@ void main() {
 * Custom uniforms.
 * Activable gui for changing custom uniforms at runtime.
 * Glsl Snippets.
+
+-----------
 
 ## Glsl Snippets
 
@@ -118,7 +130,7 @@ void main() {
 | `glsl.shapes.2d.spiral`      | Shape 2D spiral                       |
 | `glsl.shapes.2d.star`        | Shape 2D star                         |
 | `glsl.modifiers.tile`        | Tiling function                       |
-| `glsl.units`                 | Pixel units utility functions         |
+| `glsl.units`                 | Pixel unit conversion function        |
 
 Snippets library documentation and playgrounds [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/src/snippets/snippets.md).
 
@@ -130,8 +142,10 @@ Snippets library documentation and playgrounds [here](https://github.com/actaria
 
 ## Todo
 
-* Improved snippets library.
+* Glsl 3d snippets.
+* Mouse orbit control.
 * Glsl code formatting.
+* WebGL code exporter.
 
 ## Contributing
 
@@ -140,7 +154,15 @@ Snippets library documentation and playgrounds [here](https://github.com/actaria
 
 *Thank you so much for taking the time to provide feedback and review. This feedback is appreciated and very helpful.*
 
+-----------
+
 ## Release Notes
+
+### 0.1.6
+
+* Documented snippets library with playgrounds.
+* Mouse trail uniforms.
+* Texture repeating feature.
 
 ### 0.1.5
 

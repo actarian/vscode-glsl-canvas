@@ -164,6 +164,7 @@
                     stats = new Stats();
                     stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
                     statsdom = stats.dom;
+                    statsdom.setAttribute('class', 'stats');
                     // statsdom.style.cssText = 'position:fixed;top:0;right:0;cursor:pointer;opacity:0.9;z-index:10000';
                     document.body.appendChild(stats.dom);
                 } else {
@@ -259,6 +260,7 @@
         output += '</ul></div>';
         document.querySelector('.errors').setAttribute('class', 'errors active');
         document.querySelector('.errors').innerHTML = output;
+        document.querySelector('body').setAttribute('class', 'idle');
     }
 
     window.addEventListener('load', onLoad);

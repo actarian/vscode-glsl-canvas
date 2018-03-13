@@ -1,54 +1,71 @@
-[{
-    "inputFiles": [
-        "bower_components/glslCanvas/build/GlslCanvas.js",
-        "bower_components/stats.js/build/stats.min.js",
-        "bower_components/dat.gui/build/dat.gui.js"
-    ],
-    "outputFileName": "resources/js/vendors.js",
-    "minify": {
-        "enabled": true
+[
+    {
+        "inputFiles": [
+            "bower_components/glslCanvas/build/GlslCanvas.js",
+            "bower_components/stats.js/build/stats.min.js",
+            "bower_components/dat.gui/build/dat.gui.js"
+        ],
+        "outputFileName": "resources/js/vendors.js",
+        "minify": {
+            "enabled": true
+        }
+    },
+    {
+        "inputFiles": [
+            "bower_components/dat.gui/build/dat.gui.css"
+        ],
+        "outputFileName": "resources/css/vendors.css",
+        "minify": {
+            "enabled": true
+        }
+    },
+    {
+        "inputFiles": [
+            "resources/css/app.css"
+        ],
+        "outputFileName": "resources/css/app.css",
+        "minify": {
+            "enabled": true
+        }
+    },
+    {
+        "inputFiles": [
+            "src/app/services/capture/capture.service.js",
+            "src/app/services/gui/gui.service.js",
+            "src/app/services/trails/trails.service.js",
+            "src/app/app.js"
+        ],
+        "outputFileName": "resources/js/app.js",
+        "minify": {
+            "enabled": true
+        }
+    },
+    {
+        "inputFiles": [
+            "bower_components/glslEditor/build/glslEditor.css"
+        ],
+        "outputFileName": "docs/css/vendors.css",
+        "minify": {
+            "enabled": true
+        }
+    },
+    {
+        "inputFiles": [
+            "bower_components/glslEditor/build/glslEditor.js"
+        ],
+        "outputFileName": "docs/js/vendors.js",
+        "minify": {
+            "enabled": true
+        }
+    },
+    {
+        "inputFiles": [
+            "src/app/services/trails/trails.service.js",
+            "src/docs/app.js"
+        ],
+        "outputFileName": "docs/js/app.js",
+        "minify": {
+            "enabled": true
+        }
     }
-}, {
-    "inputFiles": [
-        "bower_components/dat.gui/build/dat.gui.css"
-    ],
-    "outputFileName": "resources/css/vendors.css",
-    "minify": {
-        "enabled": true
-    }
-}, {
-    "inputFiles": [
-        "resources/css/app.css"
-    ],
-    "outputFileName": "resources/css/app.css",
-    "minify": {
-        "enabled": true
-    }
-}, {
-    "inputFiles": [
-        "src/app/services/capture/capture.service.js",
-        "src/app/services/gui/gui.service.js",
-        "src/app/services/trails/trails.service.js",
-        "src/app/app.js"
-    ],
-    "outputFileName": "resources/js/app.js",
-    "minify": {
-        "enabled": true
-    }
-}, {
-    "inputFiles": [
-        "bower_components/glslEditor/build/glslEditor.css"
-    ],
-    "outputFileName": "docs/css/vendors.css",
-    "minify": {
-        "enabled": true
-    }
-}, {
-    "inputFiles": [
-        "bower_components/glslEditor/build/glslEditor.js"
-    ],
-    "outputFileName": "docs/js/vendors.js",
-    "minify": {
-        "enabled": true
-    }
-}]
+]

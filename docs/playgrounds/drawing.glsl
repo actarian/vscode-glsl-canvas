@@ -2,7 +2,7 @@
 // Title: vscode-glsl-canvas Drawing examples
 
 void main() {
-    vec2 p = st;
+    vec2 p = st + cos(u_time + st.x) * 0.2;
 
     vec3 color = BLACK;
     

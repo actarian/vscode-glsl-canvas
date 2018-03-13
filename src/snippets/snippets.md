@@ -301,11 +301,11 @@ Tiling function for pattern replication.
 
 ## Units
 
-Pixel units utility functions. Use `pos(0.0, 0.0)` for positioning and `pix(1.0)` for sizes.  
+Pixel units utility functions. Use `pos(0.0, 0.0)` for positioning and `size(1.0)` for sizes.  
 
 | Snippet                      | Purpose                         |
 |------------------------------|---------------------------------|
-| `glsl.units`                 | Pixel units utility functions   |
+| `glsl.units`                 | Pixel unit conversion function  |
 
 -----------
 

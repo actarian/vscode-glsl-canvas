@@ -204,9 +204,17 @@ body {
 	transition: opacity ease-in-out 250ms;
 }
 
-body:hover {
-	.tools,
-	.dg {
-		opacity: 1;
+body {
+	&.idle,
+	&.empty {
+		.stats {
+			visibility: hidden;
+		}
+	}
+
+	&:not(.idle):hover {
+		.tools, .dg {
+			opacity: 1;
+		}
 	}
 }

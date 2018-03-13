@@ -14,9 +14,9 @@ void main() {
     // d = sIntersect(a, b);
     // d = sDifference(a, b);
 
-    color = field(d);
     color = mix(BLACK, WHITE, fill(d));
     // color = mix(BLACK, WHITE, stroke(d, 0.01));
-
+    // color = field(d);
+    
     gl_FragColor = vec4(color, 1.0);
 }

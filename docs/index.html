@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>vscode-glsl-canvas playground</title>
     <link href="/favicon.gif" rel="shortcut icon" />
+    <link href="css/vendors.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Cousine" rel="stylesheet">
     <style>
         body {
             height: 100%;
@@ -14,22 +16,58 @@
         }
 
         .editor {
-            height: 512px !important;
-            border: 1px solid white;
+            display: block;
+            height: 100%;
         }
 
         .CodeMirror {
-            font-size: 12px !important;
+            font-size: 13px !important;
+            font-family: Cousine, Monaco, 'Courier New', monospace !important;
+            min-height: 100vh;
+        }
+
+        .cm-s-monokai.CodeMirror {
+            background: #171717;
+            color: #d4d4d4;
+        }
+
+        .cm-s-monokai .CodeMirror-gutters {
+            background: #171717;
+        }
+
+        .CodeMirror-linenumber.CodeMirror-gutter-elt {
+            color: #5a5a5a;
+        }
+
+        .cm-s-monokai span.cm-atom,
+        .cm-s-monokai span.cm-number {
+            color: #b5cea8;
+        }
+
+        .cm-s-monokai span.cm-keyword {
+            color: #9f7ec0;
+        }
+
+        .cm-s-monokai span.cm-comment {
+            color: #44864e;
+        }
+
+        .cm-s-monokai span.cm-variable-3 {
+            color: #569cd6;
+        }
+
+        .cm-s-monokai span.cm-variable {
+            color: #dcd98a;
         }
     </style>
-    <link href="css/vendors.min.css" rel="stylesheet">
 </head>
 
 <body>
     <code class="editor" data="playgrounds/animation.glsl" style="height:512px;"></code>
 </body>
 <script src="js/vendors.min.js"></script>
-<script type="text/javascript">
+<script src="js/app.min.js"></script>
+<!--<script type="text/javascript">
     init();
 
     function init() {
@@ -55,6 +93,11 @@
                         watchHash: false,
                     });
                     console.log('editor', editor);
+                    var glsl = editor.shader.canvas;
+                    glsl.uniformTexture('u_texture_0', 'https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-1.png', {
+                        filtering: 'mipmap',
+                        repeat: true,
+                    });
                 });
             });
         });
@@ -83,7 +126,7 @@
                 var kv = list[i].split('=', 2);
                 if (kv.length == 1) {
                     dict[kv[0]] = '';
-                } 
+                }
                 else {
                     dict[kv[0]] = decodeURIComponent(kv[1].replace(/\+/g, ' '));
                 }
@@ -92,6 +135,6 @@
         })(window.location.search.substr(1).split('&'));
         return q;
     }
-</script>
+</script>-->
 
 </html>
