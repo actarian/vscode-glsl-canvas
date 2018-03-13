@@ -1,6 +1,6 @@
 # Glsl Snippets
 
-This snippets collection is built with intention to help to understand 2D and 3D WebGL shader programming.
+This snippets collection is built with intention to help understand 2D and 3D WebGL shader programming.
 Start typing `glsl.` and select your snippet.
 
 ## Animation

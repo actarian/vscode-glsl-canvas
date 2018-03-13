@@ -2,7 +2,7 @@
     "name": "glsl-canvas",
     "displayName": "glsl-canvas",
     "description": "Live WebGL preview of GLSL shaders",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "publisher": "circledev",
     "license": "UNLICENSED",
     "engines": {
@@ -38,38 +38,44 @@
                 }
             }
         },
-        "commands": [{
-            "command": "glsl-canvas.showGlslCanvas",
-            "title": "Show glslCanvas"
-        }],
-        "snippets": [{
-            "language": "glsl",
-            "path": "./snippets/glsl.json"
-        }],
-        "languages": [{
-            "id": "glsl",
-            "aliases": [
-                "GLSL",
-                "OpenGL Shading Language",
-                "glsl"
-            ],
-            "extensions": [
-                ".vs",
-                ".fs",
-                ".gs",
-                ".comp",
-                ".vert",
-                ".tesc",
-                ".tese",
-                ".frag",
-                ".geom",
-                ".glsl",
-                ".glslv",
-                ".glslf",
-                ".glslg"
-            ],
-            "configuration": "./glsl.configuration.json"
-        }]
+        "commands": [
+            {
+                "command": "glsl-canvas.showGlslCanvas",
+                "title": "Show glslCanvas"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "glsl",
+                "path": "./snippets/glsl.json"
+            }
+        ],
+        "languages": [
+            {
+                "id": "glsl",
+                "aliases": [
+                    "GLSL",
+                    "OpenGL Shading Language",
+                    "glsl"
+                ],
+                "extensions": [
+                    ".vs",
+                    ".fs",
+                    ".gs",
+                    ".comp",
+                    ".vert",
+                    ".tesc",
+                    ".tese",
+                    ".frag",
+                    ".geom",
+                    ".glsl",
+                    ".glslv",
+                    ".glslf",
+                    ".glslg"
+                ],
+                "configuration": "./glsl.configuration.json"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

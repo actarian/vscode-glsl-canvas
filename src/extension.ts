@@ -2,6 +2,8 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
+
 import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
 
 let uri = Uri.parse('glsl-preview://authority/glsl-preview');
@@ -91,7 +93,12 @@ function onCreateShader(uri: vscode.Uri) {
     */
     const folder: string = vscode.workspace.rootPath || '';
     // console.log('onCreateShader', folder);
-    const newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
+    let newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
+    let i = 1;
+    if (fs.existsSync(newFile.fsPath)) {
+        newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled' + i + '.glsl'));
+        i++;
+    }
     vscode.workspace.openTextDocument(newFile).then(document => {
         // console.log('document', document);
         const edit = new vscode.WorkspaceEdit();

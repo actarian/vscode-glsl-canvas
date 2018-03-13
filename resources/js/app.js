@@ -393,17 +393,19 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
         function hide() {
             var service = this;
-            var gui = service.gui;
-            gui.domElement.style.display = 'none';
             service.hidden = true;
-            // dat.GUI.toggleHide();
+            var gui = service.gui;
+            if (gui) {
+                gui.domElement.style.display = 'none';
+                // dat.GUI.toggleHide();
+            }
         }
 
         function show() {
             var service = this;
             var locals = service.locals;
-            if (Object.keys(locals).length) {
-                var gui = service.gui;
+            var gui = service.gui;
+            if (gui && Object.keys(locals).length) {
                 gui.domElement.style.display = '';
             }
             service.hidden = false;
@@ -569,7 +571,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
     window.TrailsService = TrailsService;
 
 }());
-/* global window, document, console, GlslCanvas, CaptureService, TrailsService, Stats, dat */
+/* global window, document, console, GlslCanvas, CaptureService, GuiService, TrailsService, Stats, dat */
 
 (function () {
     'use strict';
@@ -630,6 +632,12 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             var o = window.options;
             o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
             o.fragment = o.fragment.trim().length > 0 ? o.fragment : null;
+            if (o.fragment || o.vertex) {
+                document.querySelector('body').setAttribute('class', 'ready');
+            } else {
+                document.querySelector('body').setAttribute('class', 'empty');
+                removeStats();
+            }
             glsl.load(o.fragment, o.vertex);
             for (var t in o.textures) {
                 glsl.uniformTexture('u_texture_' + t, o.textures[t], {
@@ -639,12 +647,6 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             }
             gui.load(o.uniforms);
             glsl.setUniforms(gui.uniforms());
-            if (o.fragment || o.vertex) {
-                document.querySelector('body').setAttribute('class', 'ready');
-            } else {
-                document.querySelector('body').setAttribute('class', 'empty');
-                removeStats();
-            }
         }
 
         function resize(init) {

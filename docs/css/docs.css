@@ -1,7 +1,7 @@
 body {
   height: 100%;
   margin: 0;
-  background: #272823; }
+  background: #171717; }
 
 .editor {
   display: block;
@@ -32,3 +32,9 @@ body {
 
 .CodeMirror-linenumber.CodeMirror-gutter-elt {
   color: #5a5a5a; }
+
+@media screen and (min-width: 960px) {
+  body {
+    padding: 20px; }
+  .CodeMirror {
+    min-height: calc(100vh - 40px); } }

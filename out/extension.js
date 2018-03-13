@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
 const path = require("path");
+const fs = require("fs");
 const vscode_1 = require("vscode");
 let uri = vscode_1.Uri.parse('glsl-preview://authority/glsl-preview');
 let provider;
@@ -81,7 +82,12 @@ function onCreateShader(uri) {
     */
     const folder = vscode.workspace.rootPath || '';
     // console.log('onCreateShader', folder);
-    const newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
+    let newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
+    let i = 1;
+    if (fs.existsSync(newFile.fsPath)) {
+        newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled' + i + '.glsl'));
+        i++;
+    }
     vscode.workspace.openTextDocument(newFile).then(document => {
         // console.log('document', document);
         const edit = new vscode.WorkspaceEdit();

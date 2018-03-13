@@ -38,21 +38,21 @@ void main() {
     // v = easeSineOut(t); y = easeSineOut(x);
     // v = easeSineInOut(t); y = easeSineInOut(x);
 
-    vec3 color = BLACK;
+    vec3 color = AZUR;
 
-    color = mix(color, AZUR, grid(p, 0.1));
+    color = mix(color, BLACK, grid(p, 0.1));
     
-    float d = plot(p, y - s2, 0.004);
-    color = mix(color, AZUR, d * 0.5);
+    float d = plot(p, y - s2, 0.008);
+    color = mix(color, WHITE, d * 0.5);
 
     vec2 c = vec2(t, v);
     d = 0.0;
-    d += segment(p - vec2(s2, s2 + 0.01), p + vec2(-s2, s2 + 0.01), 0.002);
-    d += segment(p + vec2(-s2 - 0.01, s2), p + vec2(s2 + 0.01, s2), 0.002);
-    color = mix(color, WHITE, d * 0.3);
+    d += segment(p - vec2(s2, s2 + 0.01), p + vec2(-s2, s2 + 0.01), 0.004);
+    d += segment(p + vec2(-s2 - 0.01, s2), p + vec2(s2 + 0.01, s2), 0.004);
+    color = mix(color, BLACK, d * 0.3);
     
-    d = circle(p - 0.5 + c, 0.02);
-    color = mix(color, WHITE, d);
+    d = circle(p - 0.5 + c, 0.04);
+    color = mix(color, BLACK, d);
     
     gl_FragColor = vec4(color, 1.0);
 }

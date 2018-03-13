@@ -1,4 +1,4 @@
-/* global window, document, console, GlslCanvas, CaptureService, TrailsService, Stats, dat */
+/* global window, document, console, GlslCanvas, CaptureService, GuiService, TrailsService, Stats, dat */
 
 (function () {
     'use strict';
@@ -59,6 +59,12 @@
             var o = window.options;
             o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
             o.fragment = o.fragment.trim().length > 0 ? o.fragment : null;
+            if (o.fragment || o.vertex) {
+                document.querySelector('body').setAttribute('class', 'ready');
+            } else {
+                document.querySelector('body').setAttribute('class', 'empty');
+                removeStats();
+            }
             glsl.load(o.fragment, o.vertex);
             for (var t in o.textures) {
                 glsl.uniformTexture('u_texture_' + t, o.textures[t], {
@@ -68,12 +74,6 @@
             }
             gui.load(o.uniforms);
             glsl.setUniforms(gui.uniforms());
-            if (o.fragment || o.vertex) {
-                document.querySelector('body').setAttribute('class', 'ready');
-            } else {
-                document.querySelector('body').setAttribute('class', 'empty');
-                removeStats();
-            }
         }
 
         function resize(init) {

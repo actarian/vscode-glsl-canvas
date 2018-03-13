@@ -244,17 +244,19 @@
 
         function hide() {
             var service = this;
-            var gui = service.gui;
-            gui.domElement.style.display = 'none';
             service.hidden = true;
-            // dat.GUI.toggleHide();
+            var gui = service.gui;
+            if (gui) {
+                gui.domElement.style.display = 'none';
+                // dat.GUI.toggleHide();
+            }
         }
 
         function show() {
             var service = this;
             var locals = service.locals;
-            if (Object.keys(locals).length) {
-                var gui = service.gui;
+            var gui = service.gui;
+            if (gui && Object.keys(locals).length) {
                 gui.domElement.style.display = '';
             }
             service.hidden = false;

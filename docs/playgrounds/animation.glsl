@@ -95,7 +95,7 @@ void main() {
         object.distance = star(p + vec2(0.0, mix(0.0, 0.5, v)), 0.5, 6, 0.04) * (1.0 - animation.pow);
     }
 
-    vec3 color = BLACK;
+    vec3 color = AZUR;
     object.color = WHITE;
     color = mix(color, object.color, object.distance);
 
