@@ -569,7 +569,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
     window.TrailsService = TrailsService;
 
 }());
-/* global window, document, console, GlslCanvas, CaptureService, Stats, dat */
+/* global window, document, console, GlslCanvas, CaptureService, TrailsService, Stats, dat */
 
 (function () {
     'use strict';

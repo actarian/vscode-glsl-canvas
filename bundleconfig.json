@@ -1,5 +1,4 @@
-[
-    {
+[{
         "inputFiles": [
             "bower_components/glslCanvas/build/GlslCanvas.js",
             "bower_components/stats.js/build/stats.min.js",
@@ -61,9 +60,18 @@
     {
         "inputFiles": [
             "src/app/services/trails/trails.service.js",
-            "src/docs/app.js"
+            "src/docs/docs.js"
         ],
-        "outputFileName": "docs/js/app.js",
+        "outputFileName": "docs/js/docs.js",
+        "minify": {
+            "enabled": true
+        }
+    },
+    {
+        "inputFiles": [
+            "docs/css/docs.css"
+        ],
+        "outputFileName": "docs/css/docs.css",
         "minify": {
             "enabled": true
         }

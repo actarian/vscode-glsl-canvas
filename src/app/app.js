@@ -1,4 +1,4 @@
-/* global window, document, console, GlslCanvas, CaptureService, Stats, dat */
+/* global window, document, console, GlslCanvas, CaptureService, TrailsService, Stats, dat */
 
 (function () {
     'use strict';

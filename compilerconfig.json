@@ -1,4 +1,7 @@
 ﻿[{
     "inputFile": "src/app/app.scss",
     "outputFile": "resources/css/app.css"
+}, {
+    "inputFile": "src/docs/docs.scss",
+    "outputFile": "docs/css/docs.css"
 }]

@@ -146,7 +146,7 @@
     window.TrailsService = TrailsService;
 
 }());
-/* global window, document, console, GlslCanvas, CaptureService, Stats, dat */
+/* global window, document, console, GlslEditor, TrailsService */
 
 (function () {
     'use strict';
@@ -159,39 +159,37 @@
         var frag_header = '';
         getResource("playgrounds/lib.glsl", function (data) {
             frag_header = data;
-            var nodes = document.querySelectorAll('code');
-            forEach(nodes, function (i, node) {
-                // console.log(node.getAttribute('data'));                
-                // var resource = node.getAttribute('data');
-                var qso = getQuerystring();
-                var resource = qso.glsl || 'animation';
-                getResource('playgrounds/' + resource + '.glsl', function (data) {
-                    node.innerHTML = data;
-                    var editor = new GlslEditor(node, {
-                        canvas_size: 400,
-                        canvas_draggable: true,
-                        fileDrops: false,
-                        frag_header: frag_header,
-                        menu: false,
-                        multipleBuffers: false,
-                        theme: 'monokai',
-                        watchHash: false,
-                    });
-                    // console.log('editor', editor);
-                    var glsl = editor.shader.canvas;
-                    glsl.uniformTexture('u_texture_0', 'https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-1.png', {
-                        filtering: 'mipmap',
-                        repeat: true,
-                    });
-                    glsl.on('render', function () {
-                        trails.render(glsl);
-                        glsl.forceRender = true;
-                    });
-                    glsl.canvas.addEventListener('mousemove', function onMove(e) {
-                        trails.move(e.x - editor.shader.el.offsetLeft, editor.shader.el.offsetTop + editor.shader.el.offsetHeight - e.y);
-                    });
+            var qso = getQuerystring();
+            var resource = qso.glsl || 'main';
+            getResource('playgrounds/' + resource + '.glsl', function (data) {
+                var editorNode = document.querySelector('.editor');
+                editorNode.innerHTML = data;
+                var editor = new GlslEditor(editorNode, {
+                    canvas_size: 400,
+                    canvas_draggable: true,
+                    fileDrops: false,
+                    frag_header: frag_header,
+                    menu: false,
+                    multipleBuffers: false,
+                    theme: 'monokai',
+                    watchHash: false,
+                });
+                // console.log('editor', editor);
+                var glsl = editor.shader.canvas;
+                glsl.uniformTexture('u_texture_0', 'https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-1.png', {
+                    filtering: 'mipmap',
+                    repeat: true,
+                });
+                glsl.on('render', function () {
+                    trails.render(glsl);
+                    glsl.forceRender = true;
+                });
+                glsl.canvas.addEventListener('mousemove', function onMove(e) {
+                    trails.move(e.x - editor.shader.el.offsetLeft, editor.shader.el.offsetTop + editor.shader.el.offsetHeight - e.y);
                 });
             });
+            // var nodes = document.querySelectorAll('code');
+            // forEach(nodes, function (i, node) { });
         });
     }
 
@@ -218,8 +216,7 @@
                 var kv = list[i].split('=', 2);
                 if (kv.length == 1) {
                     dict[kv[0]] = '';
-                }
-                else {
+                } else {
                     dict[kv[0]] = decodeURIComponent(kv[1].replace(/\+/g, ' '));
                 }
             }

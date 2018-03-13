@@ -1,0 +1,49 @@
+body {
+	height: 100%;
+	margin: 0;
+	background: #272823;
+}
+
+.editor {
+	display: block;
+	height: 100%;
+}
+
+.CodeMirror {
+	font-size: 13px !important;
+	font-family: Cousine, Monaco, 'Courier New', monospace !important;
+	min-height: 100vh;
+	&.cm-s-monokai {
+		background: #171717;
+		color: #d4d4d4;
+		.CodeMirror-gutters {
+			background: #171717;
+		}
+		span {
+			&.cm-atom,
+			&.cm-number {
+				color: #b5cea8;
+			}
+			&.cm-keyword {
+				color: #9f7ec0;
+			}
+			&.cm-comment {
+				color: #44864e;
+			}
+			&.cm-variable-3 {
+				color: #569cd6;
+			}
+			&.cm-variable {
+				color: #dcd98a;
+			}
+		}
+	}
+}
+
+.CodeMirror-scroll {
+	overflow: auto !important;
+}
+
+.CodeMirror-linenumber.CodeMirror-gutter-elt {
+	color: #5a5a5a;
+}
