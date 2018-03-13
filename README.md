@@ -29,7 +29,7 @@ The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse``` and ``
 
 [Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=trails)
 
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview-trail.gif)
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/trail.gif)
 
 -----------
 
