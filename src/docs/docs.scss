@@ -48,6 +48,21 @@ body {
 	color: #5a5a5a;
 }
 
+.btn {
+	display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    padding: 8px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	background: #272727;
+    color: white;
+}
+
 @media screen and (min-width: 960px) {
 	body {
 		padding: 20px;
@@ -55,5 +70,9 @@ body {
 
 	.CodeMirror {
 		min-height: calc(100vh - 40px);
+	}
+
+	.btn {
+		display: block;
 	}
 }

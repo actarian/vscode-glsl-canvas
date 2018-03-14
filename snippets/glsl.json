@@ -67,7 +67,7 @@
 
 	"ease.back.inOut":{
   "prefix": "glsl.ease.back.inOut",
-  "body": "/* Easing Back InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBackInOut(float t) {\n    float s = 1.70158;\n    if ((t / 2.0) < 1.0) return 0.5 * (t * t * (((s *= (1.525)) + 1.0) * t - s));\n    return 0.5 * ((t -= 2.0) * t * (((s *= (1.525)) + 1.0) * t + s) + 2.0);\n}",
+  "body": "/* Easing Back InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBackInOut(float t) {\n    t *= 2.0; float s = 1.70158;\n    if (t < 1.0) return 0.5 * (t * t * (((s *= (1.525)) + 1.0) * t - s));\n    return 0.5 * ((t -= 2.0) * t * (((s *= (1.525)) + 1.0) * t + s) + 2.0);\n}",
   "description": "Easing Back InOut equation "
 },
 
@@ -103,7 +103,7 @@
 
 	"ease.circular.inOut":{
   "prefix": "glsl.ease.circular.inOut",
-  "body": "/* Easing Circular InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeCircularInOut(float t) {\n    if ((t / 2.0) < 1.0) return -0.5 * (sqrt(1.0 - t * t) - 1.0);\n    return 0.5 * (sqrt(1.0 - (t -= 2.0) * t) + 1.0);\n}",
+  "body": "/* Easing Circular InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeCircularInOut(float t) {\n    t = t * 2.0; if ((t) < 1.0) return -0.5 * (sqrt(1.0 - t * t) - 1.0);\n    return 0.5 * (sqrt(1.0 - (t -= 2.0) * t) + 1.0);\n}",
   "description": "Easing Circular InOut equation "
 },
 
@@ -121,7 +121,7 @@
 
 	"ease.cubic.inOut":{
   "prefix": "glsl.ease.cubic.inOut",
-  "body": "/* Easing Cubic InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeCubicInOut(float t) {\n    if ((t / 2.0) < 1.0) return 0.5 * t * t * t;\n    return 0.5 * ((t -= 2.0) * t * t + 2.0);\n}",
+  "body": "/* Easing Cubic InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeCubicInOut(float t) {\n    t = t * 2.0; if (t < 1.0) return 0.5 * t * t * t;\n    return 0.5 * ((t -= 2.0) * t * t + 2.0);\n}",
   "description": "Easing Cubic InOut equation "
 },
 
@@ -139,7 +139,7 @@
 
 	"ease.elastic.inOut":{
   "prefix": "glsl.ease.elastic.inOut",
-  "body": "/* Easing Elastic InOut equation */\n/* Adapted from Robert Penner easing equations */\n#define TWO_PI\t\t\t6.283185307179586\nfloat easeElasticInOut(float t) {\n    if (t == 0.0) { return 0.0; }\n    if ((t / 2.0) == 2.0) { return 1.0; }\n    float p = (0.3 * 1.5);\n    float a = 1.0; \n    float s = p / 4.0;\n    if (t < 1.0) {\n        return -0.5 * (a * pow(2.0, 10.0 * (t -= 1.0)) * sin((t - s) * TWO_PI / p));\n    }\n    return a * pow(2.0, -10.0 * (t -= 1.0)) * sin((t - s) * TWO_PI / p) * 0.5 + 1.0;\n}",
+  "body": "/* Easing Elastic InOut equation */\n/* Adapted from Robert Penner easing equations */\n#define TWO_PI\t\t\t6.283185307179586\nfloat easeElasticInOut(float t) {\n    t = t * 2.0;\n    if (t == 0.0) { return 0.0; }\n    if ((t / 2.0) == 2.0) { return 1.0; }\n    float p = (0.3 * 1.5);\n    float a = 1.0; \n    float s = p / 4.0;\n    if (t < 1.0) {\n        return -0.5 * (a * pow(2.0, 10.0 * (t -= 1.0)) * sin((t - s) * TWO_PI / p));\n    }\n    return a * pow(2.0, -10.0 * (t -= 1.0)) * sin((t - s) * TWO_PI / p) * 0.5 + 1.0;\n}",
   "description": "Easing Elastic InOut equation "
 },
 
@@ -157,7 +157,7 @@
 
 	"ease.expo.inOut":{
   "prefix": "glsl.ease.expo.inOut",
-  "body": "/* Easing Expo InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeExpoInOut(float t) {\n    if (t == 0.0) return 0.0;\n    if (t == 1.0) return 1.0;\n    if ((t / 2.0) < 1.0) return 0.5 * pow(2.0, 10.0 * (t - 1.0));\n    return 0.5 * (-pow(2.0, -10.0 * --t) + 2.0);\n}",
+  "body": "/* Easing Expo InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeExpoInOut(float t) {\n    t = t * 2.0;\n    if (t == 0.0) return 0.0;\n    if (t == 1.0) return 1.0;\n    if (t < 1.0) return 0.5 * pow(2.0, 10.0 * (t - 1.0));\n    return 0.5 * (-pow(2.0, -10.0 * --t) + 2.0);\n}",
   "description": "Easing Expo InOut equation "
 },
 
@@ -175,7 +175,7 @@
 
 	"ease.quad.inOut":{
   "prefix": "glsl.ease.quad.inOut",
-  "body": "/* Easing Quad InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuadInOut(float t) {\n    if ((t / 2.0) < 1.0) return 0.5 * t * t;\n    return -0.5 * ((--t) * (t - 2.0) - 1.0);\n}",
+  "body": "/* Easing Quad InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuadInOut(float t) {\n    t = t * 2.0; if (t < 1.0) return 0.5 * t * t;\n    return -0.5 * ((--t) * (t - 2.0) - 1.0);\n}",
   "description": "Easing Quad InOut equation "
 },
 
@@ -193,7 +193,7 @@
 
 	"ease.quart.inOut":{
   "prefix": "glsl.ease.quart.inOut",
-  "body": "/* Easing Quart InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartInOut(float t) {\n    if ((t / 2.0) < 1.0) return 0.5 * t * t * t * t;\n    return -0.5 * ((t -= 2.0) * t * t * t - 2.0);\n}",
+  "body": "/* Easing Quart InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartInOut(float t) {\n    t = t * 2.0; if (t < 1.0) return 0.5 * t * t * t * t;\n    return -0.5 * ((t -= 2.0) * t * t * t - 2.0);\n}",
   "description": "Easing Quart InOut equation "
 },
 
@@ -211,7 +211,7 @@
 
 	"ease.quint.inOut":{
   "prefix": "glsl.ease.quint.inOut",
-  "body": "/* Easing Quint InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintInOut(float t) {\n    if ((t / 2.0) < 1.0) return 0.5 * t * t * t * t * t;\n    return 0.5 * ((t -= 2.0) * t * t * t * t + 2.0);\n}",
+  "body": "/* Easing Quint InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuintInOut(float t) {\n    t = t * 2.0; if (t < 1.0) return 0.5 * t * t * t * t * t;\n    return 0.5 * ((t -= 2.0) * t * t * t * t + 2.0);\n}",
   "description": "Easing Quint InOut equation "
 },
 
@@ -229,7 +229,7 @@
 
 	"ease.sine.inOut":{
   "prefix": "glsl.ease.sine.inOut",
-  "body": "/* Easing Sine InOut equation */\n/* Adapted from Robert Penner easing equations */\n#define PI\t\t\t\t3.141592653589793\nfloat easeSineInOut(float t) {\n    return -0.5 * (cos(PI * t) - 1.0);\n}",
+  "body": "/* Easing Sine InOut equation */\n/* Adapted from Robert Penner easing equations */\n#define PI\t\t\t\t3.141592653589793\nfloat easeSineInOut(float t) {\n    return -0.5 * (cos(PI * t * 2.0) - 1.0);\n}",
   "description": "Easing Sine InOut equation "
 },
 
@@ -253,7 +253,7 @@
 
 	"shapes.2d.arc":{
   "prefix": "glsl.shapes.2d.arc",
-  "body": "/* Shape 2D arc */\nfloat sArc(in vec2 p, in float w, in float s, in float e) {\n    e += s;\n    float o = (s + e - PI);\n\tfloat a = mod(atan(p.y, p.x) - o, TWO_PI) + o;\n\ta = clamp(a, min(s, e), max(s, e));\n    vec2 r = vec2(cos(a), sin(a));\n\tfloat d = distance(p, w * 0.5 * r);\n    return d * 2.0;\n}\nfloat arc(in vec2 p, in float w, in float s, in float e, in float t) {\n    float d = sArc(p, w, s, e);\n    return stroke(d, t);\n}",
+  "body": "/* Shape 2D arc */\nfloat sArc(in vec2 p, in float w, in float s, in float e) {    \n    float a = distance(p, w * 0.5 * vec2(cos(s), sin(s)));\n    float x = -PI;\n    p *= mat2(cos(x - s), -sin(x - s), sin(x - s), cos(x - s));\n    float b = clamp(atan(p.y, p.x), x, x + e);\n    b = distance(p, w * 0.5 * vec2(cos(b), sin(b)));\n    return min(a, b) * 2.0;\n}\nfloat arc(in vec2 p, in float w, in float s, in float e, in float t) {\n    float d = sArc(p, w, s, e);\n    return stroke(d, t);\n}",
   "description": "Shape 2D arc "
 },
 

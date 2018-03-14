@@ -21,7 +21,7 @@ void main() {
         object.distance = line(p, 0.0, 0.5 * v);
     }
     if (between(0.25)) {
-        v = easeSineInOut(animation.pow);
+        v = easeSineOut(animation.pow);
         object.distance = line(p, PI_TWO / 2.0 * v, 0.5);
     }
     if (between(0.5)) {
