@@ -297,8 +297,7 @@ float easeBackOut(float t) {
     return ((t = t - 1.0) * t * ((s + 1.0) * t + s) + 1.0);
 }
 float easeBackInOut(float t) {
-    t *= 2.0;
-    float s = 1.70158;
+    t *= 2.0; float s = 1.70158;
     if (t < 1.0) return 0.5 * (t * t * (((s *= (1.525)) + 1.0) * t - s));
     return 0.5 * ((t -= 2.0) * t * (((s *= (1.525)) + 1.0) * t + s) + 2.0);
 }
@@ -329,8 +328,7 @@ float easeCircularOut(float t) {
     return sqrt(1.0 - (t = t - 1.0) * t);
 }
 float easeCircularInOut(float t) {
-    t = t * 2.0;
-    if ((t) < 1.0) return -0.5 * (sqrt(1.0 - t * t) - 1.0);
+    t = t * 2.0; if ((t) < 1.0) return -0.5 * (sqrt(1.0 - t * t) - 1.0);
     return 0.5 * (sqrt(1.0 - (t -= 2.0) * t) + 1.0);
 }
 // Cubic
@@ -341,8 +339,7 @@ float easeCubicOut(float t) {
     return ((t = t - 1.0) * t * t + 1.0);
 }
 float easeCubicInOut(float t) {
-    t = t * 2.0;
-    if (t < 1.0) return 0.5 * t * t * t;
+    t = t * 2.0; if (t < 1.0) return 0.5 * t * t * t;
     return 0.5 * ((t -= 2.0) * t * t + 2.0);
 }
 // Elastic
@@ -396,8 +393,7 @@ float easeQuadOut(float t) {
     return -1.0 * t * (t - 2.0);
 }
 float easeQuadInOut(float t) {
-    t = t * 2.0;
-    if (t < 1.0) return 0.5 * t * t;
+    t = t * 2.0; if (t < 1.0) return 0.5 * t * t;
     return -0.5 * ((--t) * (t - 2.0) - 1.0);
 }
 // Quartic
@@ -408,8 +404,7 @@ float easeQuartOut(float t) {
     return -1.0 * ((t = t - 1.0) * t * t * t - 1.0);
 }
 float easeQuartInOut(float t) {
-    t = t * 2.0;
-    if (t < 1.0) return 0.5 * t * t * t * t;
+    t = t * 2.0; if (t < 1.0) return 0.5 * t * t * t * t;
     return -0.5 * ((t -= 2.0) * t * t * t - 2.0);
 }
 // Quintic
@@ -420,8 +415,7 @@ float easeQuintOut(float t) {
     return ((t = t - 1.0) * t * t * t * t + 1.0);
 }
 float easeQuintInOut(float t) {
-    t = t * 2.0;
-    if (t < 1.0) return 0.5 * t * t * t * t * t;
+    t = t * 2.0; if (t < 1.0) return 0.5 * t * t * t * t * t;
     return 0.5 * ((t -= 2.0) * t * t * t * t + 2.0);
 }
 // Sine
@@ -432,8 +426,7 @@ float easeSineOut(float t) {
     return sin(t * PI_TWO);
 }
 float easeSineInOut(float t) {
-    t = t * 2.0;
-    return -0.5 * (cos(PI * t) - 1.0);
+    return -0.5 * (cos(PI * t * 2.0) - 1.0);
 }
 
 struct Object { float distance; vec3 color; };

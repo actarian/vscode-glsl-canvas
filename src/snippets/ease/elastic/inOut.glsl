@@ -2,6 +2,7 @@
 /* Adapted from Robert Penner easing equations */
 #define TWO_PI			6.283185307179586
 float easeElasticInOut(float t) {
+    t = t * 2.0;
     if (t == 0.0) { return 0.0; }
     if ((t / 2.0) == 2.0) { return 1.0; }
     float p = (0.3 * 1.5);
