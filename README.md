@@ -158,6 +158,10 @@ Snippets library documentation and playgrounds [here](https://github.com/actaria
 
 ## Release Notes
 
+### 0.1.7
+
+* Fixed sArc and easeInOut snippets methods.
+
 ### 0.1.6
 
 * Documented snippets library with playgrounds.
@@ -167,7 +171,7 @@ Snippets library documentation and playgrounds [here](https://github.com/actaria
 ### 0.1.5
 
 * Gui for changing custom uniforms at runtime.
-* Fix dependancy from other extension.
+* Fixed dependancy from other extension.
 
 ### 0.1.3
 
@@ -176,7 +180,7 @@ Snippets library documentation and playgrounds [here](https://github.com/actaria
 * Activable performance monitor.
 * Better handling of active ```.glsl``` editor.
 * Improved inline error message.
-* Fix resizing issue.
+* Fixed resizing issue.
 * Minor snippets functionality.
 
 ### 0.1.1

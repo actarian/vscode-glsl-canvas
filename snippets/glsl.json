@@ -307,7 +307,7 @@
 
 	"shapes.2d.roundrect":{
   "prefix": "glsl.shapes.2d.roundrect",
-  "body": "/* Shape 2D roundrect */\nfloat sRoundrect(in vec2 p, in vec2 w, in float corner) {\n    vec2 s = w * 0.5 - corner;\n    float m = max(s.x, s.y);\n    float d = length(max(abs(p) - s, 0.00001)) * m / corner;\n    return (d - m) / m * corner * 2.0;\n}\nfloat roundrect(in vec2 p, in vec2 w, in float corner) {\n    float d = sRoundrect(p, w, corner);\n    return fill(d);\n}\nfloat roundrect(in vec2 p, in vec2 w, in float corner, in float t) {\n    float d = sRoundrect(p, w, corner);\n    return stroke(d, t);\n}",
+  "body": "/* Shape 2D roundrect */\nfloat sRoundrect(in vec2 p, in vec2 w, in float corner) {\n    vec2 d = abs(p) - w * 0.5 + corner;\n    return (min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - corner) * 2.0;\n}\nfloat roundrect(in vec2 p, in vec2 w, in float corner) {\n    float d = sRoundrect(p, w, corner);\n    return fill(d);\n}\nfloat roundrect(in vec2 p, in vec2 w, in float corner, in float t) {\n    float d = sRoundrect(p, w, corner);\n    return stroke(d, t);\n}",
   "description": "Shape 2D roundrect "
 },
 
