@@ -1,4 +1,4 @@
-/* global window, document, console, GlslCanvas, CaptureService, GuiService, TrailsService, Stats, dat */
+/* global window, document, console, GlslCanvas, CaptureService, GuiService, TrailsService, CameraService, Stats, dat */
 
 (function () {
     'use strict';
@@ -32,10 +32,13 @@
         var capture = new CaptureService();
         capture.set(canvas);
 
+        var camera = new CameraService();
+
         var trails = new TrailsService();
 
         glsl.on('render', function () {
             capture.snapshotRender();
+            camera.render(glsl);
             trails.render(glsl);
             glsl.forceRender = true;
         });
@@ -222,12 +225,31 @@
             }, 1000 / 25);
         }
 
+        function onDown(e) {
+            var min = Math.min(content.offsetWidth, content.offsetHeight);
+            camera.down(e.x / min, e.y / min);
+        }
+
         function onMove(e) {
+            var min = Math.min(content.offsetWidth, content.offsetHeight);
+            camera.move(e.x / min, e.y / min);
             trails.move(e.x, content.offsetHeight - e.y);
         }
 
+        function onUp(e) {
+            var min = Math.min(content.offsetWidth, content.offsetHeight);
+            camera.up(e.x / min, e.y / min);
+        }
+
+        function onWheel(e) {
+            camera.wheel(e.wheelDelta / Math.abs(e.wheelDelta));
+        }
+
         canvas.addEventListener("dblclick", togglePause);
+        canvas.addEventListener('mousedown', onDown);
         canvas.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        window.addEventListener('mousewheel', onWheel);
         buttons.pause.addEventListener('mousedown', togglePause);
         buttons.record.addEventListener('mousedown', toggleRecord);
         buttons.stats.addEventListener('mousedown', toggleStats);

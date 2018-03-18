@@ -89,28 +89,6 @@
             if (history.length) {
                 history.shift();
             }
-            /*
-            var d = trails[0];
-            if (history.length && Math.abs(d.x - tx.x) < 2 && Math.abs(d.y - tx.y) < 2) {
-                history.shift();
-            }
-            */
-            /*
-            ti++;
-            if (ti % 10 === 0 && history.length > 0) {
-                history.shift();
-            }
-            */
-            /*
-            fastUpdate('2fv', 'vec2', 'u_trails[10]', trails);
-            console.log('parseUniforms', parseUniforms({
-                u_trails: value
-            }));
-            */
-            // onUpdateUniforms();
-            // uniforms.u_trails = trails;
-            // glsl.setUniform('u_trails', trails);
-            // console.log('onUpdateUniforms', trails[0][0], trails[0][1]);
         }
 
         function move(x, y) {

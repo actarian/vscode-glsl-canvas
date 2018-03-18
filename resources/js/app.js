@@ -1,3 +1,290 @@
+(function () {
+    'use strict';
+
+    var Vector = function () {
+
+        function Vector(x, y, z) {
+            this.x = x || 0;
+            this.y = y || 0;
+            this.z = z || 0;
+        }
+
+        // Instance Methods
+        // The methods add(), subtract(), multiply(), and divide() can all take either a vector or a number as an argument.
+
+        Vector.prototype = {
+            negative: function () {
+                return new Vector(-this.x, -this.y, -this.z);
+            },
+            add: function (v) {
+                if (v instanceof Vector) return new Vector(this.x + v.x, this.y + v.y, this.z + v.z);
+                else return new Vector(this.x + v, this.y + v, this.z + v);
+            },
+            subtract: function (v) {
+                if (v instanceof Vector) return new Vector(this.x - v.x, this.y - v.y, this.z - v.z);
+                else return new Vector(this.x - v, this.y - v, this.z - v);
+            },
+            multiply: function (v) {
+                if (v instanceof Vector) return new Vector(this.x * v.x, this.y * v.y, this.z * v.z);
+                else return new Vector(this.x * v, this.y * v, this.z * v);
+            },
+            divide: function (v) {
+                if (v instanceof Vector) return new Vector(this.x / v.x, this.y / v.y, this.z / v.z);
+                else return new Vector(this.x / v, this.y / v, this.z / v);
+            },
+            equals: function (v) {
+                return this.x === v.x && this.y === v.y && this.z === v.z;
+            },
+            dot: function (v) {
+                return this.x * v.x + this.y * v.y + this.z * v.z;
+            },
+            cross: function (v) {
+                return new Vector(
+                    this.y * v.z - this.z * v.y,
+                    this.z * v.x - this.x * v.z,
+                    this.x * v.y - this.y * v.x
+                );
+            },
+            length: function () {
+                return Math.sqrt(this.dot(this));
+            },
+            unit: function () {
+                return this.divide(this.length());
+            },
+            min: function () {
+                return Math.min(Math.min(this.x, this.y), this.z);
+            },
+            max: function () {
+                return Math.max(Math.max(this.x, this.y), this.z);
+            },
+            toAngles: function () {
+                return {
+                    theta: Math.atan2(this.z, this.x),
+                    phi: Math.asin(this.y / this.length())
+                };
+            },
+            angleTo: function (a) {
+                return Math.acos(this.dot(a) / (this.length() * a.length()));
+            },
+            toArray: function (n) {
+                return [this.x, this.y, this.z].slice(0, n || 3);
+            },
+            clone: function () {
+                return new Vector(this.x, this.y, this.z);
+            },
+            init: function (x, y, z) {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                return this;
+            }
+        };
+
+        // Static Methods
+        // Vector.randomDirection() returns a vector with a length of 1 and a statistically uniform direction. Vector.lerp() performs linear interpolation between two vectors.
+
+        Vector.negative = function (a, b) {
+            b.x = -a.x;
+            b.y = -a.y;
+            b.z = -a.z;
+            return b;
+        };
+        Vector.add = function (a, b, c) {
+            if (b instanceof Vector) {
+                c.x = a.x + b.x;
+                c.y = a.y + b.y;
+                c.z = a.z + b.z;
+            } else {
+                c.x = a.x + b;
+                c.y = a.y + b;
+                c.z = a.z + b;
+            }
+            return c;
+        };
+        Vector.subtract = function (a, b, c) {
+            if (b instanceof Vector) {
+                c.x = a.x - b.x;
+                c.y = a.y - b.y;
+                c.z = a.z - b.z;
+            } else {
+                c.x = a.x - b;
+                c.y = a.y - b;
+                c.z = a.z - b;
+            }
+            return c;
+        };
+        Vector.multiply = function (a, b, c) {
+            if (b instanceof Vector) {
+                c.x = a.x * b.x;
+                c.y = a.y * b.y;
+                c.z = a.z * b.z;
+            } else {
+                c.x = a.x * b;
+                c.y = a.y * b;
+                c.z = a.z * b;
+            }
+            return c;
+        };
+        Vector.divide = function (a, b, c) {
+            if (b instanceof Vector) {
+                c.x = a.x / b.x;
+                c.y = a.y / b.y;
+                c.z = a.z / b.z;
+            } else {
+                c.x = a.x / b;
+                c.y = a.y / b;
+                c.z = a.z / b;
+            }
+            return c;
+        };
+        Vector.cross = function (a, b, c) {
+            c.x = a.y * b.z - a.z * b.y;
+            c.y = a.z * b.x - a.x * b.z;
+            c.z = a.x * b.y - a.y * b.x;
+            return c;
+        };
+        Vector.unit = function (a, b) {
+            var length = a.length();
+            b.x = a.x / length;
+            b.y = a.y / length;
+            b.z = a.z / length;
+            return b;
+        };
+        Vector.fromAngles = function (theta, phi) {
+            return new Vector(Math.cos(theta) * Math.cos(phi), Math.sin(phi), Math.sin(theta) * Math.cos(phi));
+        };
+        Vector.randomDirection = function () {
+            return Vector.fromAngles(Math.random() * Math.PI * 2, Math.asin(Math.random() * 2 - 1));
+        };
+        Vector.min = function (a, b) {
+            return new Vector(Math.min(a.x, b.x), Math.min(a.y, b.y), Math.min(a.z, b.z));
+        };
+        Vector.max = function (a, b) {
+            return new Vector(Math.max(a.x, b.x), Math.max(a.y, b.y), Math.max(a.z, b.z));
+        };
+        Vector.lerp = function (a, b, fraction) {
+            return b.subtract(a).multiply(fraction).add(a);
+        };
+        Vector.fromArray = function (a) {
+            return new Vector(a[0], a[1], a[2]);
+        };
+        Vector.angleBetween = function (a, b) {
+            return a.angleTo(b);
+        };
+
+        return Vector;
+    }();
+
+    window.Vector = Vector;
+
+}());
+/* global window, console, Vector */
+
+(function () {
+    'use strict';
+
+    var CameraService = function () {
+
+        var PI = Math.PI;
+        var RAD = PI / 180;
+
+        function CameraService(theta, phi, radius) {
+            var service = this;
+            service.theta = (theta || 45) * RAD;
+            service.phi = (phi || 45) * RAD;
+            service.radius = radius || 1.0;
+        }
+
+        CameraService.prototype = {
+            down: down,
+            move: move,
+            up: up,
+            wheel: wheel,
+            render: render,
+            update: update,
+        };
+
+        CameraService.fromVector = fromVector;
+        CameraService.toVector = toVector;
+
+        // publics
+
+        function down(x, y) {
+            var service = this;
+            service.mouse = {
+                x: x,
+                y: y,
+            };
+        }
+
+        function move(x, y) {
+            var service = this,
+                mouse = service.mouse;
+            if (mouse) {
+                var theta = (x - mouse.x) * 180 * RAD;
+                var phi = (mouse.y - y) * 180 * RAD;
+                mouse.x = x;
+                mouse.y = y;
+                service.theta += theta;
+                service.phi += phi;
+            }
+        }
+
+        function up(x, y) {
+            var service = this;
+            service.mouse = null;
+        }
+
+        function wheel(d) {
+            var service = this;
+            service.radius = Math.max(0.01, service.radius + d * 0.02);
+        }
+
+        function render(glsl) {
+            var service = this;
+            var vector = CameraService.toVector(service);
+            var array = new Float32Array([vector.x, vector.y, vector.z]);
+            service.update(glsl, '3fv', 'vec3', 'u_camera', array);
+        }
+
+        function update(glsl, method, type, name, value) {
+            try {
+                var u = glsl.uniforms[name] = glsl.uniforms[name] || {};
+                u.name = name;
+                u.value = value;
+                u.type = type;
+                u.method = 'uniform' + method;
+                u.location = glsl.gl.getUniformLocation(glsl.program, name);
+                glsl.gl[u.method].apply(glsl.gl, [u.location].concat(u.value));
+            } catch (e) {
+                console.log('fastUpdate', e);
+            }
+        }
+
+        // statics
+
+        function fromVector(vector) {
+            var radius = vector.length();
+            var theta = Math.acos(vector.y / radius); //theta
+            var phi = Math.atan(vector.x / vector.z); //phi
+            return new CameraService(theta, phi, radius);
+        }
+
+        function toVector(camera) {
+            var spr = Math.sin(camera.phi) * camera.radius;
+            var x = spr * Math.sin(camera.theta);
+            var y = Math.cos(camera.phi) * camera.radius;
+            var z = spr * Math.cos(camera.theta);
+            return new Vector(x, y, z);
+        }
+
+        return CameraService;
+
+    }();
+
+    window.CameraService = CameraService;
+
+}());
 /* global window, document, console, GlslCanvas */
 /* 
 Author: Brett Camper (@professorlemeza)
@@ -514,28 +801,6 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             if (history.length) {
                 history.shift();
             }
-            /*
-            var d = trails[0];
-            if (history.length && Math.abs(d.x - tx.x) < 2 && Math.abs(d.y - tx.y) < 2) {
-                history.shift();
-            }
-            */
-            /*
-            ti++;
-            if (ti % 10 === 0 && history.length > 0) {
-                history.shift();
-            }
-            */
-            /*
-            fastUpdate('2fv', 'vec2', 'u_trails[10]', trails);
-            console.log('parseUniforms', parseUniforms({
-                u_trails: value
-            }));
-            */
-            // onUpdateUniforms();
-            // uniforms.u_trails = trails;
-            // glsl.setUniform('u_trails', trails);
-            // console.log('onUpdateUniforms', trails[0][0], trails[0][1]);
         }
 
         function move(x, y) {
@@ -571,7 +836,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
     window.TrailsService = TrailsService;
 
 }());
-/* global window, document, console, GlslCanvas, CaptureService, GuiService, TrailsService, Stats, dat */
+/* global window, document, console, GlslCanvas, CaptureService, GuiService, TrailsService, CameraService, Stats, dat */
 
 (function () {
     'use strict';
@@ -605,10 +870,13 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
         var capture = new CaptureService();
         capture.set(canvas);
 
+        var camera = new CameraService();
+
         var trails = new TrailsService();
 
         glsl.on('render', function () {
             capture.snapshotRender();
+            camera.render(glsl);
             trails.render(glsl);
             glsl.forceRender = true;
         });
@@ -795,12 +1063,31 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             }, 1000 / 25);
         }
 
+        function onDown(e) {
+            var min = Math.min(content.offsetWidth, content.offsetHeight);
+            camera.down(e.x / min, e.y / min);
+        }
+
         function onMove(e) {
+            var min = Math.min(content.offsetWidth, content.offsetHeight);
+            camera.move(e.x / min, e.y / min);
             trails.move(e.x, content.offsetHeight - e.y);
         }
 
+        function onUp(e) {
+            var min = Math.min(content.offsetWidth, content.offsetHeight);
+            camera.up(e.x / min, e.y / min);
+        }
+
+        function onWheel(e) {
+            camera.wheel(e.wheelDelta / Math.abs(e.wheelDelta));
+        }
+
         canvas.addEventListener("dblclick", togglePause);
+        canvas.addEventListener('mousedown', onDown);
         canvas.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        window.addEventListener('mousewheel', onWheel);
         buttons.pause.addEventListener('mousedown', togglePause);
         buttons.record.addEventListener('mousedown', toggleRecord);
         buttons.stats.addEventListener('mousedown', toggleStats);

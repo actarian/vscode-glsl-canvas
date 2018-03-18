@@ -29,6 +29,8 @@
     },
     {
         "inputFiles": [
+            "src/app/services/vector/vector.js",
+            "src/app/services/camera/camera.service.js",
             "src/app/services/capture/capture.service.js",
             "src/app/services/gui/gui.service.js",
             "src/app/services/trails/trails.service.js",
