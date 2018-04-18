@@ -43,11 +43,12 @@ function currentGlslDocument() {
 }
 function onDidChangeTextDocument(e) {
     // console.log('onDidChangeTextDocument', e.document.uri.path);
+    let options = new DocumentOptions();
     clearTimeout(ti);
     diagnosticCollection.clear();
     ti = setTimeout(function () {
         provider.update(uri);
-    }, 1000);
+    }, options.timeOut);
 }
 function onDidCloseTextDocument(document) {
     if (document.languageId === 'glsl') {
@@ -190,6 +191,7 @@ class DocumentOptions {
         this.fragment = document ? document.getText() : '';
         this.vertex = '';
         this.uniforms = config['uniforms'] || {};
+        this.timeOut = config['timeOut'] || 0;
         this.textures = config['textures'] || {};
     }
     serialize() {
