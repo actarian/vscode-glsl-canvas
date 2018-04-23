@@ -35,6 +35,11 @@
                 "glsl-canvas.uniforms": {
                     "type": "object",
                     "description": "Custom uniforms values."
+                },
+                "glsl-canvas.timeOut": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Wait time in milliseconds before updating the canvas after a change in the source code. set 0 to update immediately"
                 }
             }
         },
