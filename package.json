@@ -2,7 +2,7 @@
     "name": "glsl-canvas",
     "displayName": "glsl-canvas",
     "description": "Live WebGL preview of GLSL shaders",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "publisher": "circledev",
     "license": "UNLICENSED",
     "engines": {
@@ -36,7 +36,7 @@
                     "type": "object",
                     "description": "Custom uniforms values."
                 },
-                "glsl-canvas.timeOut": {
+                "glsl-canvas.timeout": {
                     "type": "number",
                     "default": 0,
                     "description": "Wait time in milliseconds before updating the canvas after a change in the source code. set 0 to update immediately"

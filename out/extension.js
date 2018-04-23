@@ -48,7 +48,7 @@ function onDidChangeTextDocument(e) {
     diagnosticCollection.clear();
     ti = setTimeout(function () {
         provider.update(uri);
-    }, options.timeOut);
+    }, options.timeout);
 }
 function onDidCloseTextDocument(document) {
     if (document.languageId === 'glsl') {
@@ -191,7 +191,7 @@ class DocumentOptions {
         this.fragment = document ? document.getText() : '';
         this.vertex = '';
         this.uniforms = config['uniforms'] || {};
-        this.timeOut = config['timeOut'] || 0;
+        this.timeout = config['timeout'] || 0;
         this.textures = config['textures'] || {};
     }
     serialize() {

@@ -58,7 +58,7 @@ typings/
 .env
 
 _README.md
-*.vsix
+# *.vsix
 *.psd
 snippets/glsl-example.json
 
