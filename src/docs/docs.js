@@ -1,7 +1,9 @@
-/* global window, document, console, GlslEditor, TrailsService */
+/* global window, document, console, GlslEditor, CameraService, TrailsService */
 
 (function () {
     'use strict';
+
+    var camera = new CameraService();
 
     var trails = new TrailsService();
 
@@ -28,14 +30,43 @@
                 });
                 // console.log('editor', editor);
                 var glsl = editor.shader.canvas;
-                glsl.uniformTexture('u_texture_0', 'https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-1.png', {
-                    filtering: 'mipmap',
-                    repeat: true,
-                });
                 glsl.on('render', function () {
                     trails.render(glsl);
+                    camera.render(glsl);
                     glsl.forceRender = true;
                 });
+                glsl.on('load', function () {
+                    glsl.uniformTexture('u_texture_0', 'https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-1.png', {
+                        filtering: 'mipmap',
+                        repeat: true,
+                    });
+                });
+
+                function onDown(e) {
+                    var min = Math.min(glsl.canvas.offsetWidth, glsl.canvas.offsetHeight);
+                    camera.down(e.x / min, e.y / min);
+                }
+
+                function onMove(e) {
+                    var min = Math.min(glsl.canvas.offsetWidth, glsl.canvas.offsetHeight);
+                    camera.move(e.x / min, e.y / min);
+                    trails.move(e.x, glsl.canvas.offsetHeight - e.y);
+                }
+
+                function onUp(e) {
+                    var min = Math.min(glsl.canvas.offsetWidth, glsl.canvas.offsetHeight);
+                    camera.up(e.x / min, e.y / min);
+                }
+
+                function onWheel(e) {
+                    camera.wheel(e.wheelDelta / Math.abs(e.wheelDelta));
+                }
+
+                glsl.canvas.addEventListener('mousedown', onDown);
+                glsl.canvas.addEventListener('mousemove', onMove);
+                window.addEventListener('mouseup', onUp);
+                window.addEventListener('mousewheel', onWheel);
+
                 glsl.canvas.addEventListener('mousemove', function onMove(e) {
                     trails.move(e.x - editor.shader.el.offsetLeft, editor.shader.el.offsetTop + editor.shader.el.offsetHeight - e.y);
                 });

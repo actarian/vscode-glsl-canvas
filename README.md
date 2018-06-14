@@ -1,5 +1,10 @@
 # vscode-glsl-canvas
 
+[![VS Code Marketplace](https://vsmarketplacebadge.apphb.com/version-short/circledev.glsl-canvas.svg) 
+![Installs](https://vsmarketplacebadge.apphb.com/installs/circledev.glsl-canvas.svg)](https://marketplace.visualstudio.com/items?itemName=HookyQR.beautify)
+![Rating](https://vsmarketplacebadge.apphb.com/rating-short/circledev.glsl-canvas.svg) 
+[![Licence](https://img.shields.io/github/license/actarian/vscode-glsl-canvas.svg)](https://github.com/actarian/vscode-glsl-canvas)
+
 The extension opens a live WebGL preview of GLSL shaders within VSCode by providing a ```Show glslCanvas``` command.
 
 It use [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) a javaScript library from [Book of Shaders](http://thebookofshaders.com) and [glslEditor](http://editor.thebookofshaders.com) made by [Patricio Gonzalez Vivo](http://patriciogonzalezvivo.com).
@@ -7,12 +12,11 @@ It use [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) a javaSc
 *Run the command to display a fullscreen preview of your fragment shader.*
 
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview-half.gif)
+___
 
------------
+## <a name="uniforms"></a>Uniforms
 
-## Uniforms
-
-The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse``` and ```u_trails[10]```. You can define the texture channels (```u_texture_0```, ```u_texture_1```, ...) by modifying the workspace's ```settings.json``` file. 
+The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse```, ```u_camera``` and ```u_trails[10]```. You can define the texture channels (```u_texture_0```, ```u_texture_1```, ...) by modifying the workspace's ```settings.json``` file. 
 ```
 {
     "glsl-canvas.textures": {
@@ -22,6 +26,16 @@ The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse``` and ``
     }
 }
 ```
+___
+
+## u_camera
+
+```u_camera``` is a vec3 array with coordinates for an orbital camera positioned at world zero.
+
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=camera)
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/camera.gif)
+___
 
 ## u_trails[10]
 
@@ -30,8 +44,7 @@ The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse``` and ``
 [Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=trails)
 
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/trail.gif)
-
------------
+___
 
 ## Custom Uniforms
 
@@ -53,12 +66,59 @@ Types supported are ```float```,  ```vec2```,  ```vec3``` and ```vec4```. Vector
 | `vec2`                  | "u_vec2":  [1.0, 1.0],           |
 | `vec3`                  | "u_vec3":  [1.0, 1.0, 1.0],      |
 | `vec4`                  | "u_vec4":  [1.0, 1.0, 1.0, 1.0], |
+___
 
 ## Uniforms Gui
 
 By clicking the option button you can view and modify at runtime uniforms via the [dat.gui](https://github.com/dataarts/dat.gui) interface.
 
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview-gui.gif)
+___
+
+## Multiple buffers 
+
+You can use shader buffers by requiring definition with `#ifdef` or `defined` directly in `.glsl` code.  
+Just ask for `BUFFER_`N definition and a `u_buffer`N uniform will be created for you: 
+
+```glsl
+
+uniform sampler2D u_buffer0;
+
+#ifdef BUFFER_0
+
+void main() {
+    vec4 color = texture2D(u_buffer0, uv, 0.0);
+    ...
+    gl_FragColor = color;
+}
+
+#else
+
+void main() {
+    vec4 color = texture2D(u_buffer0, uv, 0.0);
+    ...
+    gl_FragColor = color;
+}
+
+#endif
+
+```
+
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=buffers)
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/buffers.gif)
+___
+
+## Change detection 
+
+You can set the timeout change detection option by modifying the workspace's ```settings.json``` file. 
+
+```
+{
+    "glsl-canvas.timeout": 0
+}
+```
+___
 
 ## Fragment shader
 
@@ -81,18 +141,19 @@ void main() {
     gl_FragColor = vec4(color, 1.0);
 }
 ```
+___
 
 ## Features
 
 * Integrated support of error handling with lines hilight.
+* Multiple buffers.
 * Play / pause functionality.
 * Recording and exporting to ```.webm``` video.
 * Activable [stats.js](https://github.com/mrdoob/stats.js/) performance monitor.
 * Custom uniforms.
 * Activable gui for changing custom uniforms at runtime.
 * Glsl Snippets.
-
------------
+___
 
 ## Glsl Snippets
 
@@ -133,30 +194,36 @@ void main() {
 | `glsl.units`                 | Pixel unit conversion function        |
 
 Snippets library documentation and playgrounds [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/src/snippets/snippets.md).
+___
 
 ## Requirements
 
 * A graphics card supporting WebGL.
-
------------
+___
 
 ## Todo
 
-* Glsl 3d snippets.
-* Mouse orbit control.
-* Glsl code formatting.
 * WebGL code exporter.
+* Glsl code formatting.
+* Glsl 3d snippets.
+___
 
 ## Contributing
 
 [Github Project Page](https://github.com/actarian/vscode-glsl-canvas)  
 [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=circledev.glsl-canvas)
 
-*Thank you so much for taking the time to provide feedback and review. This feedback is appreciated and very helpful.*
-
------------
+*Thank you for taking the time to provide feedback and review. This feedback is appreciated and very helpful.*
+___
 
 ## Release Notes
+Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHANGELOG.md).
+
+### 0.1.9
+
+* Added multiple buffers functionality and playground.
+* Added mouse orbit control and playground.
+* Change detection timeout configuration option.
 
 ### 0.1.7
 

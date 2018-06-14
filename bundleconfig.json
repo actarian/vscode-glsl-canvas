@@ -1,6 +1,7 @@
-[{
+[
+    {
         "inputFiles": [
-            "bower_components/glslCanvas/build/GlslCanvas.js",
+            "bower_components/glslCanvas/dist/GlslCanvas.js",
             "bower_components/stats.js/build/stats.min.js",
             "bower_components/dat.gui/build/dat.gui.js"
         ],
@@ -61,6 +62,8 @@
     },
     {
         "inputFiles": [
+            "src/app/services/vector/vector.js",
+            "src/app/services/camera/camera.service.js",
             "src/app/services/trails/trails.service.js",
             "src/docs/docs.js"
         ],

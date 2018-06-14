@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 var fs = require('fs'),
 	gulp = require('gulp'),
 	gulpif = require('gulp-if'),

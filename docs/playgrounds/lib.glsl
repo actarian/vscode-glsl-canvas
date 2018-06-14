@@ -1,17 +1,24 @@
 // Author: Luca Zampetti
 // Title: vscode-glsl-canvas Playgrounds
 
+#extension GL_OES_standard_derivatives : enable
+
 precision highp float;
 
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
-uniform sampler2D u_texture_0;   
+uniform sampler2D u_texture_0;
+uniform vec3 u_camera;
 uniform vec2 u_trails[10];
 
 #define PI_TWO			1.570796326794897
 #define PI				3.141592653589793
 #define TWO_PI			6.283185307179586
+
+#define RAD				0.01745329251
+#define EPSILON			0.001
+#define PHI             sqrt(5) * 0.5 + 0.5
 
 #define BLACK           vec3(0.0, 0.0, 0.0)
 #define WHITE           vec3(1.0, 1.0, 1.0)
