@@ -22,7 +22,7 @@ function activate(context) {
     vscode.commands.registerCommand('glsl-canvas.createShader', onCreateShader);
     vscode.commands.registerCommand('glsl-canvas.revealGlslLine', onRevealLine);
     vscode.commands.registerCommand('glsl-canvas.showDiagnostic', onShowDiagnostic);
-    vscode.commands.registerCommand('glsl-canvas.refreshView', onRefreshView);
+    vscode.commands.registerCommand('glsl-canvas.refreshCanvas', onRefreshView);
     let command = vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
         return vscode.commands.executeCommand('vscode.previewHtml', uri, vscode_1.ViewColumn.Two, 'glslCanvas').then((success) => {
             // success
