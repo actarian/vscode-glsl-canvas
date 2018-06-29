@@ -1,10 +1,9 @@
 'use strict';
 
-import * as vscode from 'vscode';
-import * as path from 'path';
 import * as fs from 'fs';
-
-import { ExtensionContext, TextDocumentContentProvider, EventEmitter, Event, Uri, ViewColumn } from 'vscode';
+import * as path from 'path';
+import * as vscode from 'vscode';
+import { Event, EventEmitter, ExtensionContext, TextDocumentContentProvider, Uri, ViewColumn } from 'vscode';
 
 let uri = Uri.parse('glsl-preview://authority/glsl-preview');
 let provider: GlslDocumentContentProvider;
@@ -14,7 +13,7 @@ let ti;
 export function activate(context: ExtensionContext) {
     provider = new GlslDocumentContentProvider(context);
     diagnosticCollection = vscode.languages.createDiagnosticCollection('glslCanvas');
-    //
+
     vscode.workspace.onDidChangeTextDocument(onDidChangeTextDocument);
     vscode.workspace.onDidCloseTextDocument(onDidCloseTextDocument);
     vscode.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
@@ -25,7 +24,7 @@ export function activate(context: ExtensionContext) {
     vscode.commands.registerCommand('glsl-canvas.createShader', onCreateShader);
     vscode.commands.registerCommand('glsl-canvas.revealGlslLine', onRevealLine);
     vscode.commands.registerCommand('glsl-canvas.showDiagnostic', onShowDiagnostic);
-    vscode.commands.registerCommand('glsl-canvas.refreshCanvas', onRefreshView);
+    vscode.commands.registerCommand('glsl-canvas.refreshCanvas', onRefreshCanvas);
 
     let command = vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
         return vscode.commands.executeCommand('vscode.previewHtml', uri, ViewColumn.Two, 'glslCanvas').then((success) => {
@@ -52,8 +51,7 @@ function currentGlslDocument(): vscode.TextDocument {
 function onDidChangeTextDocument(e: vscode.TextDocumentChangeEvent) {
     // console.log('onDidChangeTextDocument', e.document.uri.path);
     let options = new DocumentOptions();
-    if(options.refreshOnChange)
-    {
+    if (options.refreshOnChange) {
         clearTimeout(ti);
         diagnosticCollection.clear();
         ti = setTimeout(function () {
@@ -67,14 +65,16 @@ function onDidCloseTextDocument(document: vscode.TextDocument) {
         provider.update(uri);
     }
 }
-function onRefreshView(){
-    if(currentGlslEditor())
-        provider.update(uri); 
+
+function onRefreshCanvas() {
+    if (currentGlslEditor()) {
+        provider.update(uri);
+    }
 }
 
-function onDidSaveDocument(document : vscode.TextDocument){
+function onDidSaveDocument(document: vscode.TextDocument) {
     let options = new DocumentOptions();
-    if(currentGlslEditor() && options.refreshOnSave){
+    if (currentGlslEditor() && options.refreshOnSave) {
         provider.update(uri);
     }
 }
@@ -224,7 +224,6 @@ class DocumentOptions {
     public timeout: number;
     public refreshOnChange: boolean;
     public refreshOnSave: boolean;
-
 
     constructor() {
         const document: vscode.TextDocument = currentGlslDocument();

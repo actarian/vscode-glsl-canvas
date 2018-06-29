@@ -1,8 +1,8 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode = require("vscode");
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
+const vscode = require("vscode");
 const vscode_1 = require("vscode");
 let uri = vscode_1.Uri.parse('glsl-preview://authority/glsl-preview');
 let provider;
@@ -11,7 +11,6 @@ let ti;
 function activate(context) {
     provider = new GlslDocumentContentProvider(context);
     diagnosticCollection = vscode.languages.createDiagnosticCollection('glslCanvas');
-    //
     vscode.workspace.onDidChangeTextDocument(onDidChangeTextDocument);
     vscode.workspace.onDidCloseTextDocument(onDidCloseTextDocument);
     vscode.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
@@ -22,7 +21,7 @@ function activate(context) {
     vscode.commands.registerCommand('glsl-canvas.createShader', onCreateShader);
     vscode.commands.registerCommand('glsl-canvas.revealGlslLine', onRevealLine);
     vscode.commands.registerCommand('glsl-canvas.showDiagnostic', onShowDiagnostic);
-    vscode.commands.registerCommand('glsl-canvas.refreshCanvas', onRefreshView);
+    vscode.commands.registerCommand('glsl-canvas.refreshCanvas', onRefreshCanvas);
     let command = vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
         return vscode.commands.executeCommand('vscode.previewHtml', uri, vscode_1.ViewColumn.Two, 'glslCanvas').then((success) => {
             // success
@@ -59,9 +58,10 @@ function onDidCloseTextDocument(document) {
         provider.update(uri);
     }
 }
-function onRefreshView() {
-    if (currentGlslEditor())
+function onRefreshCanvas() {
+    if (currentGlslEditor()) {
         provider.update(uri);
+    }
 }
 function onDidSaveDocument(document) {
     let options = new DocumentOptions();
