@@ -15,12 +15,14 @@ function activate(context) {
     vscode.workspace.onDidChangeTextDocument(onDidChangeTextDocument);
     vscode.workspace.onDidCloseTextDocument(onDidCloseTextDocument);
     vscode.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
+    vscode.workspace.onDidSaveTextDocument(onDidSaveDocument);
     vscode.window.onDidChangeActiveTextEditor(onDidChangeActiveTextEditor);
     // vscode.window.onDidChangeTextEditorViewColumn(onDidChangeTextEditorViewColumn);
     // vscode.workspace.onDidOpenTextDocument(onDidOpenTextDocument);
     vscode.commands.registerCommand('glsl-canvas.createShader', onCreateShader);
     vscode.commands.registerCommand('glsl-canvas.revealGlslLine', onRevealLine);
     vscode.commands.registerCommand('glsl-canvas.showDiagnostic', onShowDiagnostic);
+    vscode.commands.registerCommand('glsl-canvas.refreshView', onRefreshView);
     let command = vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
         return vscode.commands.executeCommand('vscode.previewHtml', uri, vscode_1.ViewColumn.Two, 'glslCanvas').then((success) => {
             // success
@@ -44,14 +46,26 @@ function currentGlslDocument() {
 function onDidChangeTextDocument(e) {
     // console.log('onDidChangeTextDocument', e.document.uri.path);
     let options = new DocumentOptions();
-    clearTimeout(ti);
-    diagnosticCollection.clear();
-    ti = setTimeout(function () {
-        provider.update(uri);
-    }, options.timeout);
+    if (options.refreshOnChange) {
+        clearTimeout(ti);
+        diagnosticCollection.clear();
+        ti = setTimeout(function () {
+            provider.update(uri);
+        }, options.timeout);
+    }
 }
 function onDidCloseTextDocument(document) {
     if (document.languageId === 'glsl') {
+        provider.update(uri);
+    }
+}
+function onRefreshView() {
+    if (currentGlslEditor())
+        provider.update(uri);
+}
+function onDidSaveDocument(document) {
+    let options = new DocumentOptions();
+    if (currentGlslEditor() && options.refreshOnSave) {
         provider.update(uri);
     }
 }
@@ -193,6 +207,8 @@ class DocumentOptions {
         this.uniforms = config['uniforms'] || {};
         this.timeout = config['timeout'] || 0;
         this.textures = config['textures'] || {};
+        this.refreshOnChange = config['refreshOnChange'] || false;
+        this.refreshOnSave = config['refreshOnSave'] || false;
     }
     serialize() {
         return JSON.stringify(this);
