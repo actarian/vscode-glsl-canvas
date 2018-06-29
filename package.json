@@ -40,6 +40,16 @@
                     "type": "number",
                     "default": 0,
                     "description": "Wait time in milliseconds before updating the canvas after a change in the source code. set 0 to update immediately"
+                },
+                "glsl-canvas.refreshOnSave": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enables/Disables refreshing the glslCanvas when saving the document."
+                },
+                "glsl-canvas.refreshOnChange": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enables/Disables refreshing the glslCanvas when changing the document."
                 }
             }
         },
@@ -47,6 +57,10 @@
             {
                 "command": "glsl-canvas.showGlslCanvas",
                 "title": "Show glslCanvas"
+            },
+            {
+                "command": "glsl-canvas.refreshCanvas",
+                "title": "Refresh glslCanvas"
             }
         ],
         "snippets": [

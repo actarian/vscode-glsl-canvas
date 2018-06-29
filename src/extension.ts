@@ -18,12 +18,14 @@ export function activate(context: ExtensionContext) {
     vscode.workspace.onDidChangeTextDocument(onDidChangeTextDocument);
     vscode.workspace.onDidCloseTextDocument(onDidCloseTextDocument);
     vscode.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
+    vscode.workspace.onDidSaveTextDocument(onDidSaveDocument);
     vscode.window.onDidChangeActiveTextEditor(onDidChangeActiveTextEditor);
     // vscode.window.onDidChangeTextEditorViewColumn(onDidChangeTextEditorViewColumn);
     // vscode.workspace.onDidOpenTextDocument(onDidOpenTextDocument);
     vscode.commands.registerCommand('glsl-canvas.createShader', onCreateShader);
     vscode.commands.registerCommand('glsl-canvas.revealGlslLine', onRevealLine);
     vscode.commands.registerCommand('glsl-canvas.showDiagnostic', onShowDiagnostic);
+    vscode.commands.registerCommand('glsl-canvas.refreshCanvas', onRefreshView);
 
     let command = vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
         return vscode.commands.executeCommand('vscode.previewHtml', uri, ViewColumn.Two, 'glslCanvas').then((success) => {
@@ -50,15 +52,29 @@ function currentGlslDocument(): vscode.TextDocument {
 function onDidChangeTextDocument(e: vscode.TextDocumentChangeEvent) {
     // console.log('onDidChangeTextDocument', e.document.uri.path);
     let options = new DocumentOptions();
-    clearTimeout(ti);
-    diagnosticCollection.clear();
-    ti = setTimeout(function () {
-        provider.update(uri);
-    }, options.timeout);
+    if(options.refreshOnChange)
+    {
+        clearTimeout(ti);
+        diagnosticCollection.clear();
+        ti = setTimeout(function () {
+            provider.update(uri);
+        }, options.timeout);
+    }
 }
 
 function onDidCloseTextDocument(document: vscode.TextDocument) {
     if (document.languageId === 'glsl') {
+        provider.update(uri);
+    }
+}
+function onRefreshView(){
+    if(currentGlslEditor())
+        provider.update(uri); 
+}
+
+function onDidSaveDocument(document : vscode.TextDocument){
+    let options = new DocumentOptions();
+    if(currentGlslEditor() && options.refreshOnSave){
         provider.update(uri);
     }
 }
@@ -206,6 +222,9 @@ class DocumentOptions {
     public uniforms: object;
     public textures: object;
     public timeout: number;
+    public refreshOnChange: boolean;
+    public refreshOnSave: boolean;
+
 
     constructor() {
         const document: vscode.TextDocument = currentGlslDocument();
@@ -216,6 +235,8 @@ class DocumentOptions {
         this.uniforms = config['uniforms'] || {};
         this.timeout = config['timeout'] || 0;
         this.textures = config['textures'] || {};
+        this.refreshOnChange = config['refreshOnChange'] || false;
+        this.refreshOnSave = config['refreshOnSave'] || false;
     }
 
     public serialize(): string {
