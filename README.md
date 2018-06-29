@@ -240,7 +240,7 @@ ___
 ## Release Notes
 Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHANGELOG.md).
 
-### 0.1.10
+### 0.1.91
 * Added more control/options over refreshing the glslCanvas.
 * Fixed rendering loop updating GlslCanvas.
 
