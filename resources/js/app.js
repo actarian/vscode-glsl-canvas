@@ -878,7 +878,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             capture.snapshotRender();
             camera.render(glsl);
             trails.render(glsl);
-            glsl.forceRender = true;
+            // glsl.forceRender = true;
         });
 
         function onUpdateUniforms(params) {

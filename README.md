@@ -120,6 +120,27 @@ You can set the timeout change detection option by modifying the workspace's ```
 ```
 ___
 
+## Refresh on save
+
+Enables or disables refreshing the glslCanvas when saving the document.  
+                
+```
+{
+    "glsl-canvas.refreshOnSave": true
+}
+```
+
+## Refresh on change
+
+Enables or disables refreshing the glslCanvas when changing the document.  
+
+```
+{
+    "glsl-canvas.refreshOnChange": true
+}
+```
+___
+
 ## Fragment shader
 
 An example of fragment shader. You can copy paste this code in an empty `.glsl` file:
@@ -218,6 +239,10 @@ ___
 
 ## Release Notes
 Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHANGELOG.md).
+
+### 0.1.10
+* Added more control/options over refreshing the glslCanvas.
+* Fixed rendering loop updating GlslCanvas.
 
 ### 0.1.9
 

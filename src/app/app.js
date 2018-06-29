@@ -40,7 +40,7 @@
             capture.snapshotRender();
             camera.render(glsl);
             trails.render(glsl);
-            glsl.forceRender = true;
+            // glsl.forceRender = true;
         });
 
         function onUpdateUniforms(params) {

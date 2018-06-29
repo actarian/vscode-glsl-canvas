@@ -3,6 +3,14 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
+## [0.1.10] - 2018-06-29
+### Added
+- More control/options over refreshing the glslCanvas.
+### Fixed
+- Rendering loop updating GlslCanvas.
+
+---
+
 ## [0.1.9] - 2018-06-16
 ### Added
 - Multiple buffers functionality and playground.
