@@ -44,12 +44,12 @@
                 "glsl-canvas.refreshOnSave": {
                     "type": "boolean",
                     "default": true,
-                    "description": ""
+                    "description": "Enables/Disables refreshing the glslCanvas when saving the document."
                 },
                 "glsl-canvas.refreshOnChange": {
                     "type": "boolean",
                     "default": true,
-                    "description": ""
+                    "description": "Enables/Disables refreshing the glslCanvas when changing the document."
                 }
             }
         },
