@@ -27,11 +27,14 @@ export function activate(context: ExtensionContext) {
     vscode.commands.registerCommand('glsl-canvas.refreshCanvas', onRefreshCanvas);
 
     let command = vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
-        return vscode.commands.executeCommand('vscode.previewHtml', uri, ViewColumn.Two, 'glslCanvas').then((success) => {
-            // success
-        }, (reason) => {
-            vscode.window.showErrorMessage(reason);
-        });
+        return vscode.commands.executeCommand('vscode.previewHtml', uri, ViewColumn.Two, 'glslCanvas').then(
+            (success) => {
+                // success
+            },
+            (reason) => {
+                vscode.window.showErrorMessage(reason);
+            }
+        );
     });
     let content = vscode.workspace.registerTextDocumentContentProvider('glsl-preview', provider);
     context.subscriptions.push(command, content);
@@ -112,15 +115,16 @@ function onCreateShader(uri: vscode.Uri) {
     // console.log('onCreateShader', folder);
     let newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
     let i = 1;
-    if (fs.existsSync(newFile.fsPath)) {
+    while (fs.existsSync(newFile.fsPath)) {
         newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled' + i + '.glsl'));
         i++;
     }
-    vscode.workspace.openTextDocument(newFile).then(document => {
-        // console.log('document', document);
-        const edit = new vscode.WorkspaceEdit();
-        edit.insert(newFile, new vscode.Position(0, 0),
-            `
+    vscode.workspace.openTextDocument(newFile).then(
+        document => {
+            // console.log('document', document);
+            const edit = new vscode.WorkspaceEdit();
+            edit.insert(newFile, new vscode.Position(0, 0),
+                `
 #ifdef GL_ES
     precision mediump float;
 #endif
@@ -162,15 +166,24 @@ void main() {
     gl_FragColor = vec4(color, 1.0);
 }
 `
-        );
-        return vscode.workspace.applyEdit(edit).then(success => {
-            if (success) {
-                vscode.window.showTextDocument(document, ViewColumn.Two);
-            } else {
-                vscode.window.showInformationMessage('Error!');
-            }
+            );
+            return vscode.workspace.applyEdit(edit).then(
+                success => {
+                    if (success) {
+                        setTimeout(() => {
+                            vscode.window.showTextDocument(document, ViewColumn.Two);
+                        }, 100);
+                    } else {
+                        vscode.window.showInformationMessage('Error!');
+                    }
+                },
+                error => {
+                    console.log('onCreateShader.applyEdit', error);
+                });
+        },
+        error => {
+            console.log('onCreateShader.openTextDocument', error);
         });
-    });
 }
 
 function onRevealLine(uri: vscode.Uri, line: number, message: string) {
@@ -233,7 +246,16 @@ class DocumentOptions {
         this.vertex = '';
         this.uniforms = config['uniforms'] || {};
         this.timeout = config['timeout'] || 0;
-        this.textures = config['textures'] || {};
+        this.textures = Object.assign({}, config['textures'] || {});
+        const folder = (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length) ? vscode.workspace.workspaceFolders[0].uri.toString() : null;
+        if (folder) {
+            Object.keys(this.textures).forEach(x => {
+                const texture = this.textures[x];
+                if (texture.indexOf('http') !== 0 && texture.indexOf('file') !== 0) {
+                    this.textures[x] = folder + '/' + texture;
+                }
+            });
+        }
         this.refreshOnChange = config['refreshOnChange'] || false;
         this.refreshOnSave = config['refreshOnSave'] || false;
     }
@@ -280,6 +302,7 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
                 </div>
                 <div class="errors"></div>
                 <div class="welcome"><div class="welcome-content" unselectable><p>There's no active .glsl editor</p><button class="btn-create"><span>create one</span></button></div></div>
+                <div class="missing"><div class="missing-content" unselectable><p>Oops. There was a problem with WebGL.</p></div></div>
                 <script src="file://${this.getResource('js/app.min.js')}"></script>
             </body>
         `;
@@ -289,12 +312,15 @@ class GlslDocumentContentProvider implements TextDocumentContentProvider {
 
     public update(uri: Uri) {
         let options = new DocumentOptions();
-        vscode.commands.executeCommand('_workbench.htmlPreview.postMessage', uri, options.serialize()).then((success) => {
-            // console.log('GlslDocumentContentProvider.update.success');
-        }, (reason) => {
-            // console.log('GlslDocumentContentProvider.update.error');
-            vscode.window.showErrorMessage(reason);
-        });
+        vscode.commands.executeCommand('_workbench.htmlPreview.postMessage', uri, options.serialize()).then(
+            (success) => {
+                // console.log('GlslDocumentContentProvider.update.success');
+            },
+            (reason) => {
+                // console.log('GlslDocumentContentProvider.update.error');
+                vscode.window.showErrorMessage(reason);
+            }
+        );
         // this.onChange.fire(uri);
     }
 

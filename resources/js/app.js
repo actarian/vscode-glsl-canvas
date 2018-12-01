@@ -865,6 +865,12 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             preserveDrawingBuffer: true,
             backgroundColor: 'rgba(1,1,1,1)',
         });
+
+        if (!glsl.gl) {
+            document.querySelector('.missing').setAttribute('class', 'missing active');
+            return;
+        }
+
         glsl.on('error', onGlslError);
 
         var capture = new CaptureService();

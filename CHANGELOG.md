@@ -3,6 +3,13 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
+## [0.1.92] - 2018-12-02
+### Added
+- Support for local textures.
+- Missing WebGL error message.
+
+---
+
 ## [0.1.91] - 2018-06-29
 ### Added
 - More control/options over refreshing the glslCanvas.

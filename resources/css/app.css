@@ -82,7 +82,7 @@ body {
   .errors.active {
     display: block; }
 
-.welcome {
+.welcome, .missing {
   display: none;
   position: absolute;
   top: 0;
@@ -95,12 +95,18 @@ body {
       -ms-flex-align: center;
           align-items: center;
   background: #1e1e1e; }
-  .welcome.active {
+  .welcome.active, .missing.active {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex; }
-  .welcome .welcome-content {
+  .welcome .welcome-content, .missing .welcome-content {
     text-align: center; }
+
+.welcome .welcome-content {
+  text-align: center; }
+
+.missing .missing-content {
+  text-align: center; }
 
 .btn-create {
   -webkit-appearance: none;

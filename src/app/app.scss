@@ -82,7 +82,7 @@ body {
 	}
 }
 
-.welcome {
+.welcome, .missing {
 	display: none;
 	position: absolute;
 	top: 0;
@@ -95,6 +95,18 @@ body {
 		display: flex;
 	}
 	.welcome-content {
+		text-align: center;
+	}
+}
+
+.welcome {
+	.welcome-content {
+		text-align: center;
+	}
+}
+
+.missing {
+	.missing-content {
 		text-align: center;
 	}
 }

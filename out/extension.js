@@ -99,7 +99,7 @@ function onCreateShader(uri) {
     // console.log('onCreateShader', folder);
     let newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
     let i = 1;
-    if (fs.existsSync(newFile.fsPath)) {
+    while (fs.existsSync(newFile.fsPath)) {
         newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled' + i + '.glsl'));
         i++;
     }
@@ -150,12 +150,18 @@ void main() {
 `);
         return vscode.workspace.applyEdit(edit).then(success => {
             if (success) {
-                vscode.window.showTextDocument(document, vscode_1.ViewColumn.Two);
+                setTimeout(() => {
+                    vscode.window.showTextDocument(document, vscode_1.ViewColumn.Two);
+                }, 100);
             }
             else {
                 vscode.window.showInformationMessage('Error!');
             }
+        }, error => {
+            console.log('onCreateShader.applyEdit', error);
         });
+    }, error => {
+        console.log('onCreateShader.openTextDocument', error);
     });
 }
 function onRevealLine(uri, line, message) {
@@ -206,7 +212,15 @@ class DocumentOptions {
         this.vertex = '';
         this.uniforms = config['uniforms'] || {};
         this.timeout = config['timeout'] || 0;
-        this.textures = config['textures'] || {};
+        this.textures = Object.assign({}, config['textures'] || {});
+        const folder = (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length) ? vscode.workspace.workspaceFolders[0].uri.toString() : null;
+        if (folder) {
+                const texture = this.textures[x];
+                if (texture.indexOf('http') !== 0 && texture.indexOf('file') !== 0) {
+                    this.textures[x] = folder + '/' + texture;
+                }
+            });
+        }
         this.refreshOnChange = config['refreshOnChange'] || false;
         this.refreshOnSave = config['refreshOnSave'] || false;
     }
@@ -248,6 +262,7 @@ class GlslDocumentContentProvider {
                 </div>
                 <div class="errors"></div>
                 <div class="welcome"><div class="welcome-content" unselectable><p>There's no active .glsl editor</p><button class="btn-create"><span>create one</span></button></div></div>
+                <div class="missing"><div class="missing-content" unselectable><p>Oops. There was a problem with WebGL.</p></div></div>
                 <script src="file://${this.getResource('js/app.min.js')}"></script>
             </body>
         `;

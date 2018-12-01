@@ -231,14 +231,34 @@ ___
 
 ## Contributing
 
-[Github Project Page](https://github.com/actarian/vscode-glsl-canvas)  
-[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=circledev.glsl-canvas)
+*Pull requests are welcome and please submit bugs 🐞*
 
-*Thank you for taking the time to provide feedback and review. This feedback is appreciated and very helpful.*
+*Thank you for taking the time to provide feedback and review. This feedback is appreciated and very helpful 🌈*
+
+[![GitHub forks](https://img.shields.io/github/forks/actarian/vscode-glsl-canvas.svg?style=social&label=Fork&maxAge=2592000)](https://gitHub.com/actarian/vscode-glsl-canvas/network/)  [![GitHub stars](https://img.shields.io/github/stars/actarian/vscode-glsl-canvas.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/actarian/vscode-glsl-canvas/stargazers/)  [![GitHub followers](https://img.shields.io/github/followers/actarian.svg?style=social&label=Follow&maxAge=2592000)](https://github.com/actarian?tab=followers)
+
+* [Github Project Page](https://github.com/actarian/vscode-glsl-canvas)  
+* [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=circledev.glsl-canvas)
+
+*If you find it helpful, feel free to contribute in keeping this extension up to date via [PayPal](https://www.paypal.me/circledev/5)*
+
+[![PayPal](https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png)](https://www.paypal.me/circledev/5)
+___
+
+## Contact
+
+* Luca Zampetti <lzampetti@gmail.com>
+* Follow [@actarian](https://twitter.com/actarian) on Twitter
+
+[![Twitter Follow](https://img.shields.io/twitter/follow/actarian.svg?style=social&label=Follow%20@actarian)](https://twitter.com/actarian)
 ___
 
 ## Release Notes
 Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHANGELOG.md).
+
+### 0.1.92
+* Added support for local textures.
+* Added missing WebGL message.
 
 ### 0.1.91
 * Added more control/options over refreshing the glslCanvas.
