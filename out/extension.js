@@ -215,6 +215,7 @@ class DocumentOptions {
         this.textures = Object.assign({}, config['textures'] || {});
         const folder = (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length) ? vscode.workspace.workspaceFolders[0].uri.toString() : null;
         if (folder) {
+            Object.keys(this.textures).forEach(x => {
                 const texture = this.textures[x];
                 if (texture.indexOf('http') !== 0 && texture.indexOf('file') !== 0) {
                     this.textures[x] = folder + '/' + texture;
