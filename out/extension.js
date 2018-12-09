@@ -36,7 +36,7 @@ function activate(context) {
 exports.activate = activate;
 function currentGlslEditor() {
     const editor = vscode.window.activeTextEditor;
-	return editor && (editor.document.languageId === 'glsl' || editor.document.languageId === 'cpp' || editor.document.languageId === 'c') ? editor : null; // || editor.document.languageId === 'plaintext'
+	return editor && (String(editor.document.fileName).split('.').pop() === "glsl") ? editor : null; // || editor.document.languageId === 'plaintext'
 }
 function currentGlslDocument() {
     const editor = currentGlslEditor();
