@@ -3,7 +3,13 @@ $boolean: #45c4b0;
 $function: #dccd7d;
 $number: #569cd6;
 $string: #c3886f;
-$input: $background;
+
+/*
+var(--vscode-editor-background)
+var(--vscode-editor-foreground)    
+var(--vscode-editor-lineHighlightBorder)
+var(--vscode-editor-lineHighlightBackground)
+*/
 .dg {
     &.ac {
         height: auto;
@@ -18,13 +24,13 @@ $input: $background;
     &.main {
         &.taller-than-window {
             .close-button {
-                border-top-color: $background;
+                border-top-color: var(--vscode-editor-background);
             }
         }
         .close-button {
-            background-color: $background;
+            background-color: var(--vscode-editor-background);
             &:hover {
-                background-color: lighten($background, 5%);
+                background-color: var(--vscode-editor-lineHighlightBorder);
             }
         }
     }
@@ -44,7 +50,7 @@ $input: $background;
         }
     }
     &.dialogue {
-        background-color: $background;
+        background-color: var(--vscode-editor-background);
         width: 460px;
         padding: 15px;
         font-size: 13px;
@@ -58,16 +64,17 @@ $input: $background;
     text-shadow: none;
     &.main {
         &::-webkit-scrollbar {
-            background: $background;
+            background: var(--vscode-editor-background);
         }
         &::-webkit-scrollbar-thumb {
-            background: lighten($background, 30%);
+            background: var(--vscode-editor-lineHighlightBorder);
         }
     }
     li {
         &:not(.folder) {
-            background: $background;
-            border-bottom-color: rgba(255, 255, 255, 0.2);
+            background: var(--vscode-editor-background);
+            // border-bottom-color: rgba(255, 255, 255, 0.2);
+            border-bottom-color: var(--vscode-editorIndentGuide-background);
         }
         &.save-row {
             background: $value;
@@ -80,7 +87,8 @@ $input: $background;
         }
         &.title {
             background: #000 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;
-            border-bottom-color: rgba(255, 255, 255, 0.2);
+            // border-bottom-color: rgba(255, 255, 255, 0.2);
+            border-bottom-color: var(--vscode-editorIndentGuide-background);
         }
     }
     .closed li.title {
@@ -88,19 +96,19 @@ $input: $background;
     }
     .c {
         input[type=text] {
-            background: $input;
+            background: var(--vscode-editor-background);
             &:hover {
-                background: lighten($input, 5%);
+                background: var(--vscode-editor-lineHighlightBorder);
             }
             &:focus {
-                background: lighten($input, 10%);
+                background: var(--vscode-editorLineNumber-foreground);
                 color: $text;
             }
         }
         .slider {
-            background: $input;
+            background: var(--vscode-editor-background);
             &:hover {
-                background: lighten($input, 5%);
+                background: var(--vscode-editor-lineHighlightBorder);
             }
         }
     }
@@ -165,7 +173,7 @@ $input: $background;
         }
         &.function:hover,
         &.boolean:hover {
-            background: $background;
+            background: var(--vscode-editor-background);
         }
     }
 }

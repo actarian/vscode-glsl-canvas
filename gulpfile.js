@@ -82,37 +82,6 @@ gulp.task('bundle:js', function () {
 	});
 	return merge(tasks);
 });
-gulp.task('bundle:partials', function () {
-	return gulp.src('./artisan/**/*.html', {
-		base: './artisan/'
-	})
-		.pipe(plumber())
-		.pipe(rename(function (path) {
-			path.dirname = path.dirname.split('\\').join('/');
-			path.dirname = path.dirname.split('artisan/').join('');
-			// path.basename += "-partial";
-			path.extname = '';
-			// console.log('path', path);
-		}))
-		.pipe(html2js('artisan-partials.js', {
-			adapter: 'angular',
-			// base: '.',
-			name: 'artisan',
-			fileHeaderString: '/* global angular: false */',
-			quoteChar: '\'',
-			indentString: '\t\t',
-			singleModule: true,
-			useStrict: true,
-		}))
-		.pipe(gulp.dest('./docs/js/')) // save .js
-		.pipe(sourcemaps.init())
-		.pipe(uglify()) // { preserveComments: 'license' }
-		.pipe(rename({
-			extname: '.min.js'
-		}))
-		.pipe(sourcemaps.write('./')) // save .map
-		.pipe(gulp.dest('./docs/js/')); // save .min.js
-});
 gulp.task('bundle:snippets', function () {
 	return gulp.src('./src/snippets/**/*.glsl', {
 		base: './src/snippets/'
@@ -153,7 +122,7 @@ gulp.task('bundle:snippets', function () {
 		}))
 		.pipe(gulp.dest('./snippets/')); // save .json
 });
-gulp.task('bundle', ['bundle:css', 'bundle:js', 'bundle:partials', 'bundle:snippets']);
+gulp.task('bundle', ['bundle:css', 'bundle:js', 'bundle:snippets']);
 
 // WEBSERVER
 gulp.task('webserver', function () {
@@ -192,7 +161,6 @@ gulp.task('watch', function (done) {
 			}), bundle);
 		}).on('change', log);
 	});
-	gulp.watch('./partials/**/*.html', ['bundle:partials']).on('change', log);
 	gulp.watch('./src/snippets/**/*.glsl', ['bundle:snippets']).on('change', log);
 	gulp.watch('./compilerconfig.json', ['compile', 'bundle']).on('change', log);
 	gulp.watch('./bundleconfig.json', ['bundle']).on('change', log);

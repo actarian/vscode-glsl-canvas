@@ -1,0 +1,11 @@
+{
+	"indent_with_tabs": true,
+	"max_preserve_newlines": 2,
+	"preserve_newlines": true,
+	"keep_array_indentation": true,
+	"break_chained_methods": false,
+	"wrap_line_length": 0,
+	"end_with_newline": true,
+	"brace_style": "collapse,preserve-inline",
+	"unformatted": []
+}

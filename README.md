@@ -7,11 +7,21 @@
 
 The extension opens a live WebGL preview of GLSL shaders within VSCode by providing a ```Show glslCanvas``` command.
 
-It use [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) a javaScript library from [Book of Shaders](http://thebookofshaders.com) and [glslEditor](http://editor.thebookofshaders.com) made by [Patricio Gonzalez Vivo](http://patriciogonzalezvivo.com).
+It use [glsl-canvas](https://github.com/actarian/glsl-canvas) a modified and improved version of [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) javascript library from [Book of Shaders](http://thebookofshaders.com) and [glslEditor](http://editor.thebookofshaders.com) made by [Patricio Gonzalez Vivo](http://patriciogonzalezvivo.com).
 
-*Run the command to display a fullscreen preview of your fragment shader.*
+*Run ⌘ ⇧ P on mac os, ctrl ⇧ P on windows.*  
+*Then type ```Show glslCanvas``` command to display a fullscreen preview of your fragment shader.*  
 
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview-half.gif)
+
+___
+
+## Color Picker
+
+Waiting for a more customizable code inset feature, ```vec3``` and ```vec4``` arrays can be modified with the integrated color picker.  
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/color-picker.gif)
+
 ___
 
 ## <a name="uniforms"></a>Uniforms
@@ -255,6 +265,14 @@ ___
 
 ## Release Notes
 Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHANGELOG.md).
+
+---
+
+### 0.2.0
+* Added editor color picker.
+* Added [glsl-canvas](https://github.com/actarian/glsl-canvas) refactor.
+* Fixed custom uniforms values.
+* Fixed layout reordering issue.
 
 ### 0.1.92
 * Added support for local textures.

@@ -77,24 +77,6 @@
   "description": "Easing Back Out equation "
 },
 
-	"ease.bounce.in":{
-  "prefix": "glsl.ease.bounce.in",
-  "body": "/* Easing Bounce In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}",
-  "description": "Easing Bounce In equation "
-},
-
-	"ease.bounce.inOut":{
-  "prefix": "glsl.ease.bounce.inOut",
-  "body": "/* Easing Bounce InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}\nfloat easeBounceInOut(float t) {\n    if (t < 0.5) return easeBounceIn(t * 2.0) * 0.5;\n    else return easeBounceOut(t * 2.0 - 1.0) * 0.5 + 0.5;\n}",
-  "description": "Easing Bounce InOut equation "
-},
-
-	"ease.bounce.out":{
-  "prefix": "glsl.ease.bounce.out",
-  "body": "/* Easing Bounce Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}",
-  "description": "Easing Bounce Out equation "
-},
-
 	"ease.circular.in":{
   "prefix": "glsl.ease.circular.in",
   "body": "/* Easing Circular In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeCircularIn(float t) {\n    return -1.0 * (sqrt(1.0 - t * t) - 1.0);\n}",
@@ -111,6 +93,24 @@
   "prefix": "glsl.ease.circular.out",
   "body": "/* Easing Circular Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeCircularOut(float t) {\n    return sqrt(1.0 - (t = t - 1.0) * t);\n}",
   "description": "Easing Circular Out equation "
+},
+
+	"ease.bounce.in":{
+  "prefix": "glsl.ease.bounce.in",
+  "body": "/* Easing Bounce In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}",
+  "description": "Easing Bounce In equation "
+},
+
+	"ease.bounce.inOut":{
+  "prefix": "glsl.ease.bounce.inOut",
+  "body": "/* Easing Bounce InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}\nfloat easeBounceInOut(float t) {\n    if (t < 0.5) return easeBounceIn(t * 2.0) * 0.5;\n    else return easeBounceOut(t * 2.0 - 1.0) * 0.5 + 0.5;\n}",
+  "description": "Easing Bounce InOut equation "
+},
+
+	"ease.bounce.out":{
+  "prefix": "glsl.ease.bounce.out",
+  "body": "/* Easing Bounce Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}",
+  "description": "Easing Bounce Out equation "
 },
 
 	"ease.cubic.in":{
@@ -239,18 +239,6 @@
   "description": "Easing Sine Out equation "
 },
 
-	"math.2d.transform":{
-  "prefix": "glsl.math.2d.transform",
-  "body": "/* Math 2D Transformations */\nmat2 rotate2d(in float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}",
-  "description": "Math 2D Transformations "
-},
-
-	"math.3d.transform":{
-  "prefix": "glsl.math.3d.transform",
-  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\n\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\n\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
-  "description": "Math 3D Transformations "
-},
-
 	"shapes.2d.arc":{
   "prefix": "glsl.shapes.2d.arc",
   "body": "/* Shape 2D arc */\nfloat sArc(in vec2 p, in float w, in float s, in float e) {    \n    float a = distance(p, w * 0.5 * vec2(cos(s), sin(s)));\n    float x = -PI;\n    p *= mat2(cos(x - s), -sin(x - s), sin(x - s), cos(x - s));\n    float b = clamp(atan(p.y, p.x), x, x + e);\n    b = distance(p, w * 0.5 * vec2(cos(b), sin(b)));\n    return min(a, b) * 2.0;\n}\nfloat arc(in vec2 p, in float w, in float s, in float e, in float t) {\n    float d = sArc(p, w, s, e);\n    return stroke(d, t);\n}",
@@ -327,6 +315,18 @@
   "prefix": "glsl.shapes.2d.star",
   "body": "/* Shape 2D star */\nfloat sStar(in vec2 p, in float w, in int sides) {    \n    float r = 0.5; float s = max(5.0, float(sides)); float m = 0.5 / s; float x = PI_TWO / s * (2.0 - mod(s, 2.0)); \n    float segment = (atan(p.y, p.x) - x) / TWO_PI * s;    \n    float a = ((floor(segment) + r) / s + mix(m, -m, step(r, fract(segment)))) * TWO_PI;\n    float d = abs(dot(vec2(cos(a + x), sin(a + x)), p)) + m;\n    return (d - rx) * 2.0 - w;\n}\nfloat star(in vec2 p, in float w, in int sides) {\n    float d = sStar(p, w, sides);\n    return fill(d);\n}\nfloat star(in vec2 p, in float w, in int sides, float t) {    \n    float d = sStar(p, w, sides);\n    return stroke(d, t);\n}",
   "description": "Shape 2D star "
+},
+
+	"math.2d.transform":{
+  "prefix": "glsl.math.2d.transform",
+  "body": "/* Math 2D Transformations */\nmat2 rotate2d(in float angle){\n    return mat2(cos(angle),-sin(angle), sin(angle), cos(angle));\n}",
+  "description": "Math 2D Transformations "
+},
+
+	"math.3d.transform":{
+  "prefix": "glsl.math.3d.transform",
+  "body": "/* Math 3D Transformations */\n\nconst mat4 projection = mat4(\n\tvec4(3.0 / 4.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 0.5, 0.5),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 scale = mat4(\n\tvec4(4.0 / 3.0, 0.0, 0.0, 0.0),\n\tvec4(     0.0, 1.0, 0.0, 0.0),\n\tvec4(     0.0, 0.0, 1.0, 0.0),\n\tvec4(     0.0, 0.0, 0.0, 1.0)\n);\n\nmat4 rotation = mat4(\n\tvec4(1.0,          0.0,         0.0, \t0.0),\n\tvec4(0.0,  cos(u_time), sin(u_time),  \t0.0),\n\tvec4(0.0, -sin(u_time), cos(u_time),  \t0.0),\n\tvec4(0.0,          0.0,         0.0, \t1.0)\n);\n\nmat4 rotationAxis(float angle, vec3 axis) {\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}\n\nvec3 rotateX(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(1.0, 0.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY_(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 1.0, 0.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateZ(vec3 p, float angle) {\n\tmat4 rmy = rotationAxis(angle, vec3(0.0, 0.0, 1.0));\n\treturn (vec4(p, 1.0) * rmy).xyz;\n}\n\nvec3 rotateY(vec3 p, float angle) {\n    float c = cos(angle);\n    float s = sin(angle);\n    mat4 r = mat4(\n        vec4(c, 0, s, 0),\n        vec4(0, 1, 0, 0),\n        vec4(-s, 0, c, 0),\n        vec4(0, 0, 0, 1)\n    );\n\treturn (vec4(p, 1.0) * r).xyz;\n}",
+  "description": "Math 3D Transformations "
 }
 
 }

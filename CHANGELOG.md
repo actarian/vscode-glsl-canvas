@@ -3,6 +3,16 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
+## [0.2.0] - 2019-01-27
+### Added
+- Editor color picker.
+- `glsl-canvas` refactor.
+### Fixed
+- Custom uniforms values.
+- Layout reordering issue.
+
+---
+
 ## [0.1.92] - 2018-12-02
 ### Added
 - Support for local textures.

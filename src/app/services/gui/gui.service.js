@@ -186,7 +186,6 @@
         }
 
         function randomize(obj, params, callback) {
-
             function _randomize(obj, params) {
                 obj.__controllers.filter(function (c) {
                     if (typeof c.initialValue === 'number' && typeof c.__min === 'number' && typeof c.__max === 'number') {
@@ -239,6 +238,9 @@
                     randomize(gui, pool, _callback);
                 };
                 gui.add(pool, 'randomize');
+            } else {
+                // console.log('service.callback', service.pool);
+                service.callback(service.pool);
             }
         }
 
