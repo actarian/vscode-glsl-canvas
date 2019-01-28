@@ -1,0 +1,69 @@
+﻿{
+	"targets": {
+		"browser": {
+			"compile": [{
+				"input": "src/app/app.scss",
+				"output": "resources/css/app.css",
+				"minify": true
+			}, {
+				"input": "src/docs/docs.scss",
+				"output": "docs/css/docs.css",
+				"minify": true
+			}],
+			"bundle": [{
+				"input": [
+					"node_modules/stats.js/build/stats.min.js",
+					"node_modules/dat.gui/build/dat.gui.min.js",
+					"node_modules/glsl-canvas-js/dist/glsl-canvas.min.js"
+				],
+				"output": "resources/js/vendors.js",
+				"minify": true
+			}, {
+				"input": [
+					"node_modules/dat.gui/build/dat.gui.css"
+				],
+				"output": "resources/css/vendors.css",
+				"minify": true
+			}, {
+				"input": [
+					"src/app/services/vector/vector.js",
+					"src/app/services/camera/camera.service.js",
+					"src/app/services/capture/capture.service.js",
+					"src/app/services/gui/gui.service.js",
+					"src/app/services/trails/trails.service.js",
+					"src/app/app.js"
+				],
+				"output": "resources/js/app.js",
+				"minify": true
+			}, {
+				"input": [
+					"bower_components/glslEditor/build/glslEditor.css"
+				],
+				"output": "docs/css/vendors.css",
+				"minify": true
+			}, {
+				"input": [
+					"bower_components/glslEditor/build/glslEditor.js"
+				],
+				"output": "docs/js/vendors.js",
+				"minify": true
+			}, {
+				"input": [
+					"src/app/services/vector/vector.js",
+					"src/app/services/camera/camera.service.js",
+					"src/app/services/trails/trails.service.js",
+					"src/docs/docs.js"
+				],
+				"output": "docs/js/docs.js",
+				"minify": true
+			}]
+		}
+	},
+	"options": {
+		"tfs": false,
+		"server": {
+			"src": "./docs",
+			"port": 5555
+		}
+	}
+}

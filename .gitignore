@@ -61,6 +61,7 @@ _README.md
 # *.vsix
 *.psd
 snippets/glsl-example.json
+gulp3/
 
 .DS_Store
 src/preview.jpg
