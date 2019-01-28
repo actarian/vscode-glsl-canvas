@@ -268,7 +268,7 @@ Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHAN
 
 ---
 
-### 0.2.1
+### 0.2.2
 * Fixed initialization error.
 
 ### 0.2.0

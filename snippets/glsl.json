@@ -167,24 +167,6 @@
   "description": "Easing Quad Out equation "
 },
 
-	"ease.bounce.in":{
-  "prefix": "glsl.ease.bounce.in",
-  "body": "/* Easing Bounce In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}",
-  "description": "Easing Bounce In equation "
-},
-
-	"ease.bounce.inOut":{
-  "prefix": "glsl.ease.bounce.inOut",
-  "body": "/* Easing Bounce InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}\nfloat easeBounceInOut(float t) {\n    if (t < 0.5) return easeBounceIn(t * 2.0) * 0.5;\n    else return easeBounceOut(t * 2.0 - 1.0) * 0.5 + 0.5;\n}",
-  "description": "Easing Bounce InOut equation "
-},
-
-	"ease.bounce.out":{
-  "prefix": "glsl.ease.bounce.out",
-  "body": "/* Easing Bounce Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}",
-  "description": "Easing Bounce Out equation "
-},
-
 	"ease.quart.in":{
   "prefix": "glsl.ease.quart.in",
   "body": "/* Easing Quart In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeQuartIn(float t) {\n    return t * t * t * t;\n}",
@@ -327,6 +309,24 @@
   "prefix": "glsl.shapes.2d.star",
   "body": "/* Shape 2D star */\nfloat sStar(in vec2 p, in float w, in int sides) {    \n    float r = 0.5; float s = max(5.0, float(sides)); float m = 0.5 / s; float x = PI_TWO / s * (2.0 - mod(s, 2.0)); \n    float segment = (atan(p.y, p.x) - x) / TWO_PI * s;    \n    float a = ((floor(segment) + r) / s + mix(m, -m, step(r, fract(segment)))) * TWO_PI;\n    float d = abs(dot(vec2(cos(a + x), sin(a + x)), p)) + m;\n    return (d - rx) * 2.0 - w;\n}\nfloat star(in vec2 p, in float w, in int sides) {\n    float d = sStar(p, w, sides);\n    return fill(d);\n}\nfloat star(in vec2 p, in float w, in int sides, float t) {    \n    float d = sStar(p, w, sides);\n    return stroke(d, t);\n}",
   "description": "Shape 2D star "
+},
+
+	"ease.bounce.in":{
+  "prefix": "glsl.ease.bounce.in",
+  "body": "/* Easing Bounce In equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}",
+  "description": "Easing Bounce In equation "
+},
+
+	"ease.bounce.inOut":{
+  "prefix": "glsl.ease.bounce.inOut",
+  "body": "/* Easing Bounce InOut equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}\nfloat easeBounceIn(float t) {\n    return 1.0 - easeBounceOut(1.0 - t);\n}\nfloat easeBounceInOut(float t) {\n    if (t < 0.5) return easeBounceIn(t * 2.0) * 0.5;\n    else return easeBounceOut(t * 2.0 - 1.0) * 0.5 + 0.5;\n}",
+  "description": "Easing Bounce InOut equation "
+},
+
+	"ease.bounce.out":{
+  "prefix": "glsl.ease.bounce.out",
+  "body": "/* Easing Bounce Out equation */\n/* Adapted from Robert Penner easing equations */\nfloat easeBounceOut(float t) {\n    if (t < (1.0 / 2.75)) {\n        return (7.5625 * t * t);\n    } else if (t < (2.0 / 2.75)) {\n        return (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75);\n    } else if (t < (2.5 / 2.75)) {\n        return (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375);\n    } else {\n        return (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375);\n    }\n}",
+  "description": "Easing Bounce Out equation "
 }
 
 }

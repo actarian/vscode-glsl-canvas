@@ -2,7 +2,7 @@
 	"name": "glsl-canvas",
 	"displayName": "glsl-canvas",
 	"description": "Live WebGL preview of GLSL shaders",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"author": "Luca Zampetti <lzampetti@gmail.com>",
 	"publisher": "circledev",
 	"license": "MIT",
@@ -28,10 +28,6 @@
 			"properties": {
 				"glsl-canvas.textures": {
 					"type": "object",
-					"default": {
-						"0": "",
-						"1": ""
-					},
 					"description": "The texture channels (u_texture_0, u_texture_1, ...) using http:// or file:// protocol."
 				},
 				"glsl-canvas.uniforms": {

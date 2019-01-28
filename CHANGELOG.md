@@ -3,7 +3,7 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
-## [0.2.1] - 2019-01-28
+## [0.2.2] - 2019-01-28
 ### Fixed
 - Inizialization error.
 

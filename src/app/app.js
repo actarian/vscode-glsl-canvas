@@ -1,6 +1,6 @@
 /* global window, document, console, acquireVsCodeApi, GlslCanvas, CaptureService, GuiService, TrailsService, CameraService, Stats, dat */
 
-(function () {
+(function() {
 	'use strict';
 
 	var vscode = acquireVsCodeApi();
@@ -50,7 +50,7 @@
 
 		var trails = new TrailsService();
 
-		glsl.on('render', function () {
+		glsl.on('render', function() {
 			if (flags.stats) {
 				stats.end();
 			}
@@ -85,6 +85,7 @@
 				document.querySelector('body').setAttribute('class', 'empty');
 				removeStats();
 			}
+			console.log('load', o.textures);
 			for (var t in o.textures) {
 				// console.log(t, o.textures[t]);
 				// glsl.setUniform('u_texture_' + t, o.textures[t]);
@@ -103,14 +104,14 @@
 			var h = content.offsetHeight;
 			canvas.style.width = w + 'px';
 			canvas.style.height = h + 'px';
-            /*
-            if (init) {
-                canvas.width = w;
-                canvas.height = h;
-            } else {
-                glsl.resize();
-            }
-            */
+			/*
+			if (init) {
+			    canvas.width = w;
+			    canvas.height = h;
+			} else {
+			    glsl.resize();
+			}
+			*/
 		}
 
 		function snapshot() {
@@ -128,7 +129,7 @@
 		}
 
 		function stop() {
-			capture.stop().then(function (video) {
+			capture.stop().then(function(video) {
 				// console.log('capture.stop');
 				// var filename = options.uri.path.split('/').pop().replace('.glsl', '');
 				// console.log('filename', filename);
@@ -137,7 +138,7 @@
 				link.href = url;
 				link.download = 'shader' + video.extension;
 				link.click();
-				setTimeout(function () {
+				setTimeout(function() {
 					window.URL.revokeObjectURL(output);
 				}, 100);
 			});
@@ -148,20 +149,20 @@
 			// console.log('pause', flags.pause);
 			if (glsl.timer.paused) {
 				flags.pause = false;
-                /*
-                if (glsl.timePause) {
-                    glsl.timePrev = new Date();
-                    glsl.timeLoad += (glsl.timePrev - glsl.timePause);
-                }
-                */
+				/*
+				if (glsl.timePause) {
+				    glsl.timePrev = new Date();
+				    glsl.timeLoad += (glsl.timePrev - glsl.timePause);
+				}
+				*/
 				glsl.play();
 				buttons.pause.querySelector('i').setAttribute('class', 'icon-pause');
 			} else {
 				flags.pause = true;
 				glsl.pause();
-                /*
-                glsl.timePause = new Date();
-                */
+				/*
+				glsl.timePause = new Date();
+				*/
 				buttons.pause.querySelector('i').setAttribute('class', 'icon-play');
 			}
 		}
@@ -250,7 +251,7 @@
 			if (ui) {
 				clearTimeout(ui);
 			}
-			ui = setTimeout(function () {
+			ui = setTimeout(function() {
 				onUpdateUniforms();
 			}, 1000 / 25);
 		}
@@ -303,13 +304,13 @@
 		var errors = [],
 			warnings = [],
 			lines = [];
-		message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function (m, l, v, t) {
+		message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function(m, l, v, t) {
 			var li = '<li><span class="error" unselectable reveal-line="' + lines.length + '"><span class="line">ERROR line ' + Number(l) + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
 			errors.push(li);
 			lines.push([options.uri, Number(l), 'ERROR (' + v + ') ' + t]);
 			return li;
 		});
-		message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function (m, l, v, t) {
+		message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function(m, l, v, t) {
 			var li = '<li><span class="warning" unselectable reveal-line="' + lines.length + '"><span class="line">WARN line ' + Number(l) + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
 			warnings.push(li);
 			lines.push([options.uri, Number(l), 'ERROR (' + v + ') ' + t]);
@@ -321,9 +322,9 @@
 		output += '</ul></div>';
 		document.querySelector('.errors').setAttribute('class', 'errors active');
 		document.querySelector('.errors').innerHTML = output;
-		[].slice.call(document.querySelectorAll('.errors [reveal-line]')).forEach(function (node) {
+		[].slice.call(document.querySelectorAll('.errors [reveal-line]')).forEach(function(node) {
 			var index = parseInt(node.getAttribute('reveal-line'));
-			node.addEventListener('click', function () {
+			node.addEventListener('click', function() {
 				revealGlslLine(lines[index]);
 			});
 		});
