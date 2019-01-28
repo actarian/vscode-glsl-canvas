@@ -21,14 +21,14 @@ var fs = require('fs'),
 	webserver = require('gulp-webserver');
 
 // COMPILE
-gulp.task('compile:sass', function () {
-	var tasks = getCompilers('.scss').map(function (compile) {
+gulp.task('compile:sass', function() {
+	var tasks = getCompilers('.scss').map(function(compile) {
 		console.log(compile.inputFile);
 		return gulp.src(compile.inputFile, {
-			base: '.'
-		})
+				base: '.'
+			})
 			.pipe(plumber())
-			.pipe(sass().on('compile:sass.error', function (error) {
+			.pipe(sass().on('compile:sass.error', function(error) {
 				console.log('compile:sass.error', error);
 			}))
 			.pipe(autoprefixer()) // autoprefixer
@@ -52,8 +52,8 @@ function doCssBundle(glob, bundle) {
 		}))
 		.pipe(gulp.dest('.'));
 }
-gulp.task('bundle:css', function () {
-	var tasks = getBundles('.css').map(function (bundle) {
+gulp.task('bundle:css', function() {
+	var tasks = getBundles('.css').map(function(bundle) {
 		return doCssBundle(gulp.src(bundle.inputFiles, {
 			base: '.'
 		}), bundle);
@@ -74,26 +74,26 @@ function doJsBundle(glob, bundle) {
 		.pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('.'));
 }
-gulp.task('bundle:js', function () {
-	var tasks = getBundles('.js').map(function (bundle) {
+gulp.task('bundle:js', function() {
+	var tasks = getBundles('.js').map(function(bundle) {
 		return doJsBundle(gulp.src(bundle.inputFiles, {
 			base: '.'
 		}), bundle);
 	});
 	return merge(tasks);
 });
-gulp.task('bundle:snippets', function () {
+gulp.task('bundle:snippets', function() {
 	return gulp.src('./src/snippets/**/*.glsl', {
-		base: './src/snippets/'
-	})
+			base: './src/snippets/'
+		})
 		.pipe(plumber())
-		.pipe(rename(function (path) {
+		.pipe(rename(function(path) {
 			path.dirname = path.dirname.split('\\').join('/');
 			path.dirname = path.dirname.split('src/snippets/').join('');
 			path.extname = '';
 		}))
 		.pipe(concatutil('glsl.json', {
-			process: function (source, filePath) {
+			process: function(source, filePath) {
 				// console.log('filePath', filePath);
 				var folders = filePath.replace('src/snippets/', '').split(path.sep);
 				// console.log('folders', folders);
@@ -115,7 +115,7 @@ gulp.task('bundle:snippets', function () {
 			}
 		}))
 		.pipe(concatutil('glsl.json', {
-			process: function (source, filePath) {
+			process: function(source, filePath) {
 				source = source.replace(new RegExp(',\n' + '$'), '\n');
 				return "{\n" + source + "\n}";
 			}
@@ -125,10 +125,10 @@ gulp.task('bundle:snippets', function () {
 gulp.task('bundle', ['bundle:css', 'bundle:js', 'bundle:snippets']);
 
 // WEBSERVER
-gulp.task('webserver', function () {
+gulp.task('webserver', function() {
 	return gulp.src('./docs/')
 		.pipe(webserver({
-			port: 6001,
+			port: 6002,
 			fallback: 'index.html',
 			open: true,
 			livereload: false,
@@ -137,7 +137,7 @@ gulp.task('webserver', function () {
 });
 
 // WATCH
-gulp.task('watch', function (done) {
+gulp.task('watch', function(done) {
 	function log(e) {
 		console.log(e.type, e.path);
 	}
@@ -147,15 +147,15 @@ gulp.task('watch', function (done) {
 	    gulp.watch(compiler.inputFile, ['compile:sass']).on('change', log);
 	});
 	*/
-	getBundles('.css').forEach(function (bundle) {
-		gulp.watch(bundle.inputFiles, function () {
+	getBundles('.css').forEach(function(bundle) {
+		gulp.watch(bundle.inputFiles, function() {
 			return doCssBundle(gulp.src(bundle.inputFiles, {
 				base: '.'
 			}), bundle);
 		}).on('change', log);
 	});
-	getBundles('.js').forEach(function (bundle) {
-		gulp.watch(bundle.inputFiles, function () {
+	getBundles('.js').forEach(function(bundle) {
+		gulp.watch(bundle.inputFiles, function() {
 			return doJsBundle(gulp.src(bundle.inputFiles, {
 				base: '.'
 			}), bundle);
@@ -174,14 +174,14 @@ gulp.task('start', ['compile', 'bundle', 'watch']);
 // UTILS
 function getCompilers(ext) {
 	var data = getJson('./compilerconfig.json');
-	return data.filter(function (compile) {
+	return data.filter(function(compile) {
 		return new RegExp(`${ext}$`).test(compile.inputFile);
 	});
 }
 
 function getBundles(ext) {
 	var data = getJson('./bundleconfig.json');
-	return data.filter(function (bundle) {
+	return data.filter(function(bundle) {
 		return new RegExp(`${ext}$`).test(bundle.outputFileName);
 	});
 }

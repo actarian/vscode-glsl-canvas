@@ -42,8 +42,9 @@ class GlslPanel {
             GlslPanel.current.panel.reveal(viewColumn, true);
             return GlslPanel.current;
         }
-        const localResourceRoots = [vscode.Uri.file(path.join(extensionPath, 'resources'))];
-        if (vscode.workspace) {
+        const localResourceRoots = [];
+        localResourceRoots.push(vscode.Uri.file(path.join(extensionPath, 'resources')));
+        if (vscode.workspace && vscode.workspace.rootPath) {
             localResourceRoots.push(vscode.Uri.file(vscode.workspace.rootPath));
         }
         const panel = vscode.window.createWebviewPanel(GlslPanel.viewType, 'GlslCanvas', {
@@ -114,15 +115,15 @@ class GlslPanel {
         const config = vscode.workspace.getConfiguration('editor');
         const options = new options_1.default();
         // console.log('getPanelWebviewHtml', config, options);
-        const content = `        
+        const content = `
             <head>
                 <link href="${this.getResource('fonts/styles.css')}" rel="stylesheet">
                 <!-- <link href="${this.getResource('css/vendors.min.css')}" rel="stylesheet"> -->
                 <style>
                     html, body { font-family: ${config.fontFamily}; font-weight: ${config.fontWeight}; font-size: ${config.fontSize}; };
                 </style>
-                <script nonce="${this.getNonce()}" src="${this.getResource('js/vendors.min.js')}"></script>         
-                <link href="${this.getResource('css/app.min.css')}" rel="stylesheet"/>          
+                <script nonce="${this.getNonce()}" src="${this.getResource('js/vendors.min.js')}"></script>
+                <link href="${this.getResource('css/app.min.css')}" rel="stylesheet"/>
             </head>
             <script>
                 var options = ${options.serialize()};

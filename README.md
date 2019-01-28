@@ -268,6 +268,9 @@ Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHAN
 
 ---
 
+### 0.2.1
+* Fixed initialization error.
+
 ### 0.2.0
 * Added editor color picker.
 * Added [glsl-canvas](https://github.com/actarian/glsl-canvas) refactor.

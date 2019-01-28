@@ -125,8 +125,8 @@ vec2 coord(in vec2 p) {
 
 void main() {
     vec3 color = vec3(
-        abs(cos(st.x + mx.x)), 
-        abs(sin(st.y + mx.y)), 
+        abs(cos(st.x + mx.x)),
+        abs(sin(st.y + mx.y)),
         abs(sin(u_time))
     );
     gl_FragColor = vec4(color, 1.0);

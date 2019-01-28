@@ -1,150 +1,150 @@
 {
-  "name": "glsl-canvas",
-  "displayName": "glsl-canvas",
-  "description": "Live WebGL preview of GLSL shaders",
-  "version": "0.2.0",
-  "author": "Luca Zampetti <lzampetti@gmail.com>",
-  "publisher": "circledev",
-  "license": "MIT",
-  "engines": {
-    "vscode": "^1.30.0"
-  },
-  "categories": [
-    "Snippets",
-    "Other"
-  ],
-  "activationEvents": [
-    "onCommand:glsl-canvas.showGlslCanvas",
-    "onWebviewPanel:glslCanvas",
-    "onLanguage:glsl"
-  ],
-  "main": "./out/extension",
-  "bugs": {
-    "url": "https://github.com/actarian/vscode-glsl-canvas/issues"
-  },
-  "homepage": "https://github.com/actarian/vscode-glsl-canvas/blob/master/README.md",
-  "contributes": {
-    "configuration": {
-      "properties": {
-        "glsl-canvas.textures": {
-          "type": "object",
-          "default": {
-            "0": "",
-            "1": ""
-          },
-          "description": "The texture channels (u_texture_0, u_texture_1, ...) using http:// or file:// protocol."
-        },
-        "glsl-canvas.uniforms": {
-          "type": "object",
-          "description": "Custom uniforms values."
-        },
-        "glsl-canvas.timeout": {
-          "type": "number",
-          "default": 0,
-          "description": "Wait time in milliseconds before updating the canvas after a change in the source code. set 0 to update immediately"
-        },
-        "glsl-canvas.refreshOnSave": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enables/Disables refreshing the glslCanvas when saving the document."
-        },
-        "glsl-canvas.refreshOnChange": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enables/Disables refreshing the glslCanvas when changing the document."
-        }
-      }
-    },
-    "commands": [
-      {
-        "command": "glsl-canvas.showGlslCanvas",
-        "title": "Show glslCanvas"
-      },
-      {
-        "command": "glsl-canvas.refreshCanvas",
-        "title": "Refresh glslCanvas"
-      }
-    ],
-    "snippets": [
-      {
-        "language": "glsl",
-        "path": "./snippets/glsl.json"
-      }
-    ],
-    "languages": [
-      {
-        "id": "glsl",
-        "aliases": [
-          "GLSL",
-          "OpenGL Shading Language",
-          "glsl"
-        ],
-        "extensions": [
-          ".c",
-          ".vs",
-          ".fs",
-          ".gs",
-          ".cpp",
-          ".comp",
-          ".vert",
-          ".tesc",
-          ".tese",
-          ".frag",
-          ".geom",
-          ".glsl",
-          ".glslv",
-          ".glslf",
-          ".glslg"
-        ],
-        "configuration": "./glsl.configuration.json"
-      }
-    ]
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test"
-  },
-  "devDependencies": {
-    "@types/mocha": "^2.2.42",
-    "@types/node": "^8.10.25",
-    "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^4.1.0",
-    "gulp-coffee": "^3.0.2",
-    "gulp-concat": "^2.6.1",
-    "gulp-concat-util": "^0.5.5",
-    "gulp-cssmin": "^0.2.0",
-    "gulp-html2js": "^0.4.2",
-    "gulp-if": "^2.0.2",
-    "gulp-livereload": "^3.8.1",
-    "gulp-plumber": "^1.2.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^4.0.2",
-    "gulp-sourcemaps": "^2.6.4",
-    "gulp-terser": "1.1.7",
-    "gulp-uglify": "^3.0.0",
-    "gulp-watch": "^5.0.0",
-    "gulp-webserver": "^0.9.1",
-    "merge-stream": "^1.0.1",
-    "tslint": "^5.8.0",
-    "typescript": "^3.1.4",
-    "vscode": "^1.1.25"
-  },
-  "keywords": [
-    "shader",
-    "glsl"
-  ],
-  "icon": "resources/img/icon.png",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/actarian/vscode-glsl-canvas.git"
-  },
-  "dependencies": {
-    "dat.gui": "0.7.5",
-    "glsl-canvas-js": "git://github.com/actarian/glsl-canvas.git",
-    "natives": "^1.1.6",
-    "stats.js": "0.17.0"
-  }
+	"name": "glsl-canvas",
+	"displayName": "glsl-canvas",
+	"description": "Live WebGL preview of GLSL shaders",
+	"version": "0.2.1",
+	"author": "Luca Zampetti <lzampetti@gmail.com>",
+	"publisher": "circledev",
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.25.0"
+	},
+	"categories": [
+		"Snippets",
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:glsl-canvas.showGlslCanvas",
+		"onWebviewPanel:glslCanvas",
+		"onLanguage:glsl"
+	],
+	"main": "./out/extension",
+	"bugs": {
+		"url": "https://github.com/actarian/vscode-glsl-canvas/issues"
+	},
+	"homepage": "https://github.com/actarian/vscode-glsl-canvas/blob/master/README.md",
+	"contributes": {
+		"configuration": {
+			"properties": {
+				"glsl-canvas.textures": {
+					"type": "object",
+					"default": {
+						"0": "",
+						"1": ""
+					},
+					"description": "The texture channels (u_texture_0, u_texture_1, ...) using http:// or file:// protocol."
+				},
+				"glsl-canvas.uniforms": {
+					"type": "object",
+					"description": "Custom uniforms values."
+				},
+				"glsl-canvas.timeout": {
+					"type": "number",
+					"default": 0,
+					"description": "Wait time in milliseconds before updating the canvas after a change in the source code. set 0 to update immediately"
+				},
+				"glsl-canvas.refreshOnSave": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables/Disables refreshing the glslCanvas when saving the document."
+				},
+				"glsl-canvas.refreshOnChange": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables/Disables refreshing the glslCanvas when changing the document."
+				}
+			}
+		},
+		"commands": [
+			{
+				"command": "glsl-canvas.showGlslCanvas",
+				"title": "Show glslCanvas"
+			},
+			{
+				"command": "glsl-canvas.refreshCanvas",
+				"title": "Refresh glslCanvas"
+			}
+		],
+		"snippets": [
+			{
+				"language": "glsl",
+				"path": "./snippets/glsl.json"
+			}
+		],
+		"languages": [
+			{
+				"id": "glsl",
+				"aliases": [
+					"GLSL",
+					"OpenGL Shading Language",
+					"glsl"
+				],
+				"extensions": [
+					".c",
+					".vs",
+					".fs",
+					".gs",
+					".cpp",
+					".comp",
+					".vert",
+					".tesc",
+					".tese",
+					".frag",
+					".geom",
+					".glsl",
+					".glslv",
+					".glslf",
+					".glslg"
+				],
+				"configuration": "./glsl.configuration.json"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"@types/mocha": "^2.2.42",
+		"@types/node": "^8.10.25",
+		"gulp": "^3.9.1",
+		"gulp-autoprefixer": "^4.1.0",
+		"gulp-coffee": "^3.0.2",
+		"gulp-concat": "^2.6.1",
+		"gulp-concat-util": "^0.5.5",
+		"gulp-cssmin": "^0.2.0",
+		"gulp-html2js": "^0.4.2",
+		"gulp-if": "^2.0.2",
+		"gulp-livereload": "^3.8.1",
+		"gulp-plumber": "^1.2.0",
+		"gulp-rename": "^1.2.2",
+		"gulp-sass": "^4.0.2",
+		"gulp-sourcemaps": "^2.6.4",
+		"gulp-terser": "1.1.7",
+		"gulp-uglify": "^3.0.0",
+		"gulp-watch": "^5.0.0",
+		"gulp-webserver": "^0.9.1",
+		"merge-stream": "^1.0.1",
+		"tslint": "^5.8.0",
+		"typescript": "^3.1.4",
+		"vscode": "^1.1.25"
+	},
+	"keywords": [
+		"shader",
+		"glsl"
+	],
+	"icon": "resources/img/icon.png",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/actarian/vscode-glsl-canvas.git"
+	},
+	"dependencies": {
+		"dat.gui": "0.7.5",
+		"glsl-canvas-js": "git://github.com/actarian/glsl-canvas.git",
+		"natives": "^1.1.6",
+		"stats.js": "0.17.0"
+	}
 }
