@@ -4,8 +4,6 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { currentGlslDocument } from './common';
 
-const LANGUAGES = ['glsl', 'cpp', 'c'];
-
 export default class GlslOptions {
 	public uri: vscode.Uri;
 	public workpath: string;

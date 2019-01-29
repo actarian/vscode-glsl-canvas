@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const vscode = require("vscode");
 const common_1 = require("./common");
-const LANGUAGES = ['glsl', 'cpp', 'c'];
 class GlslOptions {
     constructor() {
         const document = common_1.currentGlslDocument();
