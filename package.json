@@ -87,11 +87,9 @@
           "glsl"
         ],
         "extensions": [
-          ".c",
           ".vs",
           ".fs",
           ".gs",
-          ".cpp",
           ".comp",
           ".vert",
           ".tesc",
