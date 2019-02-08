@@ -3,6 +3,13 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
+## [0.2.4] - 2019-02-xx
+### Added
+- WebGL code exporter functionality.
+- Glsl code formatting functionality.
+
+---
+
 ## [0.2.2] - 2019-01-28
 ### Fixed
 - Inizialization error.

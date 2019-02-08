@@ -53,3 +53,6 @@
 .icon-stats:before {
   content: "\65";
 }
+.icon-export:before {
+  content: "\6c";
+}

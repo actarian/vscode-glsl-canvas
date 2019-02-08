@@ -1,0 +1,16 @@
+html, body {
+    width: 100%;
+	height: 100%;
+}
+
+body {
+	display: flex;
+	margin: 0;
+	background: #111;
+    overflow: hidden;
+}
+
+.glsl-canvas{
+	width: 100%;
+    height: 100%;
+}

@@ -1,4 +1,4 @@
-# vscode-glsl-canvas
+# 💎 vscode-glsl-canvas
 
 [![VS Code Marketplace](https://vsmarketplacebadge.apphb.com/version-short/circledev.glsl-canvas.svg) 
 ![Installs](https://vsmarketplacebadge.apphb.com/installs/circledev.glsl-canvas.svg)](https://marketplace.visualstudio.com/items?itemName=HookyQR.beautify)
@@ -8,10 +8,10 @@
 The extension opens a live WebGL preview of GLSL shaders within VSCode by providing a ```Show glslCanvas``` command.
 
 It use [glsl-canvas](https://github.com/actarian/glsl-canvas) a modified and improved version of [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) javascript library from [Book of Shaders](http://thebookofshaders.com) and [glslEditor](http://editor.thebookofshaders.com) made by [Patricio Gonzalez Vivo](http://patriciogonzalezvivo.com).
-
+___
 *Run ⌘ ⇧ P on mac os, ctrl ⇧ P on windows.*  
 *Then type ```Show glslCanvas``` command to display a fullscreen preview of your fragment shader.*  
-
+___
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview-half.gif)
 
 ___
@@ -22,6 +22,11 @@ Waiting for a more customizable code inset feature, ```vec3``` and ```vec4``` ar
 
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/color-picker.gif)
 
+___
+
+## Export to folder
+
+You can export your shader, assets and uniforms to an html page with livereload for testing in browser.
 ___
 
 ## <a name="uniforms"></a>Uniforms
@@ -151,6 +156,39 @@ Enables or disables refreshing the glslCanvas when changing the document.
 ```
 ___
 
+## Install on export
+
+Enables or disables installing the Npm packages on export. 
+
+```
+{
+    "glsl-canvas.installOnExport": true
+}
+```
+___
+
+## Use formatter
+
+Enables or disables glsl code formatter. 
+
+```
+{
+    "glsl-canvas.useFormatter": true
+}
+```
+___
+
+## Use compact formatter
+
+Enables or disables glsl code formatter compact mode.
+
+```
+{
+    "glsl-canvas.useCompactFormatter": false
+}
+```
+___
+
 ## Fragment shader
 
 An example of fragment shader. You can copy paste this code in an empty `.glsl` file:
@@ -183,10 +221,12 @@ ___
 * Activable [stats.js](https://github.com/mrdoob/stats.js/) performance monitor.
 * Custom uniforms.
 * Activable gui for changing custom uniforms at runtime.
+* Export to html page with live reload.
+* Glsl code formatter standard and compact mode.
 * Glsl Snippets.
 ___
 
-## Glsl Snippets
+## Glsl snippets
 
 | Snippet                      | Purpose                               |
 |------------------------------|---------------------------------------|
@@ -234,8 +274,6 @@ ___
 
 ## Todo
 
-* WebGL code exporter.
-* Glsl code formatting.
 * Glsl 3d snippets.
 ___
 
@@ -267,6 +305,10 @@ ___
 Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHANGELOG.md).
 
 ---
+
+### 0.2.4
+* Added WebGL code exporter functionality.
+* Added Glsl code formatting functionality.
 
 ### 0.2.2
 * Fixed initialization error.

@@ -1,52 +1,49 @@
 'use strict';
 
-import * as fs from 'fs';
-import * as path from 'path';
 import * as vscode from 'vscode';
-import { ExtensionContext, Uri, ViewColumn } from 'vscode';
+import { ExtensionContext, Uri } from 'vscode';
 import GlslColorProvider from './glsl/color.provider';
 import { currentGlslEditor, isGlslLanguage } from './glsl/common';
+import GlslEditor from './glsl/editor';
+import GlslExport from './glsl/export';
+import GlslFormatProvider from './glsl/format.provider';
 import GlslOptions from './glsl/options';
 import GlslPanel from './glsl/panel';
 
-const USE_SERIALIZE = true;
+const SELECTOR: vscode.DocumentSelector = { scheme: 'file', language: 'glsl' };
 
 let uri = Uri.parse('glsl-preview://authority/glsl-preview');
+let currentContext: ExtensionContext;
+let currentExtensionPath: string;
 let diagnosticCollection: vscode.DiagnosticCollection;
+let colorFormatter: vscode.Disposable;
+let documentFormatter: vscode.Disposable;
+let rangeFormatter: vscode.Disposable;
+let panelSerializer: vscode.Disposable;
 let ti;
 
 export function activate(context: ExtensionContext) {
+	currentContext = context;
+	currentExtensionPath = context.extensionPath;
+	registerSerializer();
+	registerDiagnostic();
+	setConfiguration();
+	context.subscriptions.push(vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
+		GlslPanel.createOrShow(currentExtensionPath, onGlslPanelMessage);
+	}));
+	vscode.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
 	vscode.workspace.onDidChangeTextDocument(onDidChangeTextDocument);
 	vscode.workspace.onDidCloseTextDocument(onDidCloseTextDocument);
-	vscode.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
 	vscode.workspace.onDidSaveTextDocument(onDidSaveDocument);
 	vscode.window.onDidChangeActiveTextEditor(onDidChangeActiveTextEditor);
+	// const exporter = new vscode.FileSystemProvider();
+	// context.subscriptions.push(vscode.workspace.registerFileSystemProvider('exporter', exporter, { isCaseSensitive: true }));
 	// vscode.window.onDidChangeTextEditorViewColumn(onDidChangeTextEditorViewColumn);
 	// vscode.workspace.onDidOpenTextDocument(onDidOpenTextDocument);
 	// vscode.commands.registerCommand('glsl-canvas.createShader', onCreateShader);
 	// vscode.commands.registerCommand('glsl-canvas.revealLine', onRevealLine);
-	vscode.commands.registerCommand('glsl-canvas.showDiagnostic', onShowDiagnostic);
-	vscode.commands.registerCommand('glsl-canvas.refreshCanvas', onRefreshCanvas);
-	context.subscriptions.push(vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
-		GlslPanel.createOrShow(context.extensionPath, onGlslPanelMessage);
-	}));
-	if (USE_SERIALIZE) {
-		if (vscode.window.registerWebviewPanelSerializer) {
-			vscode.window.registerWebviewPanelSerializer(GlslPanel.viewType, {
-				async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-					// console.log(`state ${state}`);
-					GlslPanel.revive(webviewPanel, context.extensionPath, onGlslPanelMessage);
-				}
-			});
-		}
-	}
-	diagnosticCollection = vscode.languages.createDiagnosticCollection('glslCanvas');
-	context.subscriptions.push(diagnosticCollection);
-	context.subscriptions.push(vscode.languages.registerColorProvider(
-		{ scheme: 'file', language: 'glsl' },
-		new GlslColorProvider()
-	));
-	// context.subscriptions.push(vscode.languages.registerColorProvider({ pattern: '**/*.glsl' }, new GlslColorProvider()));
+	// vscode.commands.registerCommand('glsl-canvas.showDiagnostic', onShowDiagnostic);
+	// vscode.commands.registerCommand('glsl-canvas.refreshCanvas', onRefreshCanvas);
     /*
     context.subscriptions.push(vscode.languages.registerHoverProvider('glsl', {
         provideHover(document, position, token) {
@@ -64,97 +61,37 @@ function onGlslPanelMessage(
 	switch (message.command) {
 		case 'createShader':
 			onCreateShader();
-			return;
+			break;
+		case 'onExport':
+			const options = JSON.parse(message.data);
+			GlslExport.onExport(currentExtensionPath, options);
+			break;
 		case 'revealGlslLine':
-			var data = JSON.parse(message.data);
+			const data = JSON.parse(message.data);
 			onRevealLine.apply(this, data);
-			return;
+			break;
+		case 'clearDiagnostic':
+			diagnosticCollection.clear();
+			break;
+		case 'textureError':
+			const error = JSON.parse(message.data);
+			vscode.window.showErrorMessage(`Texture error "${error.key}": "${error.urlElementOrData}"
+${error.message}`);
+			break;
 	}
 }
 
 function onCreateShader() {
-    /*
-    if (!vscode.workspace.rootPath) {
-        return vscode.window.showErrorMessage('No project currently open!');
-    }
-    */
-	const folder: string = vscode.workspace.rootPath || '';
-	// console.log('onCreateShader', folder);
-	let newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
-	let i = 1;
-	while (fs.existsSync(newFile.fsPath)) {
-		newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled' + i + '.glsl'));
-		i++;
-	}
-	vscode.workspace.openTextDocument(newFile).then(
+	GlslEditor.create().then(
 		document => {
-			// console.log('document', document);
-			const edit = new vscode.WorkspaceEdit();
-			edit.insert(newFile, new vscode.Position(0, 0), `
-#ifdef GL_ES
-    precision mediump float;
-#endif
-
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
-
-#define PI_TWO			1.570796326794897
-#define PI				3.141592653589793
-#define TWO_PI			6.283185307179586
-
-vec2 coord(in vec2 p) {
-    p = p / u_resolution.xy;
-    // correct aspect ratio
-    if (u_resolution.x > u_resolution.y) {
-        p.x *= u_resolution.x / u_resolution.y;
-        p.x += (u_resolution.y - u_resolution.x) / u_resolution.y / 2.0;
-    } else {
-        p.y *= u_resolution.y / u_resolution.x;
-        p.y += (u_resolution.x - u_resolution.y) / u_resolution.x / 2.0;
-    }
-    // centering
-    p -= 0.5;
-    p *= vec2(-1.0, 1.0);
-    return p;
-}
-#define rx 1.0 / min(u_resolution.x, u_resolution.y)
-#define uv gl_FragCoord.xy / u_resolution.xy
-#define st coord(gl_FragCoord.xy)
-#define mx coord(u_mouse)
-
-void main() {
-    vec3 color = vec3(
-        abs(cos(st.x + mx.x)),
-        abs(sin(st.y + mx.y)),
-        abs(sin(u_time))
-    );
-    gl_FragColor = vec4(color, 1.0);
-}
-`
-			);
-			return vscode.workspace.applyEdit(edit).then(
-				success => {
-					if (success) {
-						// setTimeout(() => {
-						vscode.window.showTextDocument(document, ViewColumn.One).then(
-							success => {
-								GlslPanel.rebuild();
-								// GlslPanel.reveal(uri);
-							}
-						);
-						// }, 100);
-					} else {
-						vscode.window.showInformationMessage('Error!');
-					}
-				},
-				error => {
-					console.log('onCreateShader.applyEdit', error);
-				});
+			GlslPanel.rebuild(onGlslPanelMessage);
+			// GlslPanel.reveal(uri);
 		},
 		error => {
-			console.log('onCreateShader.openTextDocument', error);
-		});
+			console.log('onCreateShader', error);
+			vscode.window.showInformationMessage('Unable to create shader!');
+		}
+	);
 }
 
 function onRevealLine(uri: vscode.Uri, line: number, message: string) {
@@ -164,14 +101,6 @@ function onRevealLine(uri: vscode.Uri, line: number, message: string) {
 			let range = editor.document.lineAt(line - 1).range;
 			editor.selection = new vscode.Selection(range.start, range.end);
 			editor.revealRange(range, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
-			onDiagnostic(editor, line, message);
-		}
-	}
-}
-
-function onShowDiagnostic(uri: vscode.Uri, line: number, message: string) {
-	for (let editor of vscode.window.visibleTextEditors) {
-		if (editor.document.uri.path === uri.path) {
 			onDiagnostic(editor, line, message);
 		}
 	}
@@ -193,10 +122,33 @@ function onDiagnostic(editor: vscode.TextEditor, line: number, message: string =
 	});
 }
 
-function onRefreshCanvas() {
-	if (currentGlslEditor()) {
-		GlslPanel.update(uri);
+function setConfiguration(e: vscode.ConfigurationChangeEvent = null) {
+	if (!currentContext) {
+		return;
 	}
+	const config = vscode.workspace.getConfiguration('glsl-canvas');
+	// console.log('setConfiguration', config);
+	registerColorFormatter(currentContext);
+	if (!e || e.affectsConfiguration('glsl-canvas.useFormatter')) {
+		if (config['useFormatter'] === true) {
+			registerCodeFormatter(currentContext);
+		} else {
+			disposeCodeFormatter();
+		}
+	}
+	if (!e) {
+		return;
+	}
+	if (e.affectsConfiguration('glsl-canvas.textures') || e.affectsConfiguration('glsl-canvas.uniforms')) {
+		console.log('updated');
+		if (currentGlslEditor()) {
+			GlslPanel.update(uri);
+		}
+	}
+}
+
+function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
+	setConfiguration(e);
 }
 
 function onDidChangeTextDocument(e: vscode.TextDocumentChangeEvent) {
@@ -231,10 +183,77 @@ function onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
 	}
 }
 
-function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
-	if (currentGlslEditor()) {
-		GlslPanel.update(uri);
+function registerSerializer() {
+	if (vscode.window.registerWebviewPanelSerializer) {
+		panelSerializer = vscode.window.registerWebviewPanelSerializer(GlslPanel.viewType, {
+			async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
+				GlslPanel.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage);
+			}
+		});
 	}
+}
+
+function disposeSerializer() {
+	if (panelSerializer) {
+		panelSerializer.dispose();
+		panelSerializer = null;
+	}
+}
+
+function registerDiagnostic() {
+	diagnosticCollection = vscode.languages.createDiagnosticCollection('glslCanvas');
+	currentContext.subscriptions.push(diagnosticCollection);
+}
+
+function disposeDiagnostic() {
+	if (diagnosticCollection) {
+		diagnosticCollection.clear();
+		diagnosticCollection.dispose();
+		diagnosticCollection = null;
+	}
+}
+
+function registerColorFormatter(context: ExtensionContext) {
+	disposeColorFormatter();
+	const colorProvider = new GlslColorProvider();
+	colorFormatter = vscode.languages.registerColorProvider(SELECTOR, colorProvider);
+	context.subscriptions.push(colorFormatter);
+}
+
+function disposeColorFormatter() {
+	if (colorFormatter) {
+		colorFormatter.dispose();
+		colorFormatter = null;
+	}
+}
+
+function registerCodeFormatter(context: ExtensionContext) {
+	disposeCodeFormatter();
+	const formatProvider = new GlslFormatProvider();
+	documentFormatter = vscode.languages.registerDocumentFormattingEditProvider(SELECTOR, formatProvider);
+	context.subscriptions.push(documentFormatter);
+	rangeFormatter = vscode.languages.registerDocumentRangeFormattingEditProvider(SELECTOR, formatProvider);
+	context.subscriptions.push(rangeFormatter);
+}
+
+function disposeCodeFormatter() {
+	if (documentFormatter) {
+		documentFormatter.dispose();
+		documentFormatter = null;
+	}
+	if (rangeFormatter) {
+		rangeFormatter.dispose();
+		rangeFormatter = null;
+	}
+}
+
+export function deactivate() {
+	GlslPanel.dispose();
+	GlslExport.dispose();
+	disposeColorFormatter();
+	disposeCodeFormatter();
+	disposeDiagnostic();
+	disposeSerializer();
 }
 
 /*
@@ -247,7 +266,20 @@ function onDidOpenTextDocument(document: vscode.TextDocument) {
 }
 */
 
-export function deactivate() {
-	diagnosticCollection.clear();
-	GlslPanel.dispose();
+/*
+function onRefreshCanvas() {
+	if (currentGlslEditor()) {
+		GlslPanel.update(uri);
+	}
 }
+*/
+
+/*
+function onShowDiagnostic(uri: vscode.Uri, line: number, message: string) {
+	for (let editor of vscode.window.visibleTextEditors) {
+		if (editor.document.uri.path === uri.path) {
+			onDiagnostic(editor, line, message);
+		}
+	}
+}
+*/

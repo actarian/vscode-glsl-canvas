@@ -1,7 +1,9 @@
 /* global window, document, console, acquireVsCodeApi, GlslCanvas, CaptureService, GuiService, TrailsService, CameraService, Stats, dat */
 
-(function() {
+(function () {
 	'use strict';
+
+	// "node_modules/glsl-canvas-js/dist/glsl-canvas.min.js"
 
 	var vscode = acquireVsCodeApi();
 	var oldState = vscode.getState();
@@ -9,12 +11,17 @@
 	function onLoad() {
 		var stats, statsdom;
 
+		var body = document.querySelector('body');
 		var content = document.querySelector('.content');
 		var canvas = document.querySelector('.shader');
+		var errors = document.querySelector('.errors');
+		var welcome = document.querySelector('.welcome');
+		var missing = document.querySelector('.missing');
 		var buttons = {
 			pause: document.querySelector('.btn-pause'),
 			record: document.querySelector('.btn-record'),
 			stats: document.querySelector('.btn-stats'),
+			export: document.querySelector('.btn-export'),
 			create: document.querySelector('.btn-create'),
 		};
 		var flags = {
@@ -25,7 +32,7 @@
 
 		resize(true);
 
-		console.log('app.js workpath', options.workpath);
+		// console.log('app.js workpath', options.workpath);
 
 		var glsl = new GlslCanvas(canvas, {
 			backgroundColor: 'rgba(0.0, 0.0, 0.0, 0.0)',
@@ -37,20 +44,23 @@
 		});
 
 		if (!glsl.gl) {
-			document.querySelector('.missing').setAttribute('class', 'missing active');
+			missing.classList.add('active');
 			return;
+		} else {
+			missing.classList.remove('active');
 		}
 
+		glsl.on('load', onGlslLoad);
 		glsl.on('error', onGlslError);
+		glsl.on('textureError', onGlslTextureError);
 
 		var capture = new CaptureService();
 		capture.set(canvas);
 
 		var camera = new CameraService();
-
 		var trails = new TrailsService();
 
-		glsl.on('render', function() {
+		glsl.on('render', function () {
 			if (flags.stats) {
 				stats.end();
 			}
@@ -64,39 +74,45 @@
 
 		function onUpdateUniforms(params) {
 			var uniforms = gui.uniforms();
-			// console.log('GuiService.onUpdate', uniforms);
 			glsl.setUniforms(uniforms);
-			// console.log('onUpdateUniforms', uniforms);
 		}
 
 		var gui = new GuiService(onUpdateUniforms);
 
 		load();
 
+		var li;
 		function load() {
-			document.querySelector('.errors').setAttribute('class', 'errors');
-			document.querySelector('.welcome').setAttribute('class', (options.uri ? 'welcome' : 'welcome active'));
 			var o = window.options;
 			o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
 			o.fragment = o.fragment.trim().length > 0 ? o.fragment : null;
 			if (o.fragment || o.vertex) {
-				document.querySelector('body').setAttribute('class', 'ready');
+				body.classList.remove('idle', 'empty');
+				body.classList.add('ready');
 			} else {
-				document.querySelector('body').setAttribute('class', 'empty');
+				body.classList.remove('idle', 'ready')
+				body.classList.add('empty');
 				removeStats();
 			}
-			console.log('load', o.textures);
 			for (var t in o.textures) {
-				// console.log(t, o.textures[t]);
-				// glsl.setUniform('u_texture_' + t, o.textures[t]);
 				glsl.setTexture('u_texture_' + t, o.textures[t], {
 					filtering: 'mipmap',
 					repeat: true,
 				});
 			}
 			glsl.load(o.fragment, o.vertex);
+		}
+
+		function onGlslLoad() {
+			var o = window.options;
 			gui.load(o.uniforms);
 			glsl.setUniforms(gui.uniforms());
+			errors.classList.remove('active');
+			if (options.uri) {
+				welcome.classList.remove('active');
+			} else {
+				welcome.classList.add('active');
+			}
 		}
 
 		function resize(init) {
@@ -104,14 +120,6 @@
 			var h = content.offsetHeight;
 			canvas.style.width = w + 'px';
 			canvas.style.height = h + 'px';
-			/*
-			if (init) {
-			    canvas.width = w;
-			    canvas.height = h;
-			} else {
-			    glsl.resize();
-			}
-			*/
 		}
 
 		function snapshot() {
@@ -129,24 +137,19 @@
 		}
 
 		function stop() {
-			capture.stop().then(function(video) {
-				// console.log('capture.stop');
-				// var filename = options.uri.path.split('/').pop().replace('.glsl', '');
-				// console.log('filename', filename);
+			capture.stop().then(function (video) {
 				var url = URL.createObjectURL(video.blob);
 				var link = document.createElement('a');
 				link.href = url;
 				link.download = 'shader' + video.extension;
 				link.click();
-				setTimeout(function() {
+				setTimeout(function () {
 					window.URL.revokeObjectURL(output);
 				}, 100);
 			});
 		}
 
 		function togglePause() {
-			// flags.pause = !flags.pause;
-			// console.log('pause', flags.pause);
 			if (glsl.timer.paused) {
 				flags.pause = false;
 				/*
@@ -169,7 +172,6 @@
 
 		function toggleRecord() {
 			flags.record = !flags.record;
-			// console.log('record', flags.record);
 			if (flags.record) {
 				buttons.record.setAttribute('class', 'btn btn-record active');
 				buttons.record.querySelector('i').setAttribute('class', 'icon-stop');
@@ -183,7 +185,6 @@
 
 		function toggleStats() {
 			flags.stats = !flags.stats;
-
 			/*
             function statsTick() {
                 stats.update();
@@ -220,6 +221,13 @@
 			flags.stats = false;
 		}
 
+		function onExport(e) {
+			vscode.postMessage({
+				command: 'onExport',
+				data: JSON.stringify(window.options),
+			});
+		}
+
 		function createShader(e) {
 			vscode.postMessage({
 				command: 'createShader',
@@ -229,15 +237,11 @@
 
 		function onMessage(event) {
 			window.options = JSON.parse(event.data);
-			// update state
 			vscode.setState(window.options);
-			// console.log('onMessage', window.options);
-			// event.source.postMessage('message', event.origin);
 			load();
 		}
 
 		var ri;
-
 		function onResize() {
 			if (ri) {
 				clearTimeout(ri);
@@ -246,12 +250,11 @@
 		}
 
 		var ui;
-
 		function updateUniforms(e) {
 			if (ui) {
 				clearTimeout(ui);
 			}
-			ui = setTimeout(function() {
+			ui = setTimeout(function () {
 				onUpdateUniforms();
 			}, 1000 / 25);
 		}
@@ -284,11 +287,22 @@
 		buttons.pause.addEventListener('mousedown', togglePause);
 		buttons.record.addEventListener('mousedown', toggleRecord);
 		buttons.stats.addEventListener('mousedown', toggleStats);
+		buttons.export.addEventListener('mousedown', onExport);
 		buttons.create.addEventListener('click', createShader);
 		window.addEventListener('message', onMessage, false);
 		window.addEventListener('resize', onResize);
+		errors.addEventListener('click', function () {
+			clearDiagnostic();
+		});
 
 		resize();
+	}
+
+	function clearDiagnostic() {
+		vscode.postMessage({
+			command: 'clearDiagnostic',
+			data: null,
+		});
 	}
 
 	function revealGlslLine(data) {
@@ -299,36 +313,54 @@
 	}
 
 	function onGlslError(message) {
-		// console.log('onGlslError.error', message.error);
-		var options = window.options;
-		var errors = [],
-			warnings = [],
+		var options = window.options
+		var errors = document.querySelector('.errors');
+		var errorLines = [],
+			warningLines = [],
 			lines = [];
-		message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function(m, l, v, t) {
-			var li = '<li><span class="error" unselectable reveal-line="' + lines.length + '"><span class="line">ERROR line ' + Number(l) + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
-			errors.push(li);
-			lines.push([options.uri, Number(l), 'ERROR (' + v + ') ' + t]);
+		message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function (m, l, v, t) {
+			l = Number(l) - message.offset;
+			var li = '<li><span class="error" unselectable reveal-line="' + lines.length + '"><span class="line">ERROR line ' + l + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
+			errorLines.push(li);
+			lines.push([options.uri, l, 'ERROR (' + v + ') ' + t]);
 			return li;
 		});
-		message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function(m, l, v, t) {
-			var li = '<li><span class="warning" unselectable reveal-line="' + lines.length + '"><span class="line">WARN line ' + Number(l) + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
-			warnings.push(li);
-			lines.push([options.uri, Number(l), 'ERROR (' + v + ') ' + t]);
+		message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function (m, l, v, t) {
+			l = Number(l) - message.offset;
+			var li = '<li><span class="warning" unselectable reveal-line="' + lines.length + '"><span class="line">WARN line ' + l + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
+			warningLines.push(li);
+			lines.push([options.uri, l, 'ERROR (' + v + ') ' + t]);
 			return li;
 		});
 		var output = '<div class="errors-content"><div class="title">glsl-canvas error</div><ul>';
-		output += errors.join('\n');
-		output += warnings.join('\n');
+		output += errorLines.join('\n');
+		output += warningLines.join('\n');
 		output += '</ul></div>';
-		document.querySelector('.errors').setAttribute('class', 'errors active');
-		document.querySelector('.errors').innerHTML = output;
-		[].slice.call(document.querySelectorAll('.errors [reveal-line]')).forEach(function(node) {
+		errors.innerHTML = output;
+		errors.classList.add('active');
+		// console.log('onGlslError', 'errorLines', errorLines, 'warningLines', warningLines);
+		[].slice.call(document.querySelectorAll('.errors [reveal-line]')).forEach(function (node) {
 			var index = parseInt(node.getAttribute('reveal-line'));
-			node.addEventListener('click', function() {
+			node.addEventListener('click', function (event) {
 				revealGlslLine(lines[index]);
+				event.preventDefault();
+				event.stopPropagation();
 			});
 		});
 		document.querySelector('body').setAttribute('class', 'idle');
+		/*
+		var body = document.querySelector('body');
+		body.classList.remove('ready', 'empty');
+		body.classList.add('idle');
+		*/
+	}
+
+	function onGlslTextureError(error) {
+		// console.log('onGlslTextureError', error);
+		vscode.postMessage({
+			command: 'textureError',
+			data: JSON.stringify(error),
+		});
 	}
 
 	window.addEventListener('load', onLoad);

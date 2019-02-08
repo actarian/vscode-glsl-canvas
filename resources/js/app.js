@@ -437,96 +437,96 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 /* global window, document, console */
 
 (function () {
-    'use strict';
+	'use strict';
 
-    var Parser = function () {
+	var Parser = function () {
 
-        var Parser = {
-            set: set,
-            get: get,
-        };
+		var Parser = {
+			set: set,
+			get: get,
+		};
 
-        function tuple(array) {
-            var tuples = {
-                2: ['x', 'y'],
-                3: ['x', 'y', 'z'],
-                4: ['r', 'g', 'b', 'a']
-            };
-            var keys = tuples[array.length];
-            var r = {};
-            array.filter(function (v, i) {
-                r[keys[i]] = v;
-            });
-            return r;
-        }
+		function tuple(array) {
+			var tuples = {
+				2: ['x', 'y'],
+				3: ['x', 'y', 'z'],
+				4: ['r', 'g', 'b', 'a']
+			};
+			var keys = tuples[array.length];
+			var r = {};
+			array.filter(function (v, i) {
+				r[keys[i]] = v;
+			});
+			return r;
+		}
 
-        function enumerate(array, prefix) {
-            var r = {};
-            array.filter(function (v, i) {
-                r[prefix + i] = v;
-            });
-            return r;
-        }
+		function enumerate(array, prefix) {
+			var r = {};
+			array.filter(function (v, i) {
+				r[prefix + i] = v;
+			});
+			return r;
+		}
 
-        function getter(v) {
-            return function (key) {
-                return v[key];
-            };
-        }
+		function getter(v) {
+			return function (key) {
+				return v[key];
+			};
+		}
 
-        function set(obj) {
-            var data = {};
-            for (var p in obj) {
-                var v = obj[p];
-                if (Array.isArray(v)) {
-                    if (v.length > 1) {
-                        switch (typeof v[0]) {
-                            case 'number':
-                                if (v.length < 5) {
-                                    data[p] = tuple(v);
-                                }
-                                break;
-                            case 'boolean':
-                                data[p] = enumerate(v, 'bool_');
-                                break;
-                            case 'string':
-                                data[p] = enumerate(v, 'texture_');
-                                break;
-                            case 'object':
-                                data[p] = enumerate(v, 'struct_');
-                                break;
-                        }
-                    } else if (v.length) {
-                        data[p] = v[0];
-                    }
-                } else if (v !== undefined && v !== null) {
-                    data[p] = v;
-                }
-            }
-            return data;
-        }
+		function set(obj) {
+			var data = {};
+			for (var p in obj) {
+				var v = obj[p];
+				if (Array.isArray(v)) {
+					if (v.length > 1) {
+						switch (typeof v[0]) {
+							case 'number':
+								if (v.length < 5) {
+									data[p] = tuple(v);
+								}
+								break;
+							case 'boolean':
+								data[p] = enumerate(v, 'bool_');
+								break;
+							case 'string':
+								data[p] = enumerate(v, 'texture_');
+								break;
+							case 'object':
+								data[p] = enumerate(v, 'struct_');
+								break;
+						}
+					} else if (v.length) {
+						data[p] = v[0];
+					}
+				} else if (v !== undefined && v !== null) {
+					data[p] = v;
+				}
+			}
+			return data;
+		}
 
-        function get(obj) {
-            var data = {};
-            for (var p in obj) {
-                var v = obj[p];
-                switch (typeof v) {
-                    case 'function':
-                        break;
-                    case 'number':
-                    case 'boolean':
-                    case 'string':
-                        data[p] = v;
-                        break;
-                    default:
-                        var keys = Object.keys(v);
-                        data[p] = keys.map(getter(v));
-                        break;
-                }
-            }
-            // console.log('Parser.get', data);
-            return data;
-        }
+		function get(obj) {
+			var data = {};
+			for (var p in obj) {
+				var v = obj[p];
+				switch (typeof v) {
+					case 'function':
+						break;
+					case 'number':
+					case 'boolean':
+					case 'string':
+						data[p] = v;
+						break;
+					default:
+						var keys = Object.keys(v);
+						data[p] = keys.map(getter(v));
+						break;
+				}
+			}
+			// console.log('Parser.get', data);
+			return data;
+		}
 
         /*
         float                                   <--- typeof U === 'number'
@@ -541,177 +541,178 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             sampler2D[]                         <--- typeof U[0] === 'string'
             vec2[], vec3[], vec4[]              <--- Array.isArray(U[0]) && typeof U[0][0] === 'number'
             Structure[]                         <--- typeof U[0] === 'object'
-        
+
             TODO: assume matrix for (typeof == Float32Array && length == 16)
         TODO: support other non-float types? (int, etc.)
         */
 
-        return Parser;
+		return Parser;
 
-    }();
+	}();
 
-    var GuiService = function () {
+	var GuiService = function () {
 
-        function GuiService(callback) {
-            this.closed = true;
-            this.hidden = true;
-            this.callback = callback || function () {
-                console.log('GuiService.onChange');
-            };
-            this.pool = {};
-        }
+		function GuiService(callback) {
+			this.closed = true;
+			this.hidden = true;
+			this.callback = callback || function () {
+				console.log('GuiService.onChange');
+			};
+			this.pool = {};
+		}
 
-        GuiService.prototype = {
-            load: load,
-            hide: hide,
-            show: show,
-            uniforms: uniforms,
-        };
+		GuiService.prototype = {
+			load: load,
+			hide: hide,
+			show: show,
+			uniforms: uniforms,
+		};
 
-        // statics
+		// statics
 
-        function differs(a, b) {
-            // console.log('differs', JSON.stringify(a), JSON.stringify(b));
-            return JSON.stringify(a) !== JSON.stringify(b);
-        }
+		function differs(a, b) {
+			// console.log('differs', JSON.stringify(a), JSON.stringify(b));
+			return JSON.stringify(a) !== JSON.stringify(b);
+		}
 
-        function copy(obj) {
-            return JSON.parse(JSON.stringify(obj));
-        }
+		function copy(obj) {
+			return JSON.parse(JSON.stringify(obj));
+		}
 
-        function merge(a, b) {
-            function _merge(a, b) {
-                for (var key in a) {
-                    if (b.hasOwnProperty(key)) {
-                        if (typeof a[key] === 'number') {
-                            a[key] = b[key];
-                        } else if (typeof a[key] == 'object' && Object.keys(a[key]).length > 0) {
-                            _merge(a[key], b[key]);
-                        }
-                    }
-                }
-            }
-            if (a) {
-                a = copy(a);
+		function merge(a, b) {
+			function _merge(a, b) {
+				for (var key in a) {
+					if (b.hasOwnProperty(key)) {
+						if (typeof a[key] === 'number') {
+							a[key] = b[key];
+						} else if (typeof a[key] == 'object' && Object.keys(a[key]).length > 0) {
+							_merge(a[key], b[key]);
+						}
+					}
+				}
+			}
+			if (a) {
+				a = copy(a);
 
-                _merge(a, b);
-            }
-            return a;
-        }
+				_merge(a, b);
+			}
+			return a;
+		}
 
-        function loop(obj, params, callback) {
-            var keys = [],
-                p;
-            for (p in params) {
-                keys.push(p);
-            }
-            keys.filter(function (key) {
-                var value = params[key];
-                if (typeof value === 'number') {
-                    p = obj.add(params, key, 0.0, 1.0);
-                    p.onChange(callback);
-                } else if (typeof value === 'object' && Object.keys(value).length > 0) {
-                    p = null;
-                    var folder = obj.addFolder(key);
-                    loop(folder, value, callback);
-                } else {
-                    p = obj.add(params, key);
-                    p.onChange(callback);
-                }
-            });
-        }
+		function loop(obj, params, callback) {
+			var keys = [],
+				p;
+			for (p in params) {
+				keys.push(p);
+			}
+			keys.filter(function (key) {
+				var value = params[key];
+				if (typeof value === 'number') {
+					p = obj.add(params, key, 0.0, 1.0);
+					p.onChange(callback);
+				} else if (typeof value === 'object' && Object.keys(value).length > 0) {
+					p = null;
+					var folder = obj.addFolder(key);
+					loop(folder, value, callback);
+				} else {
+					p = obj.add(params, key);
+					p.onChange(callback);
+				}
+			});
+		}
 
-        function randomize(obj, params, callback) {
-            function _randomize(obj, params) {
-                obj.__controllers.filter(function (c) {
-                    if (typeof c.initialValue === 'number' && typeof c.__min === 'number' && typeof c.__max === 'number') {
-                        var value = c.__min + (c.__max - c.__min) * Math.random();
-                        params[c.property] = value;
-                        c.updateDisplay();
-                    }
-                });
-                for (var f in obj.__folders) {
-                    _randomize(obj.__folders[f], params[f]);
-                }
-            }
-            _randomize(obj, params);
-            callback();
-        }
+		function randomize(obj, params, callback) {
+			function _randomize(obj, params) {
+				obj.__controllers.filter(function (c) {
+					if (typeof c.initialValue === 'number' && typeof c.__min === 'number' && typeof c.__max === 'number') {
+						var value = c.__min + (c.__max - c.__min) * Math.random();
+						params[c.property] = value;
+						c.updateDisplay();
+					}
+				});
+				for (var f in obj.__folders) {
+					_randomize(obj.__folders[f], params[f]);
+				}
+			}
+			_randomize(obj, params);
+			callback();
+		}
 
-        // publics
+		// publics
 
-        function load(params) {
-            var service = this;
-            var gui = service.gui;
-            var locals = service.locals;
-            var changed = differs(params, locals);
-            if (gui && changed) {
-                service.closed = gui.closed;
-                gui.destroy();
-                gui = null;
-            }
-            if (!gui) {
-                gui = new dat.GUI();
-                gui.closed = service.closed;
-                service.gui = gui;
-                if (service.hidden) {
-                    service.hide();
-                } else {
-                    service.show();
-                }
-            }
-            if (changed) {
-                locals = copy(params);
-                service.locals = locals;
-                var pool = Parser.set(params);
-                pool = merge(pool, service.pool);
-                service.pool = pool;
-                var _callback = function () {
-                    service.callback(pool);
-                };
-                loop(gui, pool, _callback);
-                pool.randomize = function () {
-                    randomize(gui, pool, _callback);
-                };
-                gui.add(pool, 'randomize');
-            } else {
-                // console.log('service.callback', service.pool);
-                service.callback(service.pool);
-            }
-        }
+		function load(params) {
+			var service = this;
+			var gui = service.gui;
+			var locals = service.locals;
+			var changed = differs(params, locals);
+			if (gui && changed) {
+				service.closed = gui.closed;
+				gui.destroy();
+				gui = null;
+			}
+			if (!gui) {
+				gui = new dat.GUI();
+				gui.closed = service.closed;
+				service.gui = gui;
+				if (service.hidden) {
+					service.hide();
+				} else {
+					service.show();
+				}
+			}
+			if (changed) {
+				locals = copy(params);
+				service.locals = locals;
+				var pool = Parser.set(params);
+				pool = merge(pool, service.pool);
+				service.pool = pool;
+				var _callback = function () {
+					service.callback(pool);
+				};
+				loop(gui, pool, _callback);
+				pool.randomize = function () {
+					randomize(gui, pool, _callback);
+				};
+				gui.add(pool, 'randomize');
+			} else {
+				// console.log('service.callback', service.pool);
+				service.callback(service.pool);
+			}
+		}
 
-        function hide() {
-            var service = this;
-            service.hidden = true;
-            var gui = service.gui;
-            if (gui) {
-                gui.domElement.style.display = 'none';
-                // dat.GUI.toggleHide();
-            }
-        }
+		function hide() {
+			var service = this;
+			service.hidden = true;
+			var gui = service.gui;
+			if (gui) {
+				gui.domElement.style.display = 'none';
+				// dat.GUI.toggleHide();
+			}
+		}
 
-        function show() {
-            var service = this;
-            var locals = service.locals;
-            var gui = service.gui;
-            if (gui && Object.keys(locals).length) {
-                gui.domElement.style.display = '';
-            }
-            service.hidden = false;
-        }
+		function show() {
+			var service = this;
+			var locals = service.locals;
+			var gui = service.gui;
+			if (gui && Object.keys(locals).length) {
+				gui.domElement.style.display = '';
+			}
+			service.hidden = false;
+		}
 
-        function uniforms() {
-            var service = this;
-            var pool = service.pool;
-            return Parser.get(pool);
-        }
+		function uniforms() {
+			var service = this;
+			var pool = service.pool;
+			return Parser.get(pool);
+		}
 
-        return GuiService;
-    }();
+		return GuiService;
+	}();
 
-    window.GuiService = GuiService;
+	window.GuiService = GuiService;
 
 }());
+
 /* global window, document, console */
 
 (function () {
@@ -840,8 +841,10 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 }());
 /* global window, document, console, acquireVsCodeApi, GlslCanvas, CaptureService, GuiService, TrailsService, CameraService, Stats, dat */
 
-(function() {
+(function () {
 	'use strict';
+
+	// "node_modules/glsl-canvas-js/dist/glsl-canvas.min.js"
 
 	var vscode = acquireVsCodeApi();
 	var oldState = vscode.getState();
@@ -849,12 +852,17 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 	function onLoad() {
 		var stats, statsdom;
 
+		var body = document.querySelector('body');
 		var content = document.querySelector('.content');
 		var canvas = document.querySelector('.shader');
+		var errors = document.querySelector('.errors');
+		var welcome = document.querySelector('.welcome');
+		var missing = document.querySelector('.missing');
 		var buttons = {
 			pause: document.querySelector('.btn-pause'),
 			record: document.querySelector('.btn-record'),
 			stats: document.querySelector('.btn-stats'),
+			export: document.querySelector('.btn-export'),
 			create: document.querySelector('.btn-create'),
 		};
 		var flags = {
@@ -865,7 +873,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		resize(true);
 
-		console.log('app.js workpath', options.workpath);
+		// console.log('app.js workpath', options.workpath);
 
 		var glsl = new GlslCanvas(canvas, {
 			backgroundColor: 'rgba(0.0, 0.0, 0.0, 0.0)',
@@ -877,20 +885,23 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		});
 
 		if (!glsl.gl) {
-			document.querySelector('.missing').setAttribute('class', 'missing active');
+			missing.classList.add('active');
 			return;
+		} else {
+			missing.classList.remove('active');
 		}
 
+		glsl.on('load', onGlslLoad);
 		glsl.on('error', onGlslError);
+		glsl.on('textureError', onGlslTextureError);
 
 		var capture = new CaptureService();
 		capture.set(canvas);
 
 		var camera = new CameraService();
-
 		var trails = new TrailsService();
 
-		glsl.on('render', function() {
+		glsl.on('render', function () {
 			if (flags.stats) {
 				stats.end();
 			}
@@ -904,39 +915,45 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		function onUpdateUniforms(params) {
 			var uniforms = gui.uniforms();
-			// console.log('GuiService.onUpdate', uniforms);
 			glsl.setUniforms(uniforms);
-			// console.log('onUpdateUniforms', uniforms);
 		}
 
 		var gui = new GuiService(onUpdateUniforms);
 
 		load();
 
+		var li;
 		function load() {
-			document.querySelector('.errors').setAttribute('class', 'errors');
-			document.querySelector('.welcome').setAttribute('class', (options.uri ? 'welcome' : 'welcome active'));
 			var o = window.options;
 			o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
 			o.fragment = o.fragment.trim().length > 0 ? o.fragment : null;
 			if (o.fragment || o.vertex) {
-				document.querySelector('body').setAttribute('class', 'ready');
+				body.classList.remove('idle', 'empty');
+				body.classList.add('ready');
 			} else {
-				document.querySelector('body').setAttribute('class', 'empty');
+				body.classList.remove('idle', 'ready')
+				body.classList.add('empty');
 				removeStats();
 			}
-			console.log('load', o.textures);
 			for (var t in o.textures) {
-				// console.log(t, o.textures[t]);
-				// glsl.setUniform('u_texture_' + t, o.textures[t]);
 				glsl.setTexture('u_texture_' + t, o.textures[t], {
 					filtering: 'mipmap',
 					repeat: true,
 				});
 			}
 			glsl.load(o.fragment, o.vertex);
+		}
+
+		function onGlslLoad() {
+			var o = window.options;
 			gui.load(o.uniforms);
 			glsl.setUniforms(gui.uniforms());
+			errors.classList.remove('active');
+			if (options.uri) {
+				welcome.classList.remove('active');
+			} else {
+				welcome.classList.add('active');
+			}
 		}
 
 		function resize(init) {
@@ -944,14 +961,6 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			var h = content.offsetHeight;
 			canvas.style.width = w + 'px';
 			canvas.style.height = h + 'px';
-			/*
-			if (init) {
-			    canvas.width = w;
-			    canvas.height = h;
-			} else {
-			    glsl.resize();
-			}
-			*/
 		}
 
 		function snapshot() {
@@ -969,24 +978,19 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		}
 
 		function stop() {
-			capture.stop().then(function(video) {
-				// console.log('capture.stop');
-				// var filename = options.uri.path.split('/').pop().replace('.glsl', '');
-				// console.log('filename', filename);
+			capture.stop().then(function (video) {
 				var url = URL.createObjectURL(video.blob);
 				var link = document.createElement('a');
 				link.href = url;
 				link.download = 'shader' + video.extension;
 				link.click();
-				setTimeout(function() {
+				setTimeout(function () {
 					window.URL.revokeObjectURL(output);
 				}, 100);
 			});
 		}
 
 		function togglePause() {
-			// flags.pause = !flags.pause;
-			// console.log('pause', flags.pause);
 			if (glsl.timer.paused) {
 				flags.pause = false;
 				/*
@@ -1009,7 +1013,6 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		function toggleRecord() {
 			flags.record = !flags.record;
-			// console.log('record', flags.record);
 			if (flags.record) {
 				buttons.record.setAttribute('class', 'btn btn-record active');
 				buttons.record.querySelector('i').setAttribute('class', 'icon-stop');
@@ -1023,7 +1026,6 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		function toggleStats() {
 			flags.stats = !flags.stats;
-
 			/*
             function statsTick() {
                 stats.update();
@@ -1060,6 +1062,13 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			flags.stats = false;
 		}
 
+		function onExport(e) {
+			vscode.postMessage({
+				command: 'onExport',
+				data: JSON.stringify(window.options),
+			});
+		}
+
 		function createShader(e) {
 			vscode.postMessage({
 				command: 'createShader',
@@ -1069,15 +1078,11 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		function onMessage(event) {
 			window.options = JSON.parse(event.data);
-			// update state
 			vscode.setState(window.options);
-			// console.log('onMessage', window.options);
-			// event.source.postMessage('message', event.origin);
 			load();
 		}
 
 		var ri;
-
 		function onResize() {
 			if (ri) {
 				clearTimeout(ri);
@@ -1086,12 +1091,11 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		}
 
 		var ui;
-
 		function updateUniforms(e) {
 			if (ui) {
 				clearTimeout(ui);
 			}
-			ui = setTimeout(function() {
+			ui = setTimeout(function () {
 				onUpdateUniforms();
 			}, 1000 / 25);
 		}
@@ -1124,11 +1128,22 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		buttons.pause.addEventListener('mousedown', togglePause);
 		buttons.record.addEventListener('mousedown', toggleRecord);
 		buttons.stats.addEventListener('mousedown', toggleStats);
+		buttons.export.addEventListener('mousedown', onExport);
 		buttons.create.addEventListener('click', createShader);
 		window.addEventListener('message', onMessage, false);
 		window.addEventListener('resize', onResize);
+		errors.addEventListener('click', function () {
+			clearDiagnostic();
+		});
 
 		resize();
+	}
+
+	function clearDiagnostic() {
+		vscode.postMessage({
+			command: 'clearDiagnostic',
+			data: null,
+		});
 	}
 
 	function revealGlslLine(data) {
@@ -1139,36 +1154,54 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 	}
 
 	function onGlslError(message) {
-		// console.log('onGlslError.error', message.error);
-		var options = window.options;
-		var errors = [],
-			warnings = [],
+		var options = window.options
+		var errors = document.querySelector('.errors');
+		var errorLines = [],
+			warningLines = [],
 			lines = [];
-		message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function(m, l, v, t) {
-			var li = '<li><span class="error" unselectable reveal-line="' + lines.length + '"><span class="line">ERROR line ' + Number(l) + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
-			errors.push(li);
-			lines.push([options.uri, Number(l), 'ERROR (' + v + ') ' + t]);
+		message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function (m, l, v, t) {
+			l = Number(l) - message.offset;
+			var li = '<li><span class="error" unselectable reveal-line="' + lines.length + '"><span class="line">ERROR line ' + l + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
+			errorLines.push(li);
+			lines.push([options.uri, l, 'ERROR (' + v + ') ' + t]);
 			return li;
 		});
-		message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function(m, l, v, t) {
-			var li = '<li><span class="warning" unselectable reveal-line="' + lines.length + '"><span class="line">WARN line ' + Number(l) + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
-			warnings.push(li);
-			lines.push([options.uri, Number(l), 'ERROR (' + v + ') ' + t]);
+		message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function (m, l, v, t) {
+			l = Number(l) - message.offset;
+			var li = '<li><span class="warning" unselectable reveal-line="' + lines.length + '"><span class="line">WARN line ' + l + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
+			warningLines.push(li);
+			lines.push([options.uri, l, 'ERROR (' + v + ') ' + t]);
 			return li;
 		});
 		var output = '<div class="errors-content"><div class="title">glsl-canvas error</div><ul>';
-		output += errors.join('\n');
-		output += warnings.join('\n');
+		output += errorLines.join('\n');
+		output += warningLines.join('\n');
 		output += '</ul></div>';
-		document.querySelector('.errors').setAttribute('class', 'errors active');
-		document.querySelector('.errors').innerHTML = output;
-		[].slice.call(document.querySelectorAll('.errors [reveal-line]')).forEach(function(node) {
+		errors.innerHTML = output;
+		errors.classList.add('active');
+		// console.log('onGlslError', 'errorLines', errorLines, 'warningLines', warningLines);
+		[].slice.call(document.querySelectorAll('.errors [reveal-line]')).forEach(function (node) {
 			var index = parseInt(node.getAttribute('reveal-line'));
-			node.addEventListener('click', function() {
+			node.addEventListener('click', function (event) {
 				revealGlslLine(lines[index]);
+				event.preventDefault();
+				event.stopPropagation();
 			});
 		});
 		document.querySelector('body').setAttribute('class', 'idle');
+		/*
+		var body = document.querySelector('body');
+		body.classList.remove('ready', 'empty');
+		body.classList.add('idle');
+		*/
+	}
+
+	function onGlslTextureError(error) {
+		// console.log('onGlslTextureError', error);
+		vscode.postMessage({
+			command: 'textureError',
+			data: JSON.stringify(error),
+		});
 	}
 
 	window.addEventListener('load', onLoad);
