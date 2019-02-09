@@ -48,6 +48,7 @@ class GlslPanel {
             preserveFocus: true,
         }, {
             enableScripts: true,
+            retainContextWhenHidden: true,
             localResourceRoots: localResourceRoots,
         });
         GlslPanel.current = new GlslPanel(panel, extensionPath, onMessage);

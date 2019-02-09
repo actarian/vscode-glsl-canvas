@@ -188,6 +188,7 @@ function registerSerializer() {
 		panelSerializer = vscode.window.registerWebviewPanelSerializer(GlslPanel.viewType, {
 			async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
 				GlslPanel.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage);
+				return Promise.resolve();
 			}
 		});
 	}

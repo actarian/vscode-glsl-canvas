@@ -70,6 +70,7 @@ export default class GlslPanel {
 				preserveFocus: true,
 			}, {
 				enableScripts: true,
+				retainContextWhenHidden: true, // !!!
 				localResourceRoots: localResourceRoots,
 			}
 		);

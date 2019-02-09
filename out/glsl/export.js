@@ -68,7 +68,7 @@ class GlslExport {
 		/*
 		glsl-canvas.js
 		Attributes: data-fragment-url, data-vertex-url, data-fragment, data-vertex, controls, data-autoplay
-		Events: load, render, over, out, move, click
+		Events: load, error, textureError, render, over, out, move, click
 		Methods: load, on, pause, play, toggle, setTexture, setUniform, setUniforms, destroy
 		*/
 		var glsl = GlslCanvas.of(document.querySelector('.glsl-canvas'));

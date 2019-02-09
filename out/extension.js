@@ -180,6 +180,7 @@ function registerSerializer() {
             deserializeWebviewPanel(webviewPanel, state) {
                 return __awaiter(this, void 0, void 0, function* () {
                     panel_1.default.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage);
+                    return Promise.resolve();
                 });
             }
         });

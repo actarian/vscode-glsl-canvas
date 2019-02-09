@@ -42,8 +42,10 @@ class GlslFormatProvider {
                 else {
                     // parentesis
                     s = s.replace(/[^\S\n]*([\(\)\[\]])[^\S\n]*/g, '$1');
+                    // s = s.replace(/(?<!if|return)[^\S\n]*([\(\)\[\]])[^\S\n]*/g, '$1');
                     // spaces
-                    s = s.replace(/([^\(\[])[^\S\n\()]*([\*\+\-\/\=]+)[^\S\n]*([^\+\-])/g, '$1 $2 $3');
+                    s = s.replace(/([^\(\[])[^\S\n)]*([\*\+\-\/\=\>\<\?\:]+)[^\S\n)]*([^\+\-])/g, '$1 $2 $3');
+                    // s = s.replace(/([^\(\[])[^\S\n\()]*([\*\+\-\/\=/>/<]+)[^\S\n]*([^\+\-])/g, '$1 $2 $3');
                     s = s.replace(/([\,\;])[^\S\n]*/g, '$1 ');
                     s = s.replace(/[^\S\n]*([/{])/g, ' $1');
                     // zero
@@ -51,6 +53,8 @@ class GlslFormatProvider {
                     s = s.replace(/(\d)\.(\B)/g, '$1.0$2');
                     // remove double spaces
                     s = s.replace(/[^\S\n]+/gm, ' ');
+                    // special
+                    s = s.replace(/(if|return)[^\S\n]*([\(\[])/g, '$1 $2');
                     // trim
                     // s = s.replace(/^[^\S\n]+|[^\S\n]+$/gm, '');
                     /*

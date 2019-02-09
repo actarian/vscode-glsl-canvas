@@ -8,11 +8,16 @@
 The extension opens a live WebGL preview of GLSL shaders within VSCode by providing a ```Show glslCanvas``` command.
 
 It use [glsl-canvas](https://github.com/actarian/glsl-canvas) a modified and improved version of [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) javascript library from [Book of Shaders](http://thebookofshaders.com) and [glslEditor](http://editor.thebookofshaders.com) made by [Patricio Gonzalez Vivo](http://patriciogonzalezvivo.com).
+
 ___
+
 *Run ⌘ ⇧ P on mac os, ctrl ⇧ P on windows.*  
 *Then type ```Show glslCanvas``` command to display a fullscreen preview of your fragment shader.*  
+
 ___
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview-half.gif)
+
+<!-- ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/01-main.gif) -->
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/01-main.gif)
 
 ___
 
@@ -20,13 +25,14 @@ ___
 
 Waiting for a more customizable code inset feature, ```vec3``` and ```vec4``` arrays can be modified with the integrated color picker.  
 
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/color-picker.gif)
-
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/02-picker.gif)
 ___
 
-## Export to folder
+## Export to html
 
 You can export your shader, assets and uniforms to an html page with livereload for testing in browser.
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/07-export.gif)
 ___
 
 ## <a name="uniforms"></a>Uniforms
@@ -41,6 +47,7 @@ The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse```, ```u_
     }
 }
 ```
+> *As of today VSCode do not support video element or audio element. You can use video texture with the Export to html feature.*
 ___
 
 ## u_camera
@@ -49,7 +56,7 @@ ___
 
 [Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=camera)
 
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/camera.gif)
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/03-camera.gif)
 ___
 
 ## u_trails[10]
@@ -58,7 +65,7 @@ ___
 
 [Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=trails)
 
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/trail.gif)
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/04-trails.gif)
 ___
 
 ## Custom Uniforms
@@ -87,7 +94,7 @@ ___
 
 By clicking the option button you can view and modify at runtime uniforms via the [dat.gui](https://github.com/dataarts/dat.gui) interface.
 
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/preview-gui.gif)
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/05-uniforms.gif)
 ___
 
 ## Multiple buffers 
@@ -121,7 +128,7 @@ void main() {
 
 [Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=buffers)
 
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/buffers.gif)
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/06-buffers.gif)
 ___
 
 ## Change detection 
@@ -156,17 +163,6 @@ Enables or disables refreshing the glslCanvas when changing the document.
 ```
 ___
 
-## Install on export
-
-Enables or disables installing the Npm packages on export. 
-
-```
-{
-    "glsl-canvas.installOnExport": true
-}
-```
-___
-
 ## Use formatter
 
 Enables or disables glsl code formatter. 
@@ -185,6 +181,19 @@ Enables or disables glsl code formatter compact mode.
 ```
 {
     "glsl-canvas.useCompactFormatter": false
+}
+```
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/08-format.gif)
+___
+
+## Install on export
+
+Enables or disables installing the Npm packages on export. 
+
+```
+{
+    "glsl-canvas.installOnExport": true
 }
 ```
 ___
