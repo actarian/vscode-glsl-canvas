@@ -3,7 +3,13 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
-## [0.2.4] - 2019-02-xx
+## [0.2.6] - 2019-02-16
+### Fixed
+- u_mouse on retina display.
+
+---
+
+## [0.2.4] - 2019-02-09
 ### Added
 - WebGL code exporter functionality.
 - Glsl code formatting functionality.

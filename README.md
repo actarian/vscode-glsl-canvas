@@ -315,6 +315,9 @@ Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHAN
 
 ---
 
+### 0.2.6
+*  Fixed u_mouse on retina display.
+
 ### 0.2.4
 * Added WebGL code exporter functionality.
 * Added Glsl code formatting functionality.
