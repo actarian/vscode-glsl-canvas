@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
-const vscode_1 = require("vscode");
 const color_provider_1 = require("./glsl/color.provider");
 const common_1 = require("./glsl/common");
 const editor_1 = require("./glsl/editor");
@@ -18,7 +17,7 @@ const format_provider_1 = require("./glsl/format.provider");
 const options_1 = require("./glsl/options");
 const panel_1 = require("./glsl/panel");
 const SELECTOR = { scheme: 'file', language: 'glsl' };
-let uri = vscode_1.Uri.parse('glsl-preview://authority/glsl-preview');
+let uri = vscode.Uri.parse('glsl-preview://authority/glsl-preview');
 let currentContext;
 let currentExtensionPath;
 let diagnosticCollection;
@@ -156,6 +155,19 @@ function onDidChangeTextDocument(e) {
             panel_1.default.update(uri);
         }, options.timeout);
     }
+    const rootUrl = vscode.Uri.file(currentContext.extensionPath);
+    const inset = vscode.window.createWebviewTextEditorInset(vscode.window.activeTextEditor, 0, 30, { localResourceRoots: [rootUrl] });
+    /*
+    const inset = vscode.window.createWebviewTextEditorInset(vscode.window.activeTextEditor, vscode.window.activeTextEditor.selection.with({
+        end: vscode.window.activeTextEditor.selection.end.translate(30)
+    }),
+        // { enableScripts: true, enableCommandUris: true, localResourceRoots: [rootUrl] }
+    );
+    */
+    inset.onDidDispose(() => {
+        console.log('WEBVIEW disposed...');
+    });
+    inset.webview.html = `<head><meta></head><body style="background-color: #000; color: #fff;">hello world!<body>`;
 }
 function onDidCloseTextDocument(document) {
     if (common_1.isGlslLanguage(document.languageId)) {

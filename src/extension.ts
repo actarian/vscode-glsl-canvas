@@ -1,7 +1,6 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { ExtensionContext, Uri } from 'vscode';
 import GlslColorProvider from './glsl/color.provider';
 import { currentGlslEditor, isGlslLanguage } from './glsl/common';
 import GlslEditor from './glsl/editor';
@@ -12,8 +11,8 @@ import GlslPanel from './glsl/panel';
 
 const SELECTOR: vscode.DocumentSelector = { scheme: 'file', language: 'glsl' };
 
-let uri = Uri.parse('glsl-preview://authority/glsl-preview');
-let currentContext: ExtensionContext;
+let uri = vscode.Uri.parse('glsl-preview://authority/glsl-preview');
+let currentContext: vscode.ExtensionContext;
 let currentExtensionPath: string;
 let diagnosticCollection: vscode.DiagnosticCollection;
 let colorFormatter: vscode.Disposable;
@@ -22,7 +21,7 @@ let rangeFormatter: vscode.Disposable;
 let panelSerializer: vscode.Disposable;
 let ti;
 
-export function activate(context: ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) {
 	currentContext = context;
 	currentExtensionPath = context.extensionPath;
 	registerSerializer();
@@ -161,6 +160,21 @@ function onDidChangeTextDocument(e: vscode.TextDocumentChangeEvent) {
 			GlslPanel.update(uri);
 		}, options.timeout);
 	}
+
+	const rootUrl = vscode.Uri.file(currentContext.extensionPath);
+	const inset = vscode.window.createWebviewTextEditorInset(vscode.window.activeTextEditor, 0, 30, { localResourceRoots: [rootUrl] });
+    /*
+    const inset = vscode.window.createWebviewTextEditorInset(vscode.window.activeTextEditor, vscode.window.activeTextEditor.selection.with({
+        end: vscode.window.activeTextEditor.selection.end.translate(30)
+    }),
+        // { enableScripts: true, enableCommandUris: true, localResourceRoots: [rootUrl] }
+    );
+    */
+	inset.onDidDispose(() => {
+		console.log('WEBVIEW disposed...');
+	});
+	inset.webview.html = `<head><meta></head><body style="background-color: #000; color: #fff;">hello world!<body>`;
+
 }
 
 function onDidCloseTextDocument(document: vscode.TextDocument) {
@@ -214,7 +228,7 @@ function disposeDiagnostic() {
 	}
 }
 
-function registerColorFormatter(context: ExtensionContext) {
+function registerColorFormatter(context: vscode.ExtensionContext) {
 	disposeColorFormatter();
 	const colorProvider = new GlslColorProvider();
 	colorFormatter = vscode.languages.registerColorProvider(SELECTOR, colorProvider);
@@ -228,7 +242,7 @@ function disposeColorFormatter() {
 	}
 }
 
-function registerCodeFormatter(context: ExtensionContext) {
+function registerCodeFormatter(context: vscode.ExtensionContext) {
 	disposeCodeFormatter();
 	const formatProvider = new GlslFormatProvider();
 	documentFormatter = vscode.languages.registerDocumentFormattingEditProvider(SELECTOR, formatProvider);

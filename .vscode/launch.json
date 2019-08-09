@@ -1,37 +1,38 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
 {
-    "version": "0.1.0",
-    "configurations": [
-        {
-            "name": "Extension",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "--extensionDevelopmentPath=${workspaceRoot}"
+	"version": "0.1.0",
+	"configurations": [
+		{
+			"name": "Extension",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceRoot}",
+				"--enable-proposed-api=circledev.glsl-canvas"
             ],
-            "stopOnEntry": false,
-            "sourceMaps": true,
-            "outFiles": [
+			"stopOnEntry": false,
+			"sourceMaps": true,
+			"outFiles": [
                 "${workspaceRoot}/out/**/*.js"
             ],
-            "preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: watch"
         },
-        {
-            "name": "Extension Tests",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
+		{
+			"name": "Extension Tests",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test"
             ],
-            "stopOnEntry": false,
-            "sourceMaps": true,
-            "outFiles": [
+			"stopOnEntry": false,
+			"sourceMaps": true,
+			"outFiles": [
                 "${workspaceRoot}/out/test/**/*.js"
             ],
-            "preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: watch"
         }
     ]
 }
