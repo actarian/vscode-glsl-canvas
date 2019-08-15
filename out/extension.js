@@ -137,7 +137,7 @@ function setConfiguration(e = null) {
         return;
     }
     if (e.affectsConfiguration('glsl-canvas.textures') || e.affectsConfiguration('glsl-canvas.uniforms')) {
-        console.log('updated');
+        // console.log('updated');
         if (common_1.currentGlslEditor()) {
             panel_1.default.update(uri);
         }

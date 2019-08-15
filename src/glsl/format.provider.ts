@@ -83,12 +83,13 @@ export default class GlslFormatProvider implements vscode.DocumentFormattingEdit
 			const lines = text.split('\n');
 			let i = 0;
 			text = lines.map(l => {
+				l = l.trim();
 				let a = (l.match(/^[^\{]*\}/g) || []).length;
 				let b = (l.match(/^[^\(]*\)/g) || []).length;
 				let c = (l.match(/^[^\[]*\]/g) || []).length;
 				i -= (a + b + c);
 				if (i > 0) {
-					l = new Array(i).fill(tab).join('') + l.trim();
+					l = new Array(i).fill(tab).join('') + l;
 				}
 				a = (l.match(/\{(?!.*\})/g) || []).length;
 				b = (l.match(/\((?!.*\))/g) || []).length;

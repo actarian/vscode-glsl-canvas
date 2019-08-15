@@ -954,6 +954,11 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			} else {
 				welcome.classList.add('active');
 			}
+			if (flags.pause) {
+				glsl.pause();
+			} else {
+				glsl.play();
+			}
 		}
 
 		function resize(init) {
@@ -991,7 +996,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		}
 
 		function togglePause() {
-			if (glsl.timer.paused) {
+			if (flags.pause) {
 				flags.pause = false;
 				/*
 				if (glsl.timePause) {

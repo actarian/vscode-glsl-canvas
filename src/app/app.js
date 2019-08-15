@@ -113,6 +113,11 @@
 			} else {
 				welcome.classList.add('active');
 			}
+			if (flags.pause) {
+				glsl.pause();
+			} else {
+				glsl.play();
+			}
 		}
 
 		function resize(init) {
@@ -150,7 +155,7 @@
 		}
 
 		function togglePause() {
-			if (glsl.timer.paused) {
+			if (flags.pause) {
 				flags.pause = false;
 				/*
 				if (glsl.timePause) {

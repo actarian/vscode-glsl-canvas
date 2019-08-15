@@ -140,7 +140,7 @@ function setConfiguration(e: vscode.ConfigurationChangeEvent = null) {
 		return;
 	}
 	if (e.affectsConfiguration('glsl-canvas.textures') || e.affectsConfiguration('glsl-canvas.uniforms')) {
-		console.log('updated');
+		// console.log('updated');
 		if (currentGlslEditor()) {
 			GlslPanel.update(uri);
 		}
