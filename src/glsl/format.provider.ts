@@ -25,8 +25,8 @@ export default class GlslFormatProvider implements vscode.DocumentFormattingEdit
 		if (format) {
 			let text = document.getText(range);
 			const tab = options.insertSpaces ? new Array(options.tabSize).fill(' ').join('') : '\t';
-			const comments = text.match(/(\/\/.*$)|(\/\*[\s\S]*\*\/)/gm);
-			const splitByComments = /\/\/.*$|\/\*[\s\S]*\*\//gm;
+			const comments = text.match(/(\/\/.*$)|(\/\*[\s\S]*\*\/)|(#include\s*".*")|(#include\s*'.*')/gm);
+			const splitByComments = /\/\/.*$|\/\*[\s\S]*\*\/|#include\s*".*"|#include\s*'.*'/gm;
 			const splitted = text.split(splitByComments).map(s => {
 				if (compact) {
 					// remove double spaces

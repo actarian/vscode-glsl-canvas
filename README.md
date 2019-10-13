@@ -9,6 +9,8 @@ The extension opens a live WebGL preview of GLSL shaders within VSCode by provid
 
 It use [glsl-canvas](https://github.com/actarian/glsl-canvas) a modified and improved version of [glslCanvas](https://github.com/patriciogonzalezvivo/glslCanvas) javascript library from [Book of Shaders](http://thebookofshaders.com) and [glslEditor](http://editor.thebookofshaders.com) made by [Patricio Gonzalez Vivo](http://patriciogonzalezvivo.com).
 
+***Now supporting WebGL2. just add `#version 300 es` at the very start of the file.***
+
 ___
 
 *Run ⌘ ⇧ P on mac os, ctrl ⇧ P on windows.*  
@@ -33,6 +35,19 @@ ___
 You can export your shader, assets and uniforms to an html page with livereload for testing in browser.
 
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/07-export.gif)
+___
+
+## Including dependent files with `#include`
+
+You can now include other GLSL code using a traditional `#include "file.glsl"` macro. 
+
+```javascript
+// example
+#include "common/uniforms.glsl"
+#include "common/functions.glsl"
+
+void main(){
+```
 ___
 
 ## <a name="uniforms"></a>Uniforms
@@ -223,6 +238,7 @@ ___
 
 ## Features
 
+* Both supports WebGL and WebGL2. Automatically create WebGL2 context by adding `#version 300 es` as the first line of file.
 * Integrated support of error handling with lines hilight.
 * Multiple buffers.
 * Play / pause functionality.
@@ -314,6 +330,11 @@ ___
 Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHANGELOG.md).
 
 ---
+
+### 0.2.7
+*  Added WebGL2 support.
+*  Added #include macro for including dependent files.
+*  Fixed non-compact formatter extra spaces.
 
 ### 0.2.6
 *  Fixed u_mouse on retina display.

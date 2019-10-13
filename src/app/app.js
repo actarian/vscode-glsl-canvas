@@ -43,13 +43,6 @@
 			workpath: options.workpath,
 		});
 
-		if (!glsl.gl) {
-			missing.classList.add('active');
-			return;
-		} else {
-			missing.classList.remove('active');
-		}
-
 		glsl.on('load', onGlslLoad);
 		glsl.on('error', onGlslError);
 		glsl.on('textureError', onGlslTextureError);
@@ -100,7 +93,13 @@
 					repeat: true,
 				});
 			}
-			glsl.load(o.fragment, o.vertex);
+			glsl.load(o.fragment, o.vertex).then(success => {
+				missing.classList.remove('active');
+			}, error => {
+				missing.classList.add('active');
+				onGlslLoadError(error);
+				return;
+			});
 		}
 
 		function onGlslLoad() {
@@ -118,6 +117,7 @@
 			} else {
 				glsl.play();
 			}
+			swapCanvas_(glsl.canvas);
 		}
 
 		function resize(init) {
@@ -284,22 +284,44 @@
 			camera.wheel(e.wheelDelta / Math.abs(e.wheelDelta));
 		}
 
-		canvas.addEventListener('dblclick', togglePause);
-		canvas.addEventListener('mousedown', onDown);
-		canvas.addEventListener('mousemove', onMove);
-		window.addEventListener('mouseup', onUp);
-		window.addEventListener('mousewheel', onWheel);
-		buttons.pause.addEventListener('mousedown', togglePause);
-		buttons.record.addEventListener('mousedown', toggleRecord);
-		buttons.stats.addEventListener('mousedown', toggleStats);
-		buttons.export.addEventListener('mousedown', onExport);
-		buttons.create.addEventListener('click', createShader);
-		window.addEventListener('message', onMessage, false);
-		window.addEventListener('resize', onResize);
-		errors.addEventListener('click', function () {
-			clearDiagnostic();
-		});
+		function swapCanvas_(canvas_) {
+			if (canvas !== canvas_) {
+				removeCanvasListeners_();
+				canvas = canvas_;
+				addCanvasListeners_();
+				capture.set(canvas);
+			}
+		}
 
+		function addCanvasListeners_() {
+			canvas.addEventListener('dblclick', togglePause);
+			canvas.addEventListener('mousedown', onDown);
+			canvas.addEventListener('mousemove', onMove);
+		}
+
+		function removeCanvasListeners_() {
+			canvas.removeEventListener('dblclick', togglePause);
+			canvas.removeEventListener('mousedown', onDown);
+			canvas.removeEventListener('mousemove', onMove);
+		}
+
+		function addListeners_() {
+			window.addEventListener('mouseup', onUp);
+			window.addEventListener('mousewheel', onWheel);
+			buttons.pause.addEventListener('mousedown', togglePause);
+			buttons.record.addEventListener('mousedown', toggleRecord);
+			buttons.stats.addEventListener('mousedown', toggleStats);
+			buttons.export.addEventListener('mousedown', onExport);
+			buttons.create.addEventListener('click', createShader);
+			window.addEventListener('message', onMessage, false);
+			window.addEventListener('resize', onResize);
+			errors.addEventListener('click', function () {
+				clearDiagnostic();
+			});
+			addCanvasListeners_();
+		}
+
+		addListeners_();
 		resize();
 	}
 
@@ -318,6 +340,7 @@
 	}
 
 	function onGlslError(message) {
+		console.log('onGlslError', message);
 		var options = window.options
 		var errors = document.querySelector('.errors');
 		var errorLines = [],
@@ -365,6 +388,13 @@
 		vscode.postMessage({
 			command: 'textureError',
 			data: JSON.stringify(error),
+		});
+	}
+
+	function onGlslLoadError(error) {
+		vscode.postMessage({
+			command: 'loadError',
+			data: JSON.stringify({ message: String(error) }),
 		});
 	}
 

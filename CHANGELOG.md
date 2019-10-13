@@ -3,6 +3,15 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
+## [0.2.7] - 2019-10-13
+### Added
+- WebGL2 support.
+- Including dependent files with #include macro.
+### Fixed
+- Non-compact formatter extra spaces.
+
+---
+
 ## [0.2.6] - 2019-02-16
 ### Fixed
 - u_mouse on retina display.

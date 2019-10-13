@@ -8,6 +8,7 @@ class GlslExport {
     static onExport(extensionPath, options) {
         // console.log('onExport', extensionPath, options.fragment, options.textures, options.uniforms);
         const workpath = options.workpath.replace('vscode-resource:/', '');
+        const includeUris = GlslExport.getInlineIncludes(options);
         const textureUris = GlslExport.getInlineTextures(options.fragment);
         const uniforms = {};
         for (let key in options.uniforms) {
@@ -31,8 +32,9 @@ class GlslExport {
         // const uniforms = JSON.stringify(options.uniforms, null, '\t');
         GlslExport.selectFolder().then((outputPath) => {
             const resourcePath = vscode.Uri.file(path.join(extensionPath, 'resources', 'export')).fsPath;
-            const tasks1 = textureUris.map(x => GlslExport.copyFile(path.join(workpath, x), path.join(outputPath, x)));
-            const tasks2 = [
+            const tasks1 = includeUris.map((x, i) => GlslExport.copyFile(x, path.join(outputPath, 'shaders', `${i}-${path.basename(x)}`)));
+            const tasks2 = textureUris.map(x => GlslExport.copyFile(path.join(workpath, x), path.join(outputPath, x)));
+            const tasks3 = [
                 GlslExport.copyFolder(path.join(resourcePath), path.join(outputPath)),
                 GlslExport.copyFolder(path.join(resourcePath, 'css'), path.join(outputPath, 'css')),
                 GlslExport.copyFolder(path.join(resourcePath, 'img'), path.join(outputPath, 'img')),
@@ -86,7 +88,7 @@ class GlslExport {
 
 	</html>`, path.join(outputPath, 'index.html'))
             ];
-            Promise.all(tasks1.concat(tasks2)).then(resolve => {
+            Promise.all(tasks1.concat(tasks2, tasks3)).then(resolve => {
                 // console.log('all.resolve', resolve);
                 GlslExport.detectNpm().then(has => {
                     GlslExport.npmInstallOrStart(outputPath).then((success) => {
@@ -232,8 +234,32 @@ class GlslExport {
         GlslExport.terminal.sendText(cmd_args.join(' '));
         return GlslExport.terminal;
     }
+    static getInlineIncludes(options) {
+        const fragmentString = options.fragment;
+        const slices = [];
+        const includes = [];
+        const regexp = /#include\s*['|"](.*.glsl)['|"]/gm;
+        let i = 0, n = 0;
+        let match;
+        while ((match = regexp.exec(fragmentString)) !== null) {
+            slices.push(fragmentString.slice(i, match.index));
+            i = match.index + match[0].length;
+            const include = match[1].replace('vscode-resource:/', '');
+            const file = path.basename(include);
+            includes.push(include);
+            // console.log('include', include, 'file', file);
+            slices.push(`#include "shaders/${n}-${file}"`);
+            n++;
+        }
+        slices.push(fragmentString.slice(i));
+        const fragment = slices.join('');
+        options.fragment = fragment;
+        // console.log('fragment', fragment);
+        // return [];
+        return includes;
+    }
     static getInlineTextures(fragmentString) {
-        let textures = [];
+        const textures = [];
         const textureExtensions = ['jpg', 'jpeg', 'png', 'ogv', 'webm', 'mp4'];
         const regexp = /uniform\s*sampler2D\s*([\w]*);(\s*\/\/\s*([\w|\:\/\/|\.|\-|\_]*)|\s*)/gm;
         let matches;

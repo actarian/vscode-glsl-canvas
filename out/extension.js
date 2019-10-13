@@ -76,10 +76,14 @@ function onGlslPanelMessage(message) {
         case 'clearDiagnostic':
             diagnosticCollection.clear();
             break;
+        case 'loadError':
+            const loadError = JSON.parse(message.data);
+            vscode.window.showErrorMessage(`Load error: "${loadError.message}"`);
+            break;
         case 'textureError':
-            const error = JSON.parse(message.data);
-            vscode.window.showErrorMessage(`Texture error "${error.key}": "${error.urlElementOrData}"
-${error.message}`);
+            const textureError = JSON.parse(message.data);
+            vscode.window.showErrorMessage(`Texture error "${textureError.key}": "${textureError.urlElementOrData}"
+${textureError.message}`);
             break;
     }
 }

@@ -15,6 +15,7 @@ export default class GlslExport {
 	static onExport(extensionPath: string, options: GlslOptions) {
 		// console.log('onExport', extensionPath, options.fragment, options.textures, options.uniforms);
 		const workpath = options.workpath.replace('vscode-resource:/', '');
+		const includeUris: string[] = GlslExport.getInlineIncludes(options);
 		const textureUris: string[] = GlslExport.getInlineTextures(options.fragment);
 		const uniforms: { [key: string]: any } = {};
 		for (let key in options.uniforms) {
@@ -39,11 +40,15 @@ export default class GlslExport {
 		GlslExport.selectFolder().then(
 			(outputPath: string) => {
 				const resourcePath = vscode.Uri.file(path.join(extensionPath, 'resources', 'export')).fsPath;
-				const tasks1: Promise<string[] | string>[] = textureUris.map(x => GlslExport.copyFile(
+				const tasks1: Promise<string[] | string>[] = includeUris.map((x, i) => GlslExport.copyFile(
+					x,
+					path.join(outputPath, 'shaders', `${i}-${path.basename(x)}`)
+				));
+				const tasks2: Promise<string[] | string>[] = textureUris.map(x => GlslExport.copyFile(
 					path.join(workpath, x),
 					path.join(outputPath, x)
 				));
-				const tasks2: Promise<string[] | string>[] = [
+				const tasks3: Promise<string[] | string>[] = [
 					GlslExport.copyFolder(
 						path.join(resourcePath),
 						path.join(outputPath)
@@ -117,7 +122,7 @@ export default class GlslExport {
 						path.join(outputPath, 'index.html')
 					)
 				];
-				Promise.all(tasks1.concat(tasks2)).then(
+				Promise.all(tasks1.concat(tasks2, tasks3)).then(
 					resolve => {
 						// console.log('all.resolve', resolve);
 						GlslExport.detectNpm().then(
@@ -296,8 +301,33 @@ export default class GlslExport {
 		return GlslExport.terminal;
 	}
 
+	static getInlineIncludes(options: GlslOptions): string[] {
+		const fragmentString = options.fragment;
+		const slices: string[] = [];
+		const includes: string[] = [];
+		const regexp = /#include\s*['|"](.*.glsl)['|"]/gm;
+		let i = 0, n = 0;
+		let match;
+		while ((match = regexp.exec(fragmentString)) !== null) {
+			slices.push(fragmentString.slice(i, match.index));
+			i = match.index + match[0].length;
+			const include = match[1].replace('vscode-resource:/', '');
+			const file = path.basename(include);
+			includes.push(include);
+			// console.log('include', include, 'file', file);
+			slices.push(`#include "shaders/${n}-${file}"`);
+			n++;
+		}
+		slices.push(fragmentString.slice(i));
+		const fragment = slices.join('');
+		options.fragment = fragment;
+		// console.log('fragment', fragment);
+		// return [];
+		return includes;
+	}
+
 	static getInlineTextures(fragmentString: string): string[] {
-		let textures: string[] = [];
+		const textures: string[] = [];
 		const textureExtensions = ['jpg', 'jpeg', 'png', 'ogv', 'webm', 'mp4'];
 		const regexp = /uniform\s*sampler2D\s*([\w]*);(\s*\/\/\s*([\w|\:\/\/|\.|\-|\_]*)|\s*)/gm;
 		let matches;

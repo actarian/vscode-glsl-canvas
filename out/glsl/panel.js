@@ -146,6 +146,8 @@ class GlslPanel {
     getResource(resource) {
         const file = vscode.Uri.file(path.join(this.extensionPath, 'resources', resource));
         const vscodeResource = file.with({ scheme: 'vscode-resource' });
+        // const panel = this.panel;
+        // const vscodeResource = panel.webview.toWebviewResource(imagePath);
         return vscodeResource;
     }
     getNonce() {

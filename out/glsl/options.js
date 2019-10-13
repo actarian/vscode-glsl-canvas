@@ -15,6 +15,12 @@ class GlslOptions {
         this.textures = Object.assign({}, config['textures'] || {});
         const folder = vscode.workspace ? vscode.workspace.rootPath : null;
         if (folder) {
+            if (this.fragment !== '') {
+                const regex = /#include\s*['|"](.*.glsl)['|"]/gm;
+                this.fragment = this.fragment.replace(regex, (substring, ...args) => {
+                    return `#include "vscode-resource:${vscode.Uri.file(path.join(folder, args[0])).path}"`;
+                });
+            }
             Object.keys(this.textures).forEach(x => {
                 const texture = this.textures[x];
                 if (texture.indexOf('http') !== 0 && texture.indexOf('file') !== 0) {

@@ -282,3 +282,15 @@ body {
 .dg.main.main .close-button.drag{opacity:1}
 .dg.main .close-button{-webkit-transition:opacity .1s linear;-o-transition:opacity .1s linear;-moz-transition:opacity .1s linear;transition:opacity .1s linear;border:0;line-height:19px;height:20px;cursor:pointer;text-align:center;background-color:#000}
 */
+
+.content {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.glsl-canvas--error {
+	padding: 10px;
+	font-size: 12px;
+	text-align: center;
+}

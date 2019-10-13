@@ -36,8 +36,7 @@ body {
   align-items: center;
   bottom: 15px;
   left: 50%;
-  -webkit-transform: translateX(-50%);
-          transform: translateX(-50%);
+  transform: translateX(-50%);
   border-radius: 6px;
   background: var(--vscode-editor-background);
   /*
@@ -56,14 +55,10 @@ body {
     color: var(--vscode-editor-foreground);
     cursor: pointer;
     font-size: 12px;
-    -webkit-transform: scale3d(1, 1, 1);
-            transform: scale3d(1, 1, 1);
-    transition: -webkit-transform ease-in-out 150ms;
-    transition: transform ease-in-out 150ms;
-    transition: transform ease-in-out 150ms, -webkit-transform ease-in-out 150ms; }
+    transform: scale3d(1, 1, 1);
+    transition: transform ease-in-out 150ms; }
     .tools .btn:hover, .tools .btn.active {
-      -webkit-transform: scale3d(0.9, 0.9, 0.9);
-              transform: scale3d(0.9, 0.9, 0.9); }
+      transform: scale3d(0.9, 0.9, 0.9); }
   .tools .btn-record.active {
     margin-top: 1px;
     color: var(--vscode-editorOverviewRuler-errorForeground); }
@@ -202,8 +197,7 @@ var(--vscode-editor-lineHighlightBackground)
   right: 0;
   left: auto;
   position: absolute;
-  -webkit-transform: translateX(15px);
-          transform: translateX(15px);
+  transform: translateX(15px);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -328,3 +322,12 @@ body {
 .dg.main.main .close-button.drag{opacity:1}
 .dg.main .close-button{-webkit-transition:opacity .1s linear;-o-transition:opacity .1s linear;-moz-transition:opacity .1s linear;transition:opacity .1s linear;border:0;line-height:19px;height:20px;cursor:pointer;text-align:center;background-color:#000}
 */
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+.glsl-canvas--error {
+  padding: 10px;
+  font-size: 12px;
+  text-align: center; }

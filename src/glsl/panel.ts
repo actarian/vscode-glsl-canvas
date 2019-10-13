@@ -66,13 +66,13 @@ export default class GlslPanel {
 		const panel = vscode.window.createWebviewPanel(
 			GlslPanel.viewType,
 			'GlslCanvas', {
-				viewColumn: viewColumn,
-				preserveFocus: true,
-			}, {
-				enableScripts: true,
-				retainContextWhenHidden: true, // !!!
-				localResourceRoots: localResourceRoots,
-			}
+			viewColumn: viewColumn,
+			preserveFocus: true,
+		}, {
+			enableScripts: true,
+			retainContextWhenHidden: true, // !!!
+			localResourceRoots: localResourceRoots,
+		}
 		);
 		GlslPanel.current = new GlslPanel(panel, extensionPath, onMessage);
 		return GlslPanel.current;
@@ -182,6 +182,8 @@ export default class GlslPanel {
 	private getResource(resource: string): vscode.Uri {
 		const file = vscode.Uri.file(path.join(this.extensionPath, 'resources', resource));
 		const vscodeResource = file.with({ scheme: 'vscode-resource' });
+		// const panel = this.panel;
+		// const vscodeResource = panel.webview.toWebviewResource(imagePath);
 		return vscodeResource;
 	}
 

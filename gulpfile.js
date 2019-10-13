@@ -30,14 +30,6 @@ let configuration = getJson('./gulpfile.config.json');
 const compileTask = parallel(compileScss, compileJs, compileTs, compileSnippets); // compilePartials, compileSnippets
 const bundleTask = parallel(bundleCss, bundleJs);
 
-exports.compile = compileTask;
-exports.bundle = bundleTask;
-exports.build = series(compileTask, bundleTask);
-exports.watch = watchTask;
-exports.serve = serveTask;
-exports.start = series(compileTask, bundleTask, watchTask);
-exports.default = series(compileTask, bundleTask, serveTask, watchTask);
-
 // COMPILERS
 function compileScss(done) {
 	const items = getCompilers('.scss');
@@ -70,32 +62,32 @@ function compileJs(done) {
 		return src(item.input, { base: '.', allowEmpty: true, sourcemaps: true })
 			.pipe(plumber())
 			.pipe(through2.obj((file, enc, next) => {
-					browserify(file.path)
-						.transform('babelify', {
-							global: true,
-							presets: [
+				browserify(file.path)
+					.transform('babelify', {
+						global: true,
+						presets: [
 							["@babel/preset-env", {
-									targets: {
-										chrome: '58',
-										ie: '11'
-									},
+								targets: {
+									chrome: '58',
+									ie: '11'
+								},
 							}]
 						],
-							extensions: ['.js']
-						})
-						.bundle((error, response) => {
-							if (error) {
-								logger.error('compile:js', error);
-							} else {
-								logger.log('browserify.bundle.success', item.output);
-								file.contents = response;
-								next(null, file);
-							}
-						})
-						.on('error', (error) => {
-							logger.error('compile:js', error.toString());
-						});
-				}
+						extensions: ['.js']
+					})
+					.bundle((error, response) => {
+						if (error) {
+							logger.error('compile:js', error);
+						} else {
+							logger.log('browserify.bundle.success', item.output);
+							file.contents = response;
+							next(null, file);
+						}
+					})
+					.on('error', (error) => {
+						logger.error('compile:js', error.toString());
+					});
+			}
 				/*, (done) => {
 					logger.log('through2.done', error);
 				}*/
@@ -196,8 +188,8 @@ function compilePartials() {
 
 function compileSnippets() {
 	return src('./src/snippets/**/*.glsl', {
-			base: './src/snippets/'
-		})
+		base: './src/snippets/'
+	})
 		.pipe(plumber())
 		.pipe(rename((path) => {
 			path.dirname = path.dirname.split('\\').join('/');
@@ -478,3 +470,11 @@ class logger {
 function logWatch(path, stats) {
 	logger.log('changed', path);
 }
+
+exports.compile = compileTask;
+exports.bundle = bundleTask;
+exports.build = series(compileTask, bundleTask);
+exports.watch = watchTask;
+exports.serve = serveTask;
+exports.start = series(compileTask, bundleTask, watchTask);
+exports.default = series(compileTask, bundleTask, serveTask, watchTask);
