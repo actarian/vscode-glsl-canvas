@@ -31,12 +31,16 @@ body {
   position: absolute;
   width: auto;
   height: 30px;
+  display: -webkit-box;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  -webkit-box-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+          align-items: center;
   bottom: 15px;
   left: 50%;
-  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
   border-radius: 6px;
   background: var(--vscode-editor-background);
   /*
@@ -55,10 +59,15 @@ body {
     color: var(--vscode-editor-foreground);
     cursor: pointer;
     font-size: 12px;
-    transform: scale3d(1, 1, 1);
-    transition: transform ease-in-out 150ms; }
+    -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+    -webkit-transition: -webkit-transform ease-in-out 150ms;
+    transition: -webkit-transform ease-in-out 150ms;
+    transition: transform ease-in-out 150ms;
+    transition: transform ease-in-out 150ms, -webkit-transform ease-in-out 150ms; }
     .tools .btn:hover, .tools .btn.active {
-      transform: scale3d(0.9, 0.9, 0.9); }
+      -webkit-transform: scale3d(0.9, 0.9, 0.9);
+              transform: scale3d(0.9, 0.9, 0.9); }
   .tools .btn-record.active {
     margin-top: 1px;
     color: var(--vscode-editorOverviewRuler-errorForeground); }
@@ -79,10 +88,13 @@ body {
   top: 0;
   width: 100%;
   height: 100%;
-  justify-content: center;
-  align-items: center;
+  -webkit-box-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+          align-items: center;
   background: var(--vscode-editor-background); }
   .welcome.active, .missing.active {
+    display: -webkit-box;
     display: flex; }
   .welcome .welcome-content, .missing .welcome-content {
     text-align: center; }
@@ -106,6 +118,7 @@ body {
   text-decoration: none;
   outline: 0 !important;
   cursor: pointer;
+  -webkit-transition: all ease-in-out 250ms;
   transition: all ease-in-out 250ms; }
   .btn-create:hover, .btn-create:active, .btn-create:focus {
     background: #005c99;
@@ -138,27 +151,34 @@ body {
   .errors-content .line {
     color: var(--vscode-editorRuler-foreground);
     font-weight: 800;
-    flex: 0 0 100px; }
+    -webkit-box-flex: 0;
+            flex: 0 0 100px; }
   .errors-content .value {
     color: var(--vscode-editorOverviewRuler-modifiedForeground);
-    flex: 0 0 50px;
+    -webkit-box-flex: 0;
+            flex: 0 0 50px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap; }
   .errors-content .text {
     color: var(--vscode-editor-foreground);
-    flex: 1 0 calc(100% - 150px); }
+    -webkit-box-flex: 1;
+            flex: 1 0 calc(100% - 150px); }
   .errors-content .error,
   .errors-content .warning {
+    display: -webkit-box;
     display: flex;
     border: 0px solid transparent;
-    justify-content: flex-start;
-    align-items: center;
+    -webkit-box-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+            align-items: center;
     line-height: 1;
     padding: 5px;
     margin-bottom: 5px;
     font-size: 11px;
     cursor: pointer;
+    -webkit-transition: ease-in-out 250ms background-color;
     transition: ease-in-out 250ms background-color; }
     .errors-content .error span,
     .errors-content .warning span {
@@ -197,7 +217,8 @@ var(--vscode-editor-lineHighlightBackground)
   right: 0;
   left: auto;
   position: absolute;
-  transform: translateX(15px);
+  -webkit-transform: translateX(15px);
+          transform: translateX(15px);
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -309,8 +330,10 @@ body {
     visibility: hidden; }
   body .tools, body .dg.main, body .stats {
     opacity: 0 !important;
+    -webkit-transition: opacity ease-in-out 1000ms;
     transition: opacity ease-in-out 1000ms; }
   body:not(.idle):hover .tools, body:not(.idle):hover .dg.main, body:not(.idle):hover .stats {
+    -webkit-transition: none;
     transition: none;
     opacity: 1 !important; }
 
@@ -323,9 +346,12 @@ body {
 .dg.main .close-button{-webkit-transition:opacity .1s linear;-o-transition:opacity .1s linear;-moz-transition:opacity .1s linear;transition:opacity .1s linear;border:0;line-height:19px;height:20px;cursor:pointer;text-align:center;background-color:#000}
 */
 .content {
+  display: -webkit-box;
   display: flex;
-  justify-content: center;
-  align-items: center; }
+  -webkit-box-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+          align-items: center; }
 
 .glsl-canvas--error {
   padding: 10px;

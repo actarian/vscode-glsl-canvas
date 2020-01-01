@@ -331,6 +331,11 @@ Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHAN
 
 ---
 
+### 0.2.8
+*  Added texture querystring options. 
+
+---
+
 ### 0.2.7
 *  Added WebGL2 support.
 *  Added #include macro for including dependent files.

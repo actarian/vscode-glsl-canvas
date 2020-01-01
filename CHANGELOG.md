@@ -3,6 +3,12 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
+## [0.2.8] - 2020-01-01
+### Added
+- texture querystring options.
+
+---
+
 ## [0.2.7] - 2019-10-13
 ### Added
 - WebGL2 support.
