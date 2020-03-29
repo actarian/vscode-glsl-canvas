@@ -12,6 +12,7 @@ export default class GlslOptions {
 	public vertex: string;
 	public uniforms: object;
 	public textures: object;
+	public extensions: string[];
 	public timeout: number;
 	public refreshOnChange: boolean;
 	public refreshOnSave: boolean;
@@ -25,6 +26,7 @@ export default class GlslOptions {
 		this.uniforms = config['uniforms'] || {};
 		this.timeout = config['timeout'] || 0;
 		this.textures = Object.assign({}, config['textures'] || {});
+		this.extensions = config['extensions'] || [];
 		const folder = vscode.workspace ? vscode.workspace.rootPath : null;
 		if (folder) {
 			if (this.fragment !== '') {

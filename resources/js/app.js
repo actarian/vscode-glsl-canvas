@@ -839,12 +839,8 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
     window.TrailsService = TrailsService;
 
 }());
-/* global window, document, console, acquireVsCodeApi, GlslCanvas, CaptureService, GuiService, TrailsService, CameraService, Stats, dat */
-
 (function () {
 	'use strict';
-
-	// "node_modules/glsl-canvas-js/dist/glsl-canvas.min.js"
 
 	var vscode = acquireVsCodeApi();
 	var oldState = vscode.getState();
@@ -875,18 +871,19 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		// console.log('app.js workpath', options.workpath);
 
-		var glsl = new GlslCanvas(canvas, {
+		var glslCanvas = new glsl.Canvas(canvas, {
 			backgroundColor: 'rgba(0.0, 0.0, 0.0, 0.0)',
 			alpha: true,
 			antialias: true,
 			premultipliedAlpha: false,
 			preserveDrawingBuffer: false,
 			workpath: options.workpath,
+			extensions: options.extensions
 		});
 
-		glsl.on('load', onGlslLoad);
-		glsl.on('error', onGlslError);
-		glsl.on('textureError', onGlslTextureError);
+		glslCanvas.on('load', onGlslLoad);
+		glslCanvas.on('error', onGlslError);
+		glslCanvas.on('textureError', onGlslTextureError);
 
 		var capture = new CaptureService();
 		capture.set(canvas);
@@ -894,13 +891,13 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		var camera = new CameraService();
 		var trails = new TrailsService();
 
-		glsl.on('render', function () {
+		glslCanvas.on('render', function () {
 			if (flags.stats) {
 				stats.end();
 			}
 			capture.snapshotRender();
-			camera.render(glsl);
-			trails.render(glsl);
+			camera.render(glslCanvas);
+			trails.render(glslCanvas);
 			if (flags.stats) {
 				stats.begin();
 			}
@@ -908,7 +905,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		function onUpdateUniforms(params) {
 			var uniforms = gui.uniforms();
-			glsl.setUniforms(uniforms);
+			glslCanvas.setUniforms(uniforms);
 		}
 
 		var gui = new GuiService(onUpdateUniforms);
@@ -929,12 +926,12 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 				removeStats();
 			}
 			for (var t in o.textures) {
-				glsl.setTexture('u_texture_' + t, o.textures[t], {
+				glslCanvas.setTexture('u_texture_' + t, o.textures[t], {
 					filtering: 'mipmap',
 					repeat: true,
 				});
 			}
-			glsl.load(o.fragment, o.vertex).then(success => {
+			glslCanvas.load(o.fragment, o.vertex).then(success => {
 				missing.classList.remove('active');
 			}, error => {
 				missing.classList.add('active');
@@ -946,7 +943,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		function onGlslLoad() {
 			var o = window.options;
 			gui.load(o.uniforms);
-			glsl.setUniforms(gui.uniforms());
+			glslCanvas.setUniforms(gui.uniforms());
 			errors.classList.remove('active');
 			if (options.uri) {
 				welcome.classList.remove('active');
@@ -954,11 +951,11 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 				welcome.classList.add('active');
 			}
 			if (flags.pause) {
-				glsl.pause();
+				glslCanvas.pause();
 			} else {
-				glsl.play();
+				glslCanvas.play();
 			}
-			swapCanvas_(glsl.canvas);
+			swapCanvas_(glslCanvas.canvas);
 		}
 
 		function resize(init) {
@@ -969,14 +966,14 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		}
 
 		function snapshot() {
-			glsl.forceRender = true;
-			glsl.render();
+			glslCanvas.forceRender = true;
+			glslCanvas.render();
 			return capture.snapshot();
 		}
 
 		function record() {
-			glsl.forceRender = true;
-			glsl.render();
+			glslCanvas.forceRender = true;
+			glslCanvas.render();
 			if (capture.record()) {
 				// flags.record = true;
 			}
@@ -999,18 +996,18 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			if (flags.pause) {
 				flags.pause = false;
 				/*
-				if (glsl.timePause) {
-				    glsl.timePrev = new Date();
-				    glsl.timeLoad += (glsl.timePrev - glsl.timePause);
+				if (glslCanvas.timePause) {
+				    glslCanvas.timePrev = new Date();
+				    glslCanvas.timeLoad += (glslCanvas.timePrev - glslCanvas.timePause);
 				}
 				*/
-				glsl.play();
+				glslCanvas.play();
 				buttons.pause.querySelector('i').setAttribute('class', 'icon-pause');
 			} else {
 				flags.pause = true;
-				glsl.pause();
+				glslCanvas.pause();
 				/*
-				glsl.timePause = new Date();
+				glslCanvas.timePause = new Date();
 				*/
 				buttons.pause.querySelector('i').setAttribute('class', 'icon-play');
 			}

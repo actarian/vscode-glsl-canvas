@@ -36,6 +36,7 @@ export default class GlslExport {
 				textures[key] = texture;
 			}
 		}
+		const extensions: string[] = options.extensions;
 		// const uniforms = JSON.stringify(options.uniforms, null, '\t');
 		GlslExport.selectFolder().then(
 			(outputPath: string) => {
@@ -66,7 +67,7 @@ export default class GlslExport {
 						path.join(outputPath, 'js', 'stats.min.js')
 					),
 					GlslExport.copyFile(
-						path.join(extensionPath, 'node_modules', 'glsl-canvas-js', 'dist', 'glsl-canvas.min.js'),
+						path.join(extensionPath, 'node_modules', 'glsl-canvas-js', 'dist', 'umd', 'glsl-canvas.min.js'),
 						path.join(outputPath, 'js', 'glsl-canvas.min.js')
 					),
 					GlslExport.writeFile(
@@ -105,7 +106,11 @@ export default class GlslExport {
 		Events: load, error, textureError, render, over, out, move, click
 		Methods: load, on, pause, play, toggle, setTexture, setUniform, setUniforms, destroy
 		*/
-		var glsl = GlslCanvas.of(document.querySelector('.glsl-canvas'));
+		var options = {
+			extensions: ${JSON.stringify(extensions)},
+		};
+		var canvas = document.querySelector('.glsl-canvas');
+		var glsl = new glsl.Canvas(canvas, options);
 		glsl.setUniforms(${JSON.stringify(uniforms)});${Object.keys(textures).map(x => `
 		glsl.setTexture('u_texture_${x}', '${textures[x]}', {
 			filtering: 'mipmap',
@@ -184,10 +189,15 @@ export default class GlslExport {
 			GlslExport.readFiles(src).then(
 				(files: string[]) => {
 					Promise.all(
-						files.map(x => GlslExport.copyFile(
-							path.join(src, x),
-							path.join(dest, x)
-						))
+						files.filter(x => {
+							const filePath = path.join(src, x);
+							return fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
+						}).map(x => {
+							return GlslExport.copyFile(
+								path.join(src, x),
+								path.join(dest, x)
+							);
+						})
 					).then(
 						files => {
 							resolve(files);

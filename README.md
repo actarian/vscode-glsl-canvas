@@ -20,49 +20,11 @@ ___
 
 <!-- ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/01-main.gif) -->
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/01-main.gif)
-
 ___
 
-## Color Picker
+## Uniforms
 
-Waiting for a more customizable code inset feature, ```vec3``` and ```vec4``` arrays can be modified with the integrated color picker.  
-
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/02-picker.gif)
-___
-
-## Export to html
-
-You can export your shader, assets and uniforms to an html page with livereload for testing in browser.
-
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/07-export.gif)
-___
-
-## Including dependent files with `#include`
-
-You can now include other GLSL code using a traditional `#include "file.glsl"` macro. 
-
-```javascript
-// example
-#include "common/uniforms.glsl"
-#include "common/functions.glsl"
-
-void main(){
-```
-___
-
-## <a name="uniforms"></a>Uniforms
-
-The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse```, ```u_camera``` and ```u_trails[10]```. You can define the texture channels (```u_texture_0```, ```u_texture_1```, ...) by modifying the workspace's ```settings.json``` file. 
-```
-{
-    "glsl-canvas.textures": {
-        "0": "./texture.png",
-        "1": "https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-1.png",
-        "2": "https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-2.jpg",        
-    }
-}
-```
-> *As of today VSCode do not support video element or audio element. You can use video texture with the Export to html feature.*
+The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse```, ```u_camera``` and ```u_trails[10]```.  
 ___
 
 ## u_camera
@@ -83,11 +45,42 @@ ___
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/04-trails.gif)
 ___
 
+## WebGL Extensions
+You can include any supported WebGL extension through the ```glsl-canvas.extensions``` array option modifying the workspace's ```settings.json``` file. 
+```json
+{
+    "glsl-canvas.extensions": [
+		"EXT_shader_texture_lod"
+	]
+}
+```
+You can then enable the extension in the shader
+```glsl
+#extension GL_EXT_shader_texture_lod : enable  
+
+vec3 color = texture2DLodEXT(u_texture, st, 0.0).rgb;
+```
+___
+
+## Textures
+You can define the texture channels (```u_texture_0```, ```u_texture_1```, ...) by modifying the workspace's ```settings.json``` file. 
+```json
+{
+    "glsl-canvas.textures": {
+        "0": "./texture.png",
+        "1": "https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-1.png",
+        "2": "https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-2.jpg",        
+    }
+}
+```
+> *As of today VSCode do not support video element or audio element. You can use video texture with the Export to html feature.*
+___
+
 ## Custom Uniforms
 
 You can also define custom uniforms by modifying the workspace's ```settings.json``` file. 
 
-```
+```json
 {
     "glsl-canvas.uniforms": {
         "u_strength": 1.0
@@ -146,11 +139,37 @@ void main() {
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/06-buffers.gif)
 ___
 
+## Export to html
+
+You can export your shader, assets and uniforms to an html page with livereload for testing in browser.
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/07-export.gif)
+___
+
+## Color Picker
+
+Waiting for a more customizable code inset feature, ```vec3``` and ```vec4``` arrays can be modified with the integrated color picker.  
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/02-picker.gif)
+___
+## Including dependent files with `#include`
+
+You can now include other GLSL code using a traditional `#include "file.glsl"` macro. 
+
+```javascript
+// example
+#include "common/uniforms.glsl"
+#include "common/functions.glsl"
+
+void main(){
+```
+___
+
 ## Change detection 
 
 You can set the timeout change detection option by modifying the workspace's ```settings.json``` file. 
 
-```
+```json
 {
     "glsl-canvas.timeout": 0
 }
@@ -161,7 +180,7 @@ ___
 
 Enables or disables refreshing the glslCanvas when saving the document.  
                 
-```
+```json
 {
     "glsl-canvas.refreshOnSave": true
 }
@@ -171,7 +190,7 @@ Enables or disables refreshing the glslCanvas when saving the document.
 
 Enables or disables refreshing the glslCanvas when changing the document.  
 
-```
+```json
 {
     "glsl-canvas.refreshOnChange": true
 }
@@ -182,7 +201,7 @@ ___
 
 Enables or disables glsl code formatter. 
 
-```
+```json
 {
     "glsl-canvas.useFormatter": true
 }
@@ -193,7 +212,7 @@ ___
 
 Enables or disables glsl code formatter compact mode.
 
-```
+```json
 {
     "glsl-canvas.useCompactFormatter": false
 }
@@ -206,7 +225,7 @@ ___
 
 Enables or disables installing the Npm packages on export. 
 
-```
+```json
 {
     "glsl-canvas.installOnExport": true
 }
@@ -328,6 +347,11 @@ ___
 
 ## Release Notes
 Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHANGELOG.md).
+
+---
+
+### 0.2.9
+*  Added extensions option support.
 
 ---
 

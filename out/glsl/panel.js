@@ -3,46 +3,54 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const vscode = require("vscode");
 const options_1 = require("./options");
+const DESERIALIZE_PANEL = true;
 class GlslPanel {
     constructor(panel, extensionPath, onMessage) {
-        this.disposables = [];
-        this.panel = panel;
-        this.extensionPath = extensionPath;
-        this.render();
-        this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
-        this.panel.onDidChangeViewState(e => {
-            /*
-            if (this.panel.visible) {
-                console.log('onDidChangeViewState', e);
-                // this.render();
+        this.disposables_ = [];
+        this.panel_ = panel;
+        this.extensionPath_ = extensionPath;
+        this.panel_.onDidDispose(() => this.dispose(), null, this.disposables_);
+        /*
+        // Update the content based on view changes
+        // cause an unneeded reload of the canvas
+        this.panel_.onDidChangeViewState(e => {
+            if (this.panel_.visible) {
+                // console.log('onDidChangeViewState', e);
+                this.render();
             }
-            */
-        }, null, this.disposables);
+        }, null, this.disposables_);
+        */
         this.onMessage = onMessage;
+        this.render();
+        // console.log('GlslPanel');
     }
     set onMessage(onMessage) {
-        this._onMessage = onMessage;
-        this.panel.webview.onDidReceiveMessage(message => {
+        this.onMessage_ = onMessage;
+        if (this.onMessageDisposable_) {
+            this.onMessageDisposable_.dispose();
+        }
+        this.onMessageDisposable_ = this.panel_.webview.onDidReceiveMessage(message => {
             if (typeof onMessage === 'function') {
                 onMessage(message);
             }
-        }, null, this.disposables);
+        }, null, this.disposables_);
     }
     get onMessage() {
-        return this._onMessage;
+        return this.onMessage_;
     }
     static createOrShow(extensionPath, onMessage) {
         const viewColumn = vscode.window.activeTextEditor ? vscode.ViewColumn.Beside : vscode.ViewColumn.One;
         if (GlslPanel.current) {
-            GlslPanel.current.onMessage = onMessage;
-            GlslPanel.current.panel.reveal(viewColumn, true);
-            return GlslPanel.current;
+            if (DESERIALIZE_PANEL) {
+                GlslPanel.current.onMessage = onMessage;
+                GlslPanel.current.panel_.reveal(viewColumn, true);
+                return GlslPanel.current;
+            }
+            else {
+                GlslPanel.current.dispose();
+            }
         }
-        const localResourceRoots = [];
-        localResourceRoots.push(vscode.Uri.file(path.join(extensionPath, 'resources')));
-        if (vscode.workspace && vscode.workspace.rootPath) {
-            localResourceRoots.push(vscode.Uri.file(vscode.workspace.rootPath));
-        }
+        const localResourceRoots = this.getLocalResourceRoots(extensionPath);
         const panel = vscode.window.createWebviewPanel(GlslPanel.viewType, 'GlslCanvas', {
             viewColumn: viewColumn,
             preserveFocus: true,
@@ -54,7 +62,17 @@ class GlslPanel {
         GlslPanel.current = new GlslPanel(panel, extensionPath, onMessage);
         return GlslPanel.current;
     }
+    static getLocalResourceRoots(extensionPath) {
+        const localResourceRoots = [];
+        localResourceRoots.push(vscode.Uri.file(path.join(extensionPath, 'resources')));
+        if (vscode.workspace && vscode.workspace.rootPath) {
+            localResourceRoots.push(vscode.Uri.file(vscode.workspace.rootPath));
+        }
+        // console.log(localResourceRoots);
+        return localResourceRoots;
+    }
     static revive(panel, extensionPath, onMessage) {
+        // panel.webview.options.localResourceRoots.concat(this.getLocalResourceRoots(extensionPath));
         GlslPanel.current = new GlslPanel(panel, extensionPath, onMessage);
     }
     static update(uri) {
@@ -62,9 +80,14 @@ class GlslPanel {
             GlslPanel.current.update(uri);
         }
     }
+    static render(uri) {
+        if (GlslPanel.current) {
+            GlslPanel.current.render(uri);
+        }
+    }
     static rebuild(onMessage) {
         if (GlslPanel.current) {
-            const extensionPath = GlslPanel.current.extensionPath;
+            const extensionPath = GlslPanel.current.extensionPath_;
             GlslPanel.dispose();
             GlslPanel.createOrShow(extensionPath, onMessage);
         }
@@ -74,9 +97,9 @@ class GlslPanel {
             /*
             const viewColumn = vscode.window.activeTextEditor ? vscode.ViewColumn.Beside : vscode.ViewColumn.One;
             console.log('reveal', vscode.window.activeTextEditor, viewColumn);
-            GlslPanel.current.panel.reveal(viewColumn, true);
+            GlslPanel.current.panel_.reveal(viewColumn, true);
             */
-            GlslPanel.current.panel.reveal(vscode.ViewColumn.Beside, true);
+            GlslPanel.current.panel_.reveal(vscode.ViewColumn.Beside, true);
             GlslPanel.current.update(uri);
         }
     }
@@ -86,43 +109,56 @@ class GlslPanel {
         }
     }
     dispose() {
-        GlslPanel.current = undefined;
-        this.panel.dispose();
-        while (this.disposables.length) {
-            const x = this.disposables.pop();
+        while (this.disposables_.length) {
+            const x = this.disposables_.pop();
             if (x) {
                 x.dispose();
             }
         }
+        this.panel_.dispose();
+        GlslPanel.current = undefined;
     }
     update(uri) {
         const options = new options_1.default();
-        this.panel.webview.postMessage(options.serialize()).then((success) => {
+        this.panel_.webview.postMessage(options.serialize()).then((success) => {
             // console.log('GlslPanel.update.success');
         }, (reason) => {
             console.log('GlslPanel.update.error');
             vscode.window.showErrorMessage(reason);
         });
     }
-    render() {
-        this.panel.title = 'glslCanvas';
-        this.panel.webview.html = this.getPanelWebviewHtml();
+    render(uri) {
+        this.panel_.title = 'glslCanvas';
+        this.panel_.webview.html = this.getPanelWebviewHtml(uri);
     }
-    getPanelWebviewHtml() {
+    getPanelWebviewHtml(uri) {
         const config = vscode.workspace.getConfiguration('editor');
         const options = new options_1.default();
+        const nonce = this.getNonce();
+        const cspSource = this.getCspSource();
         // console.log('getPanelWebviewHtml', config, options);
-        const content = `
+        const content = `<!DOCTYPE html>
+<html lang="en">
 <head>
-	<link href="${this.getResource('fonts/styles.css')}" rel="stylesheet">
-	<!-- <link href="${this.getResource('css/vendors.min.css')}" rel="stylesheet"> -->
+	<meta charset="UTF-8">
+	<!--
+	<meta http-equiv="Content-Security-Policy" content="
+	default-src 'none';
+	script-src ${cspSource} 'self' 'nonce-${nonce}';
+	style-src ${cspSource} 'self' 'nonce-${nonce}';
+	img-src ${cspSource} 'self' https:;
+	font-src ${cspSource} 'self';
+	connect-src 'self'; " />
+	-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link nonce="${nonce}" href="${this.getResource('fonts/styles.css')}" rel="stylesheet">
+	<!-- <link nonce="${nonce}" href="${this.getResource('css/vendors.min.css')}" rel="stylesheet"> -->
 	<style>
 		html, body { font-family: ${config.fontFamily}; font-weight: ${config.fontWeight}; font-size: ${config.fontSize}; };
 	</style>
-	<script nonce="${this.getNonce()}" src="${this.getResource('js/vendors.min.js')}"></script>
-	<link href="${this.getResource('css/app.min.css')}" rel="stylesheet"/>
+	<link nonce="${nonce}" href="${this.getResource('css/app.min.css')}" rel="stylesheet"/>
 </head>
-<script>
+<script nonce="${nonce}">
 	var options = ${options.serialize()};
 </script>
 <body class="idle">
@@ -138,16 +174,20 @@ class GlslPanel {
 	<div class="errors"></div>
 	<div class="welcome"><div class="welcome-content" unselectable><p>There's no active .glsl editor</p><button class="btn-create"><span>create one</span></button></div></div>
 	<div class="missing"><div class="missing-content" unselectable><p>Oops. There was a problem with WebGL.</p></div></div>
-	<script nonce="${this.getNonce()}" src="${this.getResource('js/app.min.js')}"></script>
+	<script nonce="${nonce}" src="${this.getResource('js/vendors.min.js')}"></script>
+	<script nonce="${nonce}" src="${this.getResource('js/app.min.js')}"></script>
 </body>
-        `;
+</html>`;
         return content;
     }
+    getCspSource() {
+        return this.panel_.webview.cspSource;
+    }
     getResource(resource) {
-        const file = vscode.Uri.file(path.join(this.extensionPath, 'resources', resource));
-        const vscodeResource = file.with({ scheme: 'vscode-resource' });
-        // const panel = this.panel;
-        // const vscodeResource = panel.webview.toWebviewResource(imagePath);
+        const fileOnDisk = vscode.Uri.file(path.join(this.extensionPath_, 'resources', resource));
+        // const vscodeResource = fileOnDisk.with({ scheme: 'vscode-resource' });
+        const panel = this.panel_;
+        const vscodeResource = panel.webview.asWebviewUri(fileOnDisk);
         return vscodeResource;
     }
     getNonce() {
@@ -159,6 +199,6 @@ class GlslPanel {
         return text;
     }
 }
-GlslPanel.viewType = 'glslCanvas';
 exports.default = GlslPanel;
+GlslPanel.viewType = 'glslCanvas';
 //# sourceMappingURL=panel.js.map

@@ -1,9 +1,10 @@
 'use strict';
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -17,7 +18,9 @@ const export_1 = require("./glsl/export");
 const format_provider_1 = require("./glsl/format.provider");
 const options_1 = require("./glsl/options");
 const panel_1 = require("./glsl/panel");
+const SERIALIZE_PANEL = true;
 const SELECTOR = { scheme: 'file', language: 'glsl' };
+const disposables_ = [];
 let uri = vscode_1.Uri.parse('glsl-preview://authority/glsl-preview');
 let currentContext;
 let currentExtensionPath;
@@ -30,21 +33,23 @@ let ti;
 function activate(context) {
     currentContext = context;
     currentExtensionPath = context.extensionPath;
-    registerSerializer();
     registerDiagnostic();
     setConfiguration();
     context.subscriptions.push(vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
         panel_1.default.createOrShow(currentExtensionPath, onGlslPanelMessage);
     }));
-    vscode.workspace.onDidChangeConfiguration(onDidChangeConfiguration);
-    vscode.workspace.onDidChangeTextDocument(onDidChangeTextDocument);
-    vscode.workspace.onDidCloseTextDocument(onDidCloseTextDocument);
-    vscode.workspace.onDidSaveTextDocument(onDidSaveDocument);
-    vscode.window.onDidChangeActiveTextEditor(onDidChangeActiveTextEditor);
+    vscode.workspace.onDidChangeConfiguration(onDidChangeConfiguration, null, disposables_);
+    vscode.workspace.onDidChangeTextDocument(onDidChangeTextDocument, null, disposables_);
+    vscode.workspace.onDidCloseTextDocument(onDidCloseTextDocument, null, disposables_);
+    vscode.workspace.onDidSaveTextDocument(onDidSaveDocument, null, disposables_);
+    vscode.window.onDidChangeActiveTextEditor(onDidChangeActiveTextEditor, null, disposables_);
+    setTimeout(() => {
+        registerSerializer();
+    }, 1000);
     // const exporter = new vscode.FileSystemProvider();
     // context.subscriptions.push(vscode.workspace.registerFileSystemProvider('exporter', exporter, { isCaseSensitive: true }));
-    // vscode.window.onDidChangeTextEditorViewColumn(onDidChangeTextEditorViewColumn);
-    // vscode.workspace.onDidOpenTextDocument(onDidOpenTextDocument);
+    // vscode.window.onDidChangeTextEditorViewColumn(onDidChangeTextEditorViewColumn, null, disposables_);
+    // vscode.workspace.onDidOpenTextDocument(onDidOpenTextDocument, null, disposables_);
     // vscode.commands.registerCommand('glsl-canvas.createShader', onCreateShader);
     // vscode.commands.registerCommand('glsl-canvas.revealLine', onRevealLine);
     // vscode.commands.registerCommand('glsl-canvas.showDiagnostic', onShowDiagnostic);
@@ -122,14 +127,14 @@ function onDiagnostic(editor, line, message = 'error') {
         diagnosticCollection.set(vscode.Uri.parse(key), value);
     });
 }
-function setConfiguration(e = null) {
+function setConfiguration(event = null) {
     if (!currentContext) {
         return;
     }
     const config = vscode.workspace.getConfiguration('glsl-canvas');
     // console.log('setConfiguration', config);
     registerColorFormatter(currentContext);
-    if (!e || e.affectsConfiguration('glsl-canvas.useFormatter')) {
+    if (!event || event.affectsConfiguration('glsl-canvas.useFormatter')) {
         if (config['useFormatter'] === true) {
             registerCodeFormatter(currentContext);
         }
@@ -137,10 +142,10 @@ function setConfiguration(e = null) {
             disposeCodeFormatter();
         }
     }
-    if (!e) {
+    if (!event) {
         return;
     }
-    if (e.affectsConfiguration('glsl-canvas.textures') || e.affectsConfiguration('glsl-canvas.uniforms')) {
+    if (event.affectsConfiguration('glsl-canvas.textures') || event.affectsConfiguration('glsl-canvas.uniforms')) {
         // console.log('updated');
         if (common_1.currentGlslEditor()) {
             panel_1.default.update(uri);
@@ -148,11 +153,12 @@ function setConfiguration(e = null) {
     }
 }
 function onDidChangeConfiguration(e) {
+    // console.log('onDidChangeConfiguration');
     setConfiguration(e);
 }
 function onDidChangeTextDocument(e) {
-    // console.log('onDidChangeTextDocument', e.document.uri.path);
-    let options = new options_1.default();
+    // console.log('onDidChangeTextDocument');
+    const options = new options_1.default();
     if (options.refreshOnChange) {
         clearTimeout(ti);
         diagnosticCollection.clear();
@@ -162,32 +168,30 @@ function onDidChangeTextDocument(e) {
     }
 }
 function onDidCloseTextDocument(document) {
+    // console.log('onDidCloseTextDocument');
     if (common_1.isGlslLanguage(document.languageId)) {
         panel_1.default.update(uri);
     }
 }
 function onDidSaveDocument(document) {
-    let options = new options_1.default();
+    // console.log('onDidSaveDocument');
+    const options = new options_1.default();
     if (common_1.currentGlslEditor() && options.refreshOnSave) {
         panel_1.default.update(uri);
     }
 }
 function onDidChangeActiveTextEditor(editor) {
-    // console.log('onDidChangeActiveTextEditor', editor.document.uri);
+    // console.log('onDidChangeActiveTextEditor');
     if (common_1.currentGlslEditor()) {
-        panel_1.default.update(uri);
+        panel_1.default.render(uri);
+        // GlslPanel.update(uri);
+        // GlslPanel.rebuild(onGlslPanelMessage);
     }
 }
 function registerSerializer() {
-    if (vscode.window.registerWebviewPanelSerializer) {
-        panelSerializer = vscode.window.registerWebviewPanelSerializer(panel_1.default.viewType, {
-            deserializeWebviewPanel(webviewPanel, state) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    panel_1.default.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage);
-                    return Promise.resolve();
-                });
-            }
-        });
+    disposeSerializer();
+    if (SERIALIZE_PANEL && vscode.window.registerWebviewPanelSerializer) {
+        panelSerializer = vscode.window.registerWebviewPanelSerializer(panel_1.default.viewType, new GlslPanelSerializer());
     }
 }
 function disposeSerializer() {
@@ -197,6 +201,7 @@ function disposeSerializer() {
     }
 }
 function registerDiagnostic() {
+    disposeDiagnostic();
     diagnosticCollection = vscode.languages.createDiagnosticCollection('glslCanvas');
     currentContext.subscriptions.push(diagnosticCollection);
 }
@@ -238,6 +243,12 @@ function disposeCodeFormatter() {
     }
 }
 function deactivate() {
+    while (disposables_.length) {
+        const x = disposables_.pop();
+        if (x) {
+            x.dispose();
+        }
+    }
     panel_1.default.dispose();
     export_1.default.dispose();
     disposeColorFormatter();
@@ -246,4 +257,43 @@ function deactivate() {
     disposeSerializer();
 }
 exports.deactivate = deactivate;
+/*
+function onDidChangeTextEditorViewColumn(e: vscode.TextEditorViewColumnChangeEvent) {
+    console.log('onDidChangeTextEditorViewColumn', e.viewColumn.toString());
+}
+
+function onDidOpenTextDocument(document: vscode.TextDocument) {
+    console.log('onDidOpenTextDocument', document.uri.path);
+}
+*/
+/*
+function onRefreshCanvas() {
+    if (currentGlslEditor()) {
+        GlslPanel.update(uri);
+    }
+}
+*/
+/*
+function onShowDiagnostic(uri: vscode.Uri, line: number, message: string) {
+    for (let editor of vscode.window.visibleTextEditors) {
+        if (editor.document.uri.path === uri.path) {
+            onDiagnostic(editor, line, message);
+        }
+    }
+}
+*/
+class GlslPanelSerializer {
+    deserializeWebviewPanel(webviewPanel, state) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // `state` is the state persisted using `setState` inside the webview
+            // console.log(`Got state: ${state}`);
+            // Restore the content of our webview.
+            // Make sure we hold on to the `webviewPanel` passed in here and
+            // also restore any event listeners we need on it.
+            // webviewPanel.webview.html = getWebviewContent();
+            panel_1.default.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage);
+            // return Promise.resolve();
+        });
+    }
+}
 //# sourceMappingURL=extension.js.map
