@@ -3,7 +3,7 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
-## [0.2.9] - 2020-03-29
+## [0.2.10] - 2020-03-29
 ### Added
 - WebGL extensions option support.
 - Inizialization protocol error.
