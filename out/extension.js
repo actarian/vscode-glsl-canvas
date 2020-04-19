@@ -145,10 +145,16 @@ function setConfiguration(event = null) {
     if (!event) {
         return;
     }
+    if (event.affectsConfiguration('glsl-canvas.doubleSided')) {
+        // console.log('updated');
+        if (common_1.currentGlslEditor()) {
+            return panel_1.default.render(uri);
+        }
+    }
     if (event.affectsConfiguration('glsl-canvas.textures') || event.affectsConfiguration('glsl-canvas.uniforms')) {
         // console.log('updated');
         if (common_1.currentGlslEditor()) {
-            panel_1.default.update(uri);
+            return panel_1.default.update(uri);
         }
     }
 }
@@ -156,35 +162,39 @@ function onDidChangeConfiguration(e) {
     // console.log('onDidChangeConfiguration');
     setConfiguration(e);
 }
-function onDidChangeTextDocument(e) {
+function onDidChangeTextDocument(event) {
     // console.log('onDidChangeTextDocument');
     const options = new options_1.default();
     if (options.refreshOnChange) {
         clearTimeout(ti);
         diagnosticCollection.clear();
         ti = setTimeout(function () {
+            // if (currentGlslEditor()) {
+            uri = event.document.uri;
             panel_1.default.update(uri);
+            // }
         }, options.timeout);
     }
 }
 function onDidCloseTextDocument(document) {
     // console.log('onDidCloseTextDocument');
     if (common_1.isGlslLanguage(document.languageId)) {
-        panel_1.default.update(uri);
+        panel_1.default.update(document.uri);
     }
 }
 function onDidSaveDocument(document) {
     // console.log('onDidSaveDocument');
     const options = new options_1.default();
     if (common_1.currentGlslEditor() && options.refreshOnSave) {
-        panel_1.default.update(uri);
+        uri = document.uri;
+        panel_1.default.update(document.uri);
     }
 }
 function onDidChangeActiveTextEditor(editor) {
     // console.log('onDidChangeActiveTextEditor');
     if (common_1.currentGlslEditor()) {
-        panel_1.default.render(uri);
-        // GlslPanel.update(uri);
+        uri = editor.document.uri;
+        panel_1.default.update(uri);
         // GlslPanel.rebuild(onGlslPanelMessage);
     }
 }
@@ -291,7 +301,7 @@ class GlslPanelSerializer {
             // Make sure we hold on to the `webviewPanel` passed in here and
             // also restore any event listeners we need on it.
             // webviewPanel.webview.html = getWebviewContent();
-            panel_1.default.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage);
+            panel_1.default.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage, state);
             // return Promise.resolve();
         });
     }

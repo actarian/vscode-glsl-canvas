@@ -20,8 +20,7 @@ body {
   box-sizing: border-box; }
 
 .content {
-  background-color: var(--vscode-editor-background);
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAHElEQVQYV2P4//+/FBbMgI4ZhohCbBhD81BQCAD6ay/4Sj20ZAAAAABJRU5ErkJggg=="); }
+  background-color: var(--vscode-editor-background); }
 
 .shader {
   background: transparent;
@@ -37,18 +36,25 @@ body {
           justify-content: center;
   -webkit-box-align: center;
           align-items: center;
-  bottom: 15px;
   left: 50%;
+  bottom: 15px;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
   border-radius: 6px;
   background: var(--vscode-editor-background);
+  box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   /*
 	.btn+.btn {
 		margin-left: -1px;
 	}
 	*/ }
   .tools .btn {
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+            align-items: center;
     width: 30px;
     height: 30px;
     -webkit-appearance: none;
@@ -68,9 +74,60 @@ body {
     .tools .btn:hover, .tools .btn.active {
       -webkit-transform: scale3d(0.9, 0.9, 0.9);
               transform: scale3d(0.9, 0.9, 0.9); }
-  .tools .btn-record.active {
-    margin-top: 1px;
-    color: var(--vscode-editorOverviewRuler-errorForeground); }
+
+.tools .btn-record.active {
+  margin-top: 1px;
+  color: var(--vscode-editorOverviewRuler-errorForeground); }
+
+.tools .btn-mode {
+  position: relative; }
+  .tools .btn-mode:hover, .tools .btn-mode.active {
+    -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1); }
+  .tools .btn-mode.hover .nav-modes {
+    display: -webkit-box;
+    display: flex; }
+
+.nav-modes {
+  display: none;
+  -webkit-box-pack: end;
+          justify-content: flex-end;
+  -webkit-box-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+          flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  width: 30px;
+  height: auto;
+  left: 0;
+  bottom: 30px;
+  border-radius: 6px;
+  background: var(--vscode-editor-background); }
+  .nav-modes li {
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+            align-items: center;
+    width: 30px;
+    height: 30px;
+    color: var(--vscode-editor-foreground);
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0.5;
+    -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+    -webkit-transition: all ease-in-out 150ms;
+    transition: all ease-in-out 150ms; }
+    .nav-modes li:hover, .nav-modes li.active {
+      opacity: 1;
+      -webkit-transform: scale3d(0.9, 0.9, 0.9);
+              transform: scale3d(0.9, 0.9, 0.9); }
 
 .errors {
   display: none;

@@ -8,11 +8,13 @@ export default class GlslOptions {
 
 	public uri: vscode.Uri;
 	public workpath: string;
+	public resources: string;
 	public fragment: string;
 	public vertex: string;
 	public uniforms: object;
 	public textures: object;
 	public extensions: string[];
+	public doubleSided: boolean;
 	public timeout: number;
 	public refreshOnChange: boolean;
 	public refreshOnSave: boolean;
@@ -27,6 +29,7 @@ export default class GlslOptions {
 		this.timeout = config['timeout'] || 0;
 		this.textures = Object.assign({}, config['textures'] || {});
 		this.extensions = config['extensions'] || [];
+		this.doubleSided = config['doubleSided'] || false;
 		const folder = vscode.workspace ? vscode.workspace.rootPath : null;
 		if (folder) {
 			if (this.fragment !== '') {

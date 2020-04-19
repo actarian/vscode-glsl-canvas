@@ -14,6 +14,7 @@ class GlslOptions {
         this.timeout = config['timeout'] || 0;
         this.textures = Object.assign({}, config['textures'] || {});
         this.extensions = config['extensions'] || [];
+        this.doubleSided = config['doubleSided'] || false;
         const folder = vscode.workspace ? vscode.workspace.rootPath : null;
         if (folder) {
             if (this.fragment !== '') {

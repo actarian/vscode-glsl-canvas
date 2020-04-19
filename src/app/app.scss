@@ -26,7 +26,7 @@ body {
 
 .content {
 	background-color: var(--vscode-editor-background);
-	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAHElEQVQYV2P4//+/FBbMgI4ZhohCbBhD81BQCAD6ay/4Sj20ZAAAAABJRU5ErkJggg==');
+	// background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAHElEQVQYV2P4//+/FBbMgI4ZhohCbBhD81BQCAD6ay/4Sj20ZAAAAABJRU5ErkJggg==');
 }
 
 .shader {
@@ -41,14 +41,19 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	bottom: 15px;
 	left: 50%;
+	bottom: 15px;
 	transform: translateX(-50%);
 	border-radius: 6px;
 	// background: rgba(black, .7);
 	background: var(--vscode-editor-background);
+	// border: 1px solid rgba(0,0,0,0.1);
+	box-shadow: 0 8px 8px -4px rgba(--vscode-widget-shadow, 0.3);
 
 	.btn {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		width: 30px;
 		height: 30px;
 		-webkit-appearance: none;
@@ -71,10 +76,75 @@ body {
 		margin-left: -1px;
 	}
 	*/
+}
+
+.tools {
 	.btn-record {
 		&.active {
             margin-top: 1px;
 			color: var(--vscode-editorOverviewRuler-errorForeground);
+		}
+	}
+
+	.btn-mode {
+		position: relative;
+		// color: var(--vscode-button-background);
+		// color: var(--vscode-debugIcon-breakpointCurrentStackframeForeground);
+		// color: var(--vscode-debugIcon-restartForeground);
+
+		&:hover,
+		&.active {
+			transform: scale3d(1.0, 1.0, 1.0);
+		}
+
+		&.hover {
+			// color: var(--vscode-button-hoverBackground);
+
+			.nav-modes {
+				display: flex;
+			}
+		}
+	}
+}
+
+.nav-modes {
+	display: none;
+	justify-content: flex-end;
+	align-items: center;
+    flex-direction: column;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	width: 30px;
+	height: auto;
+	left: 0;
+	bottom: 30px;
+	border-radius: 6px; // 6px 6px 0 0;
+	// border: 1px solid rgba(0,0,0,0.1);
+	background: var(--vscode-editor-background);
+	// box-shadow: 0 10px 10px -5px rgba(--vscode-widget-shadow,0.2);
+
+	li {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 30px;
+		height: 30px;
+		color: var(--vscode-editor-foreground);
+		// color: var(--vscode-button-background);
+		// color: var(--vscode-debugIcon-breakpointCurrentStackframeForeground);
+		// color: var(--vscode-debugIcon-restartForeground);
+		cursor: pointer;
+		font-size: 12px;
+		opacity: 0.5;
+		transform: scale3d(1.0, 1.0, 1.0);
+		transition: all ease-in-out 150ms;
+		&:hover,
+		&.active {
+			// color: var(--vscode-button-hoverBackground);
+			opacity: 1;
+			transform: scale3d(0.9, 0.9, 0.9);
 		}
 	}
 }

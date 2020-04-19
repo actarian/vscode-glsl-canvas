@@ -860,16 +860,19 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			stats: document.querySelector('.btn-stats'),
 			export: document.querySelector('.btn-export'),
 			create: document.querySelector('.btn-create'),
+			mode: document.querySelector('.btn-mode'),
 		};
+		var modes = Array.prototype.slice.call(buttons.mode.querySelectorAll('li'));
 		var flags = {
 			toggle: false,
 			record: false,
 			stats: false,
+			mode: 'flat',
 		};
-
 		resize(true);
 
-		// console.log('app.js workpath', options.workpath);
+		console.log('app.js workpath', options.workpath);
+		console.log('app.js resources', options.resources);
 
 		var glslCanvas = new glsl.Canvas(canvas, {
 			backgroundColor: 'rgba(0.0, 0.0, 0.0, 0.0)',
@@ -878,8 +881,13 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			premultipliedAlpha: false,
 			preserveDrawingBuffer: false,
 			workpath: options.workpath,
-			extensions: options.extensions
+			mesh: options.resources + '/model/lego.obj',
+			// mesh: options.resources + '/model/duck-toy.obj',
+			extensions: options.extensions,
+			doubleSided: options.doubleSided,
 		});
+
+		console.log('glslCanvas.init', glslCanvas.mode);
 
 		glslCanvas.on('load', onGlslLoad);
 		glslCanvas.on('error', onGlslError);
@@ -1131,6 +1139,13 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			}
 		}
 
+		function setMode(mode) {
+			console.log('mode', mode);
+			buttons.mode.firstElementChild.setAttribute('class', 'icon-' + mode);
+			flags.mode = mode;
+			glslCanvas.setMode(mode);
+		}
+
 		function addCanvasListeners_() {
 			canvas.addEventListener('dblclick', togglePause);
 			canvas.addEventListener('mousedown', onDown);
@@ -1151,6 +1166,21 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			buttons.stats.addEventListener('mousedown', toggleStats);
 			buttons.export.addEventListener('mousedown', onExport);
 			buttons.create.addEventListener('click', createShader);
+			buttons.mode.addEventListener('mouseenter', function () {
+				buttons.mode.classList.add('hover');
+			});
+			buttons.mode.addEventListener('mouseleave', function () {
+				buttons.mode.classList.remove('hover');
+			});
+			modes.forEach(function (node) {
+				node.addEventListener('mousedown', function () {
+					modes.forEach(function (x) {
+						x === node ? x.classList.add('active') : x.classList.remove('active');
+					});
+					var value = node.getAttribute('value');
+					setMode(value);
+				})
+			});
 			window.addEventListener('message', onMessage, false);
 			window.addEventListener('resize', onResize);
 			errors.addEventListener('click', function () {

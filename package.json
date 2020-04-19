@@ -38,6 +38,10 @@
           "type": "array",
           "description": "An array of extensions to enable in the webgl context, like EXT_shader_texture_lod"
         },
+        "glsl-canvas.doubleSided": {
+          "type": "boolean",
+          "description": "Enables/Disables doubleSided rendering"
+        },
         "glsl-canvas.timeout": {
           "type": "number",
           "default": 0,

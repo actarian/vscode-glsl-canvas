@@ -147,10 +147,16 @@ function setConfiguration(event: vscode.ConfigurationChangeEvent = null) {
 	if (!event) {
 		return;
 	}
+	if (event.affectsConfiguration('glsl-canvas.doubleSided')) {
+		// console.log('updated');
+		if (currentGlslEditor()) {
+			return GlslPanel.render(uri);
+		}
+	}
 	if (event.affectsConfiguration('glsl-canvas.textures') || event.affectsConfiguration('glsl-canvas.uniforms')) {
 		// console.log('updated');
 		if (currentGlslEditor()) {
-			GlslPanel.update(uri);
+			return GlslPanel.update(uri);
 		}
 	}
 }
@@ -160,14 +166,17 @@ function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
 	setConfiguration(e);
 }
 
-function onDidChangeTextDocument(e: vscode.TextDocumentChangeEvent) {
+function onDidChangeTextDocument(event: vscode.TextDocumentChangeEvent) {
 	// console.log('onDidChangeTextDocument');
 	const options = new GlslOptions();
 	if (options.refreshOnChange) {
 		clearTimeout(ti);
 		diagnosticCollection.clear();
 		ti = setTimeout(function () {
+			// if (currentGlslEditor()) {
+			uri = event.document.uri;
 			GlslPanel.update(uri);
+			// }
 		}, options.timeout);
 	}
 }
@@ -175,7 +184,7 @@ function onDidChangeTextDocument(e: vscode.TextDocumentChangeEvent) {
 function onDidCloseTextDocument(document: vscode.TextDocument) {
 	// console.log('onDidCloseTextDocument');
 	if (isGlslLanguage(document.languageId)) {
-		GlslPanel.update(uri);
+		GlslPanel.update(document.uri);
 	}
 }
 
@@ -183,15 +192,16 @@ function onDidSaveDocument(document: vscode.TextDocument) {
 	// console.log('onDidSaveDocument');
 	const options = new GlslOptions();
 	if (currentGlslEditor() && options.refreshOnSave) {
-		GlslPanel.update(uri);
+		uri = document.uri;
+		GlslPanel.update(document.uri);
 	}
 }
 
 function onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
 	// console.log('onDidChangeActiveTextEditor');
 	if (currentGlslEditor()) {
-		GlslPanel.render(uri);
-		// GlslPanel.update(uri);
+		uri = editor.document.uri;
+		GlslPanel.update(uri);
 		// GlslPanel.rebuild(onGlslPanelMessage);
 	}
 }
@@ -309,7 +319,7 @@ class GlslPanelSerializer implements vscode.WebviewPanelSerializer {
 		// Make sure we hold on to the `webviewPanel` passed in here and
 		// also restore any event listeners we need on it.
 		// webviewPanel.webview.html = getWebviewContent();
-		GlslPanel.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage);
+		GlslPanel.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage, state);
 		// return Promise.resolve();
 	}
 }

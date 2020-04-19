@@ -2,7 +2,6 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { Uri } from 'vscode';
 import GlslOptions from './options';
 
 const DESERIALIZE_PANEL: boolean = true;
@@ -16,6 +15,7 @@ export default class GlslPanel {
 	private disposables_: vscode.Disposable[] = [];
 	private onMessage_: Function;
 	private onMessageDisposable_: vscode.Disposable;
+	private fsPath: string;
 
 	set onMessage(onMessage: Function) {
 		this.onMessage_ = onMessage;
@@ -37,6 +37,7 @@ export default class GlslPanel {
 		panel: vscode.WebviewPanel,
 		extensionPath: string,
 		onMessage?: Function,
+		state?: any,
 	) {
 		this.panel_ = panel;
 		this.extensionPath_ = extensionPath;
@@ -52,7 +53,7 @@ export default class GlslPanel {
 		}, null, this.disposables_);
 		*/
 		this.onMessage = onMessage;
-		this.render();
+		this.render(state ? state.uri : null);
 		// console.log('GlslPanel');
 	}
 
@@ -95,18 +96,18 @@ export default class GlslPanel {
 		return localResourceRoots;
 	}
 
-	public static revive(panel: vscode.WebviewPanel, extensionPath: string, onMessage?: Function) {
+	public static revive(panel: vscode.WebviewPanel, extensionPath: string, onMessage?: Function, state?: any) {
 		// panel.webview.options.localResourceRoots.concat(this.getLocalResourceRoots(extensionPath));
-		GlslPanel.current = new GlslPanel(panel, extensionPath, onMessage);
+		GlslPanel.current = new GlslPanel(panel, extensionPath, onMessage, state);
 	}
 
-	public static update(uri: vscode.Uri) {
+	public static update(uri?: vscode.Uri) {
 		if (GlslPanel.current) {
 			GlslPanel.current.update(uri);
 		}
 	}
 
-	public static render(uri: vscode.Uri) {
+	public static render(uri?: vscode.Uri) {
 		if (GlslPanel.current) {
 			GlslPanel.current.render(uri);
 		}
@@ -149,8 +150,14 @@ export default class GlslPanel {
 		GlslPanel.current = undefined;
 	}
 
-	public update(uri: Uri) {
+	public update(uri?: vscode.Uri) {
+		const fsPath = uri ? uri.fsPath : null;
+		if (this.fsPath !== fsPath) {
+			this.fsPath = fsPath;
+			return this.render(uri);
+		}
 		const options = new GlslOptions();
+		// this.fsPath = options.uri ? options.uri.fsPath : null;
 		this.panel_.webview.postMessage(options.serialize()).then(
 			(success) => {
 				// console.log('GlslPanel.update.success');
@@ -170,10 +177,16 @@ export default class GlslPanel {
 	private getPanelWebviewHtml(uri?: vscode.Uri): string {
 		const config = vscode.workspace.getConfiguration('editor');
 		const options = new GlslOptions();
+		// options.resources = this.getResource('').fsPath;
+		// options.resources = this.getResource('').fsPath;
+		options.resources = 'vscode-resource:' + vscode.Uri.file(
+			path.join(this.extensionPath_, 'resources')
+		).path;
+		this.fsPath = options.uri ? options.uri.fsPath : null;
 		const nonce = this.getNonce();
 		const cspSource = this.getCspSource();
 		// console.log('getPanelWebviewHtml', config, options);
-		const content = `<!DOCTYPE html>
+		const content = /* html */`<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -202,6 +215,16 @@ export default class GlslPanel {
 		<canvas class="shader"></canvas>
 	</div>
 	<div class="tools">
+		<button class="btn btn-mode" unselectable>
+			<i class="icon-flat"></i>
+			<ul class="nav-modes">
+				<li value="flat"><i class="icon-flat"></i></li>
+				<li value="box"><i class="icon-box"></i></li>
+				<li value="sphere"><i class="icon-sphere"></i></li>
+				<li value="torus"><i class="icon-torus"></i></li>
+				<li value="mesh"><i class="icon-mesh"></i></li>
+			</ul>
+		</button>
 		<button class="btn btn-pause" unselectable><i class="icon-pause"></i></button>
 		<button class="btn btn-record" unselectable><i class="icon-record"></i></button>
 		<button class="btn btn-stats" unselectable><i class="icon-stats"></i></button>

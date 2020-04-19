@@ -56,3 +56,18 @@
 .icon-export:before {
   content: "\6c";
 }
+.icon-flat:before {
+  content: "\61";
+}
+.icon-box:before {
+  content: "\62";
+}
+.icon-sphere:before {
+  content: "\63";
+}
+.icon-torus:before {
+  content: "\64";
+}
+.icon-mesh:before {
+  content: "\65";
+}
