@@ -30,8 +30,8 @@
 		};
 		resize(true);
 
-		console.log('app.js workpath', options.workpath);
-		console.log('app.js resources', options.resources);
+		// console.log('app.js workpath', options.workpath);
+		// console.log('app.js resources', options.resources);
 
 		var glslCanvas = new glsl.Canvas(canvas, {
 			backgroundColor: 'rgba(0.0, 0.0, 0.0, 0.0)',
@@ -40,13 +40,13 @@
 			premultipliedAlpha: false,
 			preserveDrawingBuffer: false,
 			workpath: options.workpath,
-			mesh: options.resources + '/model/lego.obj',
-			// mesh: options.resources + '/model/duck-toy.obj',
+			// mesh: options.resources + '/model/lego.obj',
+			mesh: options.resources + '/model/duck-toy.obj',
 			extensions: options.extensions,
 			doubleSided: options.doubleSided,
 		});
 
-		console.log('glslCanvas.init', glslCanvas.mode);
+		// console.log('glslCanvas.init', glslCanvas.mode);
 
 		glslCanvas.on('load', onGlslLoad);
 		glslCanvas.on('error', onGlslError);
@@ -55,7 +55,7 @@
 		var capture = new CaptureService();
 		capture.set(canvas);
 
-		var camera = new CameraService();
+		// var camera = new CameraService();
 		var trails = new TrailsService();
 
 		glslCanvas.on('render', function () {
@@ -63,7 +63,7 @@
 				stats.end();
 			}
 			capture.snapshotRender();
-			camera.render(glslCanvas);
+			// camera.render(glslCanvas);
 			trails.render(glslCanvas);
 			if (flags.stats) {
 				stats.begin();
@@ -269,25 +269,31 @@
 			}, 1000 / 25);
 		}
 
+		/*
 		function onDown(e) {
 			var min = Math.min(content.offsetWidth, content.offsetHeight);
 			camera.down(e.x / min, e.y / min);
 		}
+		*/
 
 		function onMove(e) {
-			var min = Math.min(content.offsetWidth, content.offsetHeight);
-			camera.move(e.x / min, e.y / min);
+			// var min = Math.min(content.offsetWidth, content.offsetHeight);
+			// camera.move(e.x / min, e.y / min);
 			trails.move(e.x, content.offsetHeight - e.y);
 		}
 
+		/*
 		function onUp(e) {
 			var min = Math.min(content.offsetWidth, content.offsetHeight);
 			camera.up(e.x / min, e.y / min);
 		}
+		*/
 
+		/*
 		function onWheel(e) {
 			camera.wheel(e.wheelDelta / Math.abs(e.wheelDelta));
 		}
+		*/
 
 		function swapCanvas_(canvas_) {
 			if (canvas !== canvas_) {
@@ -299,7 +305,7 @@
 		}
 
 		function setMode(mode) {
-			console.log('mode', mode);
+			// console.log('mode', mode);
 			buttons.mode.firstElementChild.setAttribute('class', 'icon-' + mode);
 			flags.mode = mode;
 			glslCanvas.setMode(mode);
@@ -307,19 +313,19 @@
 
 		function addCanvasListeners_() {
 			canvas.addEventListener('dblclick', togglePause);
-			canvas.addEventListener('mousedown', onDown);
+			// canvas.addEventListener('mousedown', onDown);
 			canvas.addEventListener('mousemove', onMove);
 		}
 
 		function removeCanvasListeners_() {
 			canvas.removeEventListener('dblclick', togglePause);
-			canvas.removeEventListener('mousedown', onDown);
+			// canvas.removeEventListener('mousedown', onDown);
 			canvas.removeEventListener('mousemove', onMove);
 		}
 
 		function addListeners_() {
-			window.addEventListener('mouseup', onUp);
-			window.addEventListener('mousewheel', onWheel);
+			// window.addEventListener('mouseup', onUp);
+			// window.addEventListener('wheel', onWheel);
 			buttons.pause.addEventListener('mousedown', togglePause);
 			buttons.record.addEventListener('mousedown', toggleRecord);
 			buttons.stats.addEventListener('mousedown', toggleStats);
@@ -367,7 +373,7 @@
 	}
 
 	function onGlslError(message) {
-		console.log('onGlslError', message);
+		// console.log('onGlslError', message);
 		var options = window.options
 		var errors = document.querySelector('.errors');
 		var errorLines = [],

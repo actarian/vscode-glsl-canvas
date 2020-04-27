@@ -18,8 +18,7 @@
           "input": [
             "node_modules/stats.js/build/stats.min.js",
             "node_modules/dat.gui/build/dat.gui.min.js",
-            "../glsl-canvas/dist/iife/glsl-canvas.min.js",
-            "node_modules/glsl-canvas-js/dist/iife/glsl-canvas.min_.js"
+            "node_modules/glsl-canvas-js/dist/iife/glsl-canvas.min.js"
           ],
           "output": "resources/js/vendors.js",
           "minify": true
@@ -45,14 +44,14 @@
         },
         {
           "input": [
-            "bower_components/glslEditor/build/glslEditor.css"
+            "node_modules/glslEditor/build/glslEditor.css"
           ],
           "output": "docs/css/vendors.css",
           "minify": true
         },
         {
           "input": [
-            "bower_components/glslEditor/build/glslEditor.js"
+            "node_modules/glslEditor/build/glslEditor.js"
           ],
           "output": "docs/js/vendors.js",
           "minify": true

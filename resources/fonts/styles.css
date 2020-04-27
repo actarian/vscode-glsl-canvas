@@ -57,17 +57,17 @@
   content: "\6c";
 }
 .icon-flat:before {
-  content: "\61";
+  content: "\66";
 }
 .icon-box:before {
-  content: "\62";
+  content: "\67";
 }
 .icon-sphere:before {
-  content: "\63";
+  content: "\68";
 }
 .icon-torus:before {
-  content: "\64";
+  content: "\69";
 }
 .icon-mesh:before {
-  content: "\65";
+  content: "\6a";
 }

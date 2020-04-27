@@ -179,11 +179,11 @@ class GlslPanel {
 		<button class="btn btn-mode" unselectable>
 			<i class="icon-flat"></i>
 			<ul class="nav-modes">
-				<li value="flat"><i class="icon-flat"></i></li>
-				<li value="box"><i class="icon-box"></i></li>
-				<li value="sphere"><i class="icon-sphere"></i></li>
-				<li value="torus"><i class="icon-torus"></i></li>
 				<li value="mesh"><i class="icon-mesh"></i></li>
+				<li value="torus"><i class="icon-torus"></i></li>
+				<li value="sphere"><i class="icon-sphere"></i></li>
+				<li value="box"><i class="icon-box"></i></li>
+				<li value="flat"><i class="icon-flat"></i></li>
 			</ul>
 		</button>
 		<button class="btn btn-pause" unselectable><i class="icon-pause"></i></button>

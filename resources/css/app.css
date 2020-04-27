@@ -42,7 +42,7 @@ body {
           transform: translateX(-50%);
   border-radius: 6px;
   background: var(--vscode-editor-background);
-  box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 8px -4px rgba(0, 0, 0, 0.3);
   /*
 	.btn+.btn {
 		margin-left: -1px;

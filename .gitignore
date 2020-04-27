@@ -1,3 +1,5 @@
+*.psd
+
 # Logs
 logs
 *.log

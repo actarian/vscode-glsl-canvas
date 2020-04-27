@@ -132,7 +132,8 @@
   },
   "dependencies": {
     "dat.gui": "~0.7.6",
-    "glsl-canvas-js": "~0.2.0",
+    "glsl-canvas-js": "~0.2.2",
+    "glslEditor": "0.0.22",
     "natives": "~1.1.6",
     "spawn-command-with-kill": "~1.0.2",
     "stats.js": "~0.17.0"

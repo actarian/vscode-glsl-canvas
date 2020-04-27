@@ -17419,7 +17419,7 @@ var GlslEditor = (function () {
             this.options = options;
         }
 
-        if (this.options.imgs) {
+        if (this.options.imgs === undefined) {
             this.options.imgs = [];
         }
 
@@ -18630,7 +18630,7 @@ function saveOnServer(ge, callback) {
     var data = new FormData();
     data.append('code', content);
 
-    var dataURL = ge.shader.el_canvas.toDataURL('image/png');
+    var dataURL = ge.shader.elCanvas.toDataURL('image/png');
     var blobBin = atob(dataURL.split(',')[1]);
     var array = [];
     for (var i = 0; i < blobBin.length; i++) {

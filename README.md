@@ -19,30 +19,51 @@ ___
 ___
 
 <!-- ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/01-main.gif) -->
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/01-main.gif)
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/01-mode.gif)
+
+___
+
+## Features
+
+* Both supports WebGL and WebGL2. Automatically create WebGL2 context by adding `#version 300 es` as the first line of file.
+* Integrated support of error handling with lines hilight.
+* Drawing modes: ```flat```, ```box```, ```sphere```, ```torus``` and ```mesh``` with default mesh.
+* Mesh loader and parser for ```.obj``` format.
+* Vertex in fragment with ```VERTEX``` macro.
+* Multiple buffers with ```BUFFER``` macro.
+* Play / pause functionality.
+* Recording and exporting to ```.webm``` video.
+* Activable [stats.js](https://github.com/mrdoob/stats.js/) performance monitor.
+* Custom uniforms.
+* Activable gui for changing custom uniforms at runtime.
+* Export to html page with live reload.
+* Glsl code formatter standard and compact mode.
+* Glsl Snippets.
+___
+
+## Attributes
+
+The attributes provided are ```a_position```, ```a_normal```, ```a_texcoord```, ```a_color```.  
+
+| Type                    | Property                         |
+|-------------------------|----------------|
+| `vec4`                  | a_position     |
+| `vec4`                  | a_normal       |
+| `vec2`                  | a_texcoord     |
+| `vec4`                  | a_color        |
 ___
 
 ## Uniforms
 
 The uniforms provided are ```u_resolution```, ```u_time```, ```u_mouse```, ```u_camera``` and ```u_trails[10]```.  
-___
 
-## u_camera
-
-```u_camera``` is a vec3 array with coordinates for an orbital camera positioned at world zero.
-
-[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=camera)
-
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/03-camera.gif)
-___
-
-## u_trails[10]
-
-```u_trails[10]``` is a vec2 array with stored inertia mouse positions for mouse trailing effects.
-
-[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=trails)
-
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/04-trails.gif)
+| Type                    | Property                         |
+|-------------------------|-----------------|
+| `vec2`                  | u_resolution    |
+| `float`                 | u_time          |
+| `vec2`                  | u_mouse         |
+| `vec3`                  | u_camera        |
+| `vec2[10]`              | u_trails[10]    |
 ___
 
 ## WebGL Extensions
@@ -62,50 +83,19 @@ vec3 color = texture2DLodEXT(u_texture, st, 0.0).rgb;
 ```
 ___
 
-## Textures
-You can define the texture channels (```u_texture_0```, ```u_texture_1```, ...) by modifying the workspace's ```settings.json``` file. 
-```json
-{
-    "glsl-canvas.textures": {
-        "0": "./texture.png",
-        "1": "https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-1.png",
-        "2": "https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-2.jpg",        
-    }
-}
+## WebGL2
+For WebGL2 context creation just add `#version 300 es` at the very start of the file.  
+
+***no other characters allowed before macro!*** 
+```glsl
+#version 300 es
+
+precision mediump float;
+
 ```
-> *As of today VSCode do not support video element or audio element. You can use video texture with the Export to html feature.*
 ___
 
-## Custom Uniforms
-
-You can also define custom uniforms by modifying the workspace's ```settings.json``` file. 
-
-```json
-{
-    "glsl-canvas.uniforms": {
-        "u_strength": 1.0
-    }
-}
-```
-
-Types supported are ```float```,  ```vec2```,  ```vec3``` and ```vec4```. Vectors structures are converted from arrays of floats. Range values goes from ```0.0``` to ```1.0```.
-
-| Type                    | Property                         |
-|-------------------------|----------------------------------|
-| `float`                 | "u_float":  1.0,                 |
-| `vec2`                  | "u_vec2":  [1.0, 1.0],           |
-| `vec3`                  | "u_vec3":  [1.0, 1.0, 1.0],      |
-| `vec4`                  | "u_vec4":  [1.0, 1.0, 1.0, 1.0], |
-___
-
-## Uniforms Gui
-
-By clicking the option button you can view and modify at runtime uniforms via the [dat.gui](https://github.com/dataarts/dat.gui) interface.
-
-![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/05-uniforms.gif)
-___
-
-## Multiple buffers 
+## IO Buffers 
 
 You can use shader buffers by requiring definition with `#ifdef` or `defined` directly in `.glsl` code.  
 Just ask for `BUFFER_`N definition and a `u_buffer`N uniform will be created for you: 
@@ -137,6 +127,65 @@ void main() {
 [Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=buffers)
 
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/06-buffers.gif)
+___
+
+## Textures
+You can define the texture channels (```u_texture_0```, ```u_texture_1```, ...) by modifying the workspace's ```settings.json``` file. 
+```json
+{
+    "glsl-canvas.textures": {
+        "0": "./texture.png",
+        "1": "https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-1.png",
+        "2": "https://rawgit.com/actarian/plausible-brdf-shader/master/textures/noise/cloud-2.jpg",        
+    }
+}
+```
+> *As of today VSCode do not support video element or audio element. You can use video texture with the Export to html feature.*
+___
+
+## u_camera
+
+```u_camera``` is a vec3 array with coordinates for an orbital camera positioned at world zero, useful for raymarching.
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/03-camera.gif)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=camera)
+___
+
+## u_trails[10]
+
+```u_trails[10]``` is a vec2 array with stored inertia mouse positions for mouse trailing effects.  
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/04-trails.gif)
+[Playground](https://actarian.github.io/vscode-glsl-canvas/?glsl=trails)
+___
+
+## Custom Uniforms
+
+You can also define custom uniforms by modifying the workspace's ```settings.json``` file. 
+
+```json
+{
+    "glsl-canvas.uniforms": {
+        "u_strength": 1.0
+    }
+}
+```
+
+Types supported are ```float```,  ```vec2```,  ```vec3``` and ```vec4```. Vectors structures are converted from arrays of floats. Range values goes from ```0.0``` to ```1.0```.
+
+| Type                    | Property                         |
+|-------------------------|----------------------------------|
+| `float`                 | "u_float":  1.0,                 |
+| `vec2`                  | "u_vec2":  [1.0, 1.0],           |
+| `vec3`                  | "u_vec3":  [1.0, 1.0, 1.0],      |
+| `vec4`                  | "u_vec4":  [1.0, 1.0, 1.0, 1.0], |
+___
+
+## Uniforms Gui
+
+By clicking the option button you can view and modify at runtime uniforms via the [dat.gui](https://github.com/dataarts/dat.gui) interface.
+
+![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/05-uniforms.gif)
 ___
 
 ## Export to html
@@ -255,21 +304,6 @@ void main() {
 ```
 ___
 
-## Features
-
-* Both supports WebGL and WebGL2. Automatically create WebGL2 context by adding `#version 300 es` as the first line of file.
-* Integrated support of error handling with lines hilight.
-* Multiple buffers.
-* Play / pause functionality.
-* Recording and exporting to ```.webm``` video.
-* Activable [stats.js](https://github.com/mrdoob/stats.js/) performance monitor.
-* Custom uniforms.
-* Activable gui for changing custom uniforms at runtime.
-* Export to html page with live reload.
-* Glsl code formatter standard and compact mode.
-* Glsl Snippets.
-___
-
 ## Glsl snippets
 
 | Snippet                      | Purpose                               |
@@ -347,79 +381,3 @@ ___
 
 ## Release Notes
 Changelog [here](https://github.com/actarian/vscode-glsl-canvas/blob/master/CHANGELOG.md).
-
----
-
-### 0.2.9
-*  Added extensions option support.
-
----
-
-### 0.2.8
-*  Added texture querystring options. 
-
----
-
-### 0.2.7
-*  Added WebGL2 support.
-*  Added #include macro for including dependent files.
-*  Fixed non-compact formatter extra spaces.
-
-### 0.2.6
-*  Fixed u_mouse on retina display.
-
-### 0.2.4
-* Added WebGL code exporter functionality.
-* Added Glsl code formatting functionality.
-
-### 0.2.2
-* Fixed initialization error.
-
-### 0.2.0
-* Added editor color picker.
-* Added [glsl-canvas](https://github.com/actarian/glsl-canvas) refactor.
-* Fixed custom uniforms values.
-* Fixed layout reordering issue.
-
-### 0.1.92
-* Added support for local textures.
-* Added missing WebGL message.
-
-### 0.1.91
-* Added more control/options over refreshing the glslCanvas.
-* Fixed rendering loop updating GlslCanvas.
-
-### 0.1.9
-
-* Added multiple buffers functionality and playground.
-* Added mouse orbit control and playground.
-* Change detection timeout configuration option.
-
-### 0.1.7
-
-* Fixed sArc and easeInOut snippets methods.
-
-### 0.1.6
-
-* Documented snippets library with playgrounds.
-* Mouse trail uniforms.
-* Texture repeating feature.
-
-### 0.1.5
-
-* Gui for changing custom uniforms at runtime.
-* Fixed dependancy from other extension.
-
-### 0.1.3
-
-* Play / pause functionality.
-* Record button that exports to ```.webm``` video.
-* Activable performance monitor.
-* Better handling of active ```.glsl``` editor.
-* Improved inline error message.
-* Fixed resizing issue.
-* Minor snippets functionality.
-
-### 0.1.1
-
-* Initial release of glsl-canvas for vscode.
