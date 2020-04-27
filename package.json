@@ -2,7 +2,7 @@
   "name": "glsl-canvas",
   "displayName": "glsl-canvas",
   "description": "Live WebGL preview of GLSL shaders",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "author": "Luca Zampetti <lzampetti@gmail.com>",
   "publisher": "circledev",
   "license": "MIT",
