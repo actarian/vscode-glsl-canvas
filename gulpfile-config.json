@@ -69,11 +69,12 @@
       ]
     }
   },
-  "options": {
-    "tfs": false,
-    "server": {
-      "src": "./docs",
-      "port": 5555
-    }
-  }
+  "server": {
+    "src": "./docs",
+    "path": "/",
+    "host": "localhost",
+    "port": 5555,
+    "log": false
+  },
+  "tfs": false
 }

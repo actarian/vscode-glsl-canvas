@@ -55,7 +55,7 @@ export default class GlslPanel {
 		// console.log('GlslPanel', panel, extensionPath, state);
 	}
 
-	public static createOrShow(extensionPath: string, onMessage?: Function): GlslPanel {
+	public static createOrShow(extensionPath: string, onMessage?: Function, subscriptions?: { dispose: any }[]): GlslPanel {
 		const viewColumn = vscode.window.activeTextEditor ? vscode.ViewColumn.Beside : vscode.ViewColumn.One;
 		if (GlslPanel.current) {
 			if (DESERIALIZE_PANEL) {
@@ -80,6 +80,9 @@ export default class GlslPanel {
 				localResourceRoots: localResourceRoots,
 			}
 		);
+		panel.onDidDispose(() => {
+			// console.log('GlslPanel.onDidDispose');
+		}, null, subscriptions);
 		GlslPanel.current = new GlslPanel(panel, extensionPath, onMessage);
 		return GlslPanel.current;
 	}

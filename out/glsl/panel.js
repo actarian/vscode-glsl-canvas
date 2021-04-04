@@ -38,7 +38,7 @@ class GlslPanel {
     get onMessage() {
         return this.onMessage_;
     }
-    static createOrShow(extensionPath, onMessage) {
+    static createOrShow(extensionPath, onMessage, subscriptions) {
         const viewColumn = vscode.window.activeTextEditor ? vscode.ViewColumn.Beside : vscode.ViewColumn.One;
         if (GlslPanel.current) {
             if (DESERIALIZE_PANEL) {
@@ -59,6 +59,9 @@ class GlslPanel {
             retainContextWhenHidden: true,
             localResourceRoots: localResourceRoots,
         });
+        panel.onDidDispose(() => {
+            // console.log('GlslPanel.onDidDispose');
+        }, null, subscriptions);
         GlslPanel.current = new GlslPanel(panel, extensionPath, onMessage);
         return GlslPanel.current;
     }

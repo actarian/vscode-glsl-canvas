@@ -31,7 +31,7 @@ export function activate(context: ExtensionContext) {
 	registerDiagnostic();
 	setConfiguration();
 	context.subscriptions.push(vscode.commands.registerCommand('glsl-canvas.showGlslCanvas', () => {
-		GlslPanel.createOrShow(currentExtensionPath, onGlslPanelMessage);
+		GlslPanel.createOrShow(currentExtensionPath, onGlslPanelMessage, context.subscriptions);
 	}));
 	vscode.workspace.onDidChangeConfiguration(onDidChangeConfiguration, null, disposables_);
 	vscode.workspace.onDidChangeTextDocument(onDidChangeTextDocument, null, disposables_);
