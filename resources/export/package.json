@@ -1,17 +1,17 @@
 {
   "name": "glsl-canvas-preview",
-  "version": "0.2.0",
+  "version": "0.2.12",
   "author": "Luca Zampetti <lzampetti@gmail.com>",
   "license": "MIT",
   "scripts": {
     "postinstall": "npm run start",
-    "start": "live-server"
+    "start": "sirv --port 8080 --host --cors --single --dev"
   },
   "dependencies": {
-    "glsl-canvas-js": "~0.2.2",
-    "stats.js": "~0.17.0"
+    "glsl-canvas-js": "0.2.3",
+    "stats.js": "0.17.0"
   },
   "devDependencies": {
-    "live-server": "~1.2.1"
+    "sirv-cli": "1.0.11"
   }
 }

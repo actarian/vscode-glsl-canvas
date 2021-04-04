@@ -11,14 +11,14 @@ It use [glsl-canvas](https://github.com/actarian/glsl-canvas) a modified and imp
 
 ***Now supporting WebGL2. just add `#version 300 es` at the very start of the file.***
 
+***Now supporting nested includes with relative paths.***
+
 ___
 
 *Run ⌘ ⇧ P on mac os, ctrl ⇧ P on windows.*  
 *Then type ```Show glslCanvas``` command to display a fullscreen preview of your fragment shader.*  
 
 ___
-
-<!-- ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/01-main.gif) -->
 ![example](https://rawgit.com/actarian/vscode-glsl-canvas/master/src/previews/01-mode.gif)
 
 ___
@@ -365,10 +365,6 @@ ___
 
 * [Github Project Page](https://github.com/actarian/vscode-glsl-canvas)  
 * [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=circledev.glsl-canvas)
-
-*If you find it helpful, feel free to contribute in keeping this extension up to date via [PayPal](https://www.paypal.me/circledev/5)*
-
-[![PayPal](https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png)](https://www.paypal.me/circledev/5)
 ___
 
 ## Contact

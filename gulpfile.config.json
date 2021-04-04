@@ -18,7 +18,7 @@
           "input": [
             "node_modules/stats.js/build/stats.min.js",
             "node_modules/dat.gui/build/dat.gui.min.js",
-            "node_modules/glsl-canvas-js/dist/iife/glsl-canvas.min.js"
+            "node_modules/glsl-canvas-js/dist/umd/glsl-canvas.min.js"
           ],
           "output": "resources/js/vendors.js",
           "minify": true

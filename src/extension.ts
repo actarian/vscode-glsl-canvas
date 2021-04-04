@@ -1,7 +1,8 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { ExtensionContext, Uri } from 'vscode';
+import { ExtensionContext } from 'vscode';
+// import { ExtensionContext, Uri } from 'vscode';
 import GlslColorProvider from './glsl/color.provider';
 import { currentGlslEditor, isGlslLanguage } from './glsl/common';
 import GlslEditor from './glsl/editor';
@@ -14,7 +15,7 @@ const SERIALIZE_PANEL: boolean = true;
 const SELECTOR: vscode.DocumentSelector = { scheme: 'file', language: 'glsl' };
 const disposables_: vscode.Disposable[] = [];
 
-let uri = Uri.parse('glsl-preview://authority/glsl-preview');
+// let uri = Uri.parse('glsl-preview://authority/glsl-preview');
 let currentContext: ExtensionContext;
 let currentExtensionPath: string;
 let diagnosticCollection: vscode.DiagnosticCollection;
@@ -22,7 +23,7 @@ let colorFormatter: vscode.Disposable;
 let documentFormatter: vscode.Disposable;
 let rangeFormatter: vscode.Disposable;
 let panelSerializer: vscode.Disposable;
-let ti;
+let ti: NodeJS.Timeout;
 
 export function activate(context: ExtensionContext) {
 	currentContext = context;
@@ -59,9 +60,7 @@ export function activate(context: ExtensionContext) {
     */
 }
 
-function onGlslPanelMessage(
-	message: { command: string; data: any; }
-) {
+function onGlslPanelMessage(message: { command: string; data: any; }) {
 	switch (message.command) {
 		case 'createShader':
 			onCreateShader();
@@ -150,13 +149,13 @@ function setConfiguration(event: vscode.ConfigurationChangeEvent = null) {
 	if (event.affectsConfiguration('glsl-canvas.doubleSided')) {
 		// console.log('updated');
 		if (currentGlslEditor()) {
-			return GlslPanel.render(uri);
+			return GlslPanel.render();
 		}
 	}
 	if (event.affectsConfiguration('glsl-canvas.textures') || event.affectsConfiguration('glsl-canvas.uniforms')) {
 		// console.log('updated');
 		if (currentGlslEditor()) {
-			return GlslPanel.update(uri);
+			return GlslPanel.update();
 		}
 	}
 }
@@ -174,8 +173,7 @@ function onDidChangeTextDocument(event: vscode.TextDocumentChangeEvent) {
 		diagnosticCollection.clear();
 		ti = setTimeout(function () {
 			// if (currentGlslEditor()) {
-			uri = event.document.uri;
-			GlslPanel.update(uri);
+			GlslPanel.update();
 			// }
 		}, options.timeout);
 	}
@@ -184,7 +182,7 @@ function onDidChangeTextDocument(event: vscode.TextDocumentChangeEvent) {
 function onDidCloseTextDocument(document: vscode.TextDocument) {
 	// console.log('onDidCloseTextDocument');
 	if (isGlslLanguage(document.languageId)) {
-		GlslPanel.update(document.uri);
+		GlslPanel.update();
 	}
 }
 
@@ -192,16 +190,14 @@ function onDidSaveDocument(document: vscode.TextDocument) {
 	// console.log('onDidSaveDocument');
 	const options = new GlslOptions();
 	if (currentGlslEditor() && options.refreshOnSave) {
-		uri = document.uri;
-		GlslPanel.update(document.uri);
+		GlslPanel.update();
 	}
 }
 
 function onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
 	// console.log('onDidChangeActiveTextEditor');
 	if (currentGlslEditor()) {
-		uri = editor.document.uri;
-		GlslPanel.update(uri);
+		GlslPanel.update();
 		// GlslPanel.rebuild(onGlslPanelMessage);
 	}
 }
@@ -285,11 +281,11 @@ export function deactivate() {
 
 /*
 function onDidChangeTextEditorViewColumn(e: vscode.TextEditorViewColumnChangeEvent) {
-    console.log('onDidChangeTextEditorViewColumn', e.viewColumn.toString());
+    // console.log('onDidChangeTextEditorViewColumn', e.viewColumn.toString());
 }
 
 function onDidOpenTextDocument(document: vscode.TextDocument) {
-    console.log('onDidOpenTextDocument', document.uri.path);
+    // console.log('onDidOpenTextDocument', document.uri.path);
 }
 */
 
@@ -318,7 +314,6 @@ class GlslPanelSerializer implements vscode.WebviewPanelSerializer {
 		// Restore the content of our webview.
 		// Make sure we hold on to the `webviewPanel` passed in here and
 		// also restore any event listeners we need on it.
-		// webviewPanel.webview.html = getWebviewContent();
 		GlslPanel.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage, state);
 		// return Promise.resolve();
 	}

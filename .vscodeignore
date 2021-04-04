@@ -1,3 +1,4 @@
+#node_modules/**
 .vscode/**
 .vscode-test/**
 bower_components/**
@@ -6,11 +7,17 @@ out/test/**
 out/**/*.map
 src/**
 .gitignore
+.jsbeautifyrc
 bower.json
 bundleconfig.json
 compilerconfig.json
 tsconfig.json
+tslint.json
 gulpfile.js
+gulpfile.config.json
+**/*.ts
+**/tsconfig.json
+!file.ts
 vsc-extension-quickstart.md
 *.vsix
 *.psd

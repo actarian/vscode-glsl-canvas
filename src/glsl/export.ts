@@ -7,16 +7,23 @@ import * as spawn from 'spawn-command-with-kill';
 import * as vscode from 'vscode';
 import GlslOptions from './options';
 
+export interface GlslExportInclude {
+	fragment: string;
+	filename: string;
+}
+
 export default class GlslExport {
 
 	static terminal: vscode.Terminal;
 	static npm: boolean = false;
 
 	static onExport(extensionPath: string, options: GlslOptions) {
-		// console.log('onExport', extensionPath, options.fragment, options.textures, options.uniforms);
-		const workpath = options.workpath.replace('vscode-resource:/', '');
-		const includeUris: string[] = GlslExport.getInlineIncludes(options);
+		// console.log('onExport', extensionPath, options);
+		const includes = GlslExport.collectInlineIncludes(options.folder, options.fragment);
+		// console.log('includes', includes);
+		// const includeUris: string[] = GlslExport.getInlineIncludes(options);
 		const textureUris: string[] = GlslExport.getInlineTextures(options.fragment);
+		const modelUris: string[] = GlslExport.getInlineModels(options.fragment);
 		const uniforms: { [key: string]: any } = {};
 		for (let key in options.uniforms) {
 			const regexp = new RegExp('uniform\\s+\\w*\\s+(' + key + ')\\s*;');
@@ -36,45 +43,66 @@ export default class GlslExport {
 				textures[key] = texture;
 			}
 		}
-		const extensions: string[] = options.extensions;
 		// const uniforms = JSON.stringify(options.uniforms, null, '\t');
-		GlslExport.selectFolder().then(
-			(outputPath: string) => {
-				const resourcePath = vscode.Uri.file(path.join(extensionPath, 'resources', 'export')).fsPath;
-				const tasks1: Promise<string[] | string>[] = includeUris.map((x, i) => GlslExport.copyFile(
-					x,
-					path.join(outputPath, 'shaders', `${i}-${path.basename(x)}`)
-				));
-				const tasks2: Promise<string[] | string>[] = textureUris.map(x => GlslExport.copyFile(
-					path.join(workpath, x),
-					path.join(outputPath, x)
-				));
-				const tasks3: Promise<string[] | string>[] = [
-					GlslExport.copyFolder(
-						path.join(resourcePath),
-						path.join(outputPath)
-					),
-					GlslExport.copyFolder(
-						path.join(resourcePath, 'css'),
-						path.join(outputPath, 'css')
-					),
-					GlslExport.copyFolder(
-						path.join(resourcePath, 'img'),
-						path.join(outputPath, 'img')
-					),
-					GlslExport.copyFile(
-						path.join(extensionPath, 'node_modules', 'stats.js', 'build', 'stats.min.js'),
-						path.join(outputPath, 'js', 'stats.min.js')
-					),
-					GlslExport.copyFile(
-						path.join(extensionPath, 'node_modules', 'glsl-canvas-js', 'dist', 'umd', 'glsl-canvas.min.js'),
-						path.join(outputPath, 'js', 'glsl-canvas.min.js')
-					),
-					GlslExport.writeFile(
-						options.fragment,
-						path.join(outputPath, 'shaders', 'fragment.glsl')
-					),
-					GlslExport.writeFile(`<!DOCTYPE html>
+		GlslExport.selectFolder().then((outputPath: string) => {
+			const resourcePath = vscode.Uri.file(path.join(extensionPath, 'resources', 'export')).fsPath;
+			const basePath = options.folder;
+			/*
+			const tasks1: Promise<string[] | string>[] = includeUris.map((x, i) => GlslExport.copyFile(
+				path.join(basePath, x),
+				path.join(outputPath, 'shaders', `${i}-${path.basename(x)}`)
+			));
+			*/
+			const tasks1: Promise<string[] | string>[] = includes.map((x, i) => GlslExport.writeFile(
+				x.fragment,
+				path.join(outputPath, x.filename)
+			));
+			const tasks2: Promise<string[] | string>[] = textureUris.map(x => GlslExport.copyFile(
+				path.join(basePath, x),
+				path.join(outputPath, x)
+			));
+			const tasks3: Promise<string[] | string>[] = modelUris.map(x => GlslExport.copyFile(
+				path.join(basePath, x),
+				path.join(outputPath, x)
+			));
+			const tasks4: Promise<string[] | string>[] = [
+				GlslExport.copyFolder(
+					path.join(resourcePath),
+					path.join(outputPath)
+				),
+				GlslExport.copyFolder(
+					path.join(resourcePath, 'css'),
+					path.join(outputPath, 'css')
+				),
+				GlslExport.copyFolder(
+					path.join(resourcePath, 'img'),
+					path.join(outputPath, 'img')
+				),
+				GlslExport.copyFile(
+					path.join(extensionPath, 'resources', 'model', 'duck-toy.obj'),
+					path.join(outputPath, 'model', 'duck-toy.obj')
+				),
+				GlslExport.copyFile(
+					path.join(extensionPath, 'node_modules', 'stats.js', 'build', 'stats.min.js'),
+					path.join(outputPath, 'js', 'stats.min.js')
+				),
+				GlslExport.copyFolder(
+					path.join(extensionPath, 'node_modules', 'glsl-canvas-js', 'dist', 'umd'),
+					path.join(outputPath, 'js')
+				),
+				/*
+				GlslExport.copyFile(
+					path.join(extensionPath, 'node_modules', 'glsl-canvas-js', 'dist', 'umd', 'glsl-canvas.min.js'),
+					path.join(outputPath, 'js', 'glsl-canvas.min.js')
+				),
+				*/
+				/*
+				GlslExport.writeFile(
+					options.fragment,
+					path.join(outputPath, 'shaders', 'fragment.glsl')
+				),
+				*/
+				GlslExport.writeFile(`<!DOCTYPE html>
 	<html>
 
 	<head>
@@ -107,7 +135,15 @@ export default class GlslExport {
 		Methods: load, on, pause, play, toggle, setTexture, setUniform, setUniforms, destroy
 		*/
 		var options = {
-			extensions: ${JSON.stringify(extensions)},
+			backgroundColor: 'rgba(0.0, 0.0, 0.0, 0.0)',
+			alpha: true,
+			antialias: true,
+			premultipliedAlpha: false,
+			preserveDrawingBuffer: false, ${options.mode !== 'flat' ? `
+				mode: ${JSON.stringify(options.mode)},
+				mesh: 'model/duck-toy.obj',` : ``}
+			extensions: ${JSON.stringify(options.extensions)},
+			doubleSided: ${JSON.stringify(options.doubleSided)},
 		};
 		var canvas = document.querySelector('.glsl-canvas');
 		var glsl = new glsl.Canvas(canvas, options);
@@ -124,32 +160,24 @@ export default class GlslExport {
 	</script>
 
 	</html>`,
-						path.join(outputPath, 'index.html')
-					)
-				];
-				Promise.all(tasks1.concat(tasks2, tasks3)).then(
-					resolve => {
-						// console.log('all.resolve', resolve);
-						GlslExport.detectNpm().then(
-							has => {
-								GlslExport.npmInstallOrStart(outputPath).then(
-									(success: vscode.Terminal) => {
-										// console.log('npmInstall.success', success);
-									},
-									(error: any) => {
-										console.log('npmInstall.error', error);
-									}
-								);
-							},
-							error => {
-								vscode.window.showInformationMessage(`All files exported to '${outputPath}'`);
-							});
-					},
-					reject => {
-						console.log('all.reject', reject);
-					}
-				);
+					path.join(outputPath, 'index.html')
+				)
+			];
+			Promise.all(tasks1.concat(tasks2, tasks3, tasks4)).then(resolve => {
+				// console.log('all.resolve', resolve);
+				GlslExport.detectNpm().then(has => {
+					GlslExport.npmInstallOrStart(outputPath).then((success: vscode.Terminal) => {
+						// console.log('npmInstall.success', success);
+					}, (error: any) => {
+						console.log('npmInstall.error', error);
+					});
+				}, error => {
+					vscode.window.showInformationMessage(`All files exported to '${outputPath}'`);
+				});
+			}, reject => {
+				console.log('all.reject', reject);
 			});
+		});
 	}
 
 	static selectFolder(openLabel: string = 'Export'): Promise<string> {
@@ -165,8 +193,6 @@ export default class GlslExport {
 					const outputPath = uris[0].fsPath;
 					// console.log(openLabel + ' ' + outputPath);
 					resolve(outputPath);
-				} else {
-					reject(uris);
 				}
 			});
 		});
@@ -186,105 +212,88 @@ export default class GlslExport {
 
 	static copyFolder(src: string, dest: string): Promise<string[]> {
 		return new Promise((resolve, reject) => {
-			GlslExport.readFiles(src).then(
-				(files: string[]) => {
-					Promise.all(
-						files.filter(x => {
-							const filePath = path.join(src, x);
-							return fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
-						}).map(x => {
-							return GlslExport.copyFile(
-								path.join(src, x),
-								path.join(dest, x)
-							);
-						})
-					).then(
-						files => {
-							resolve(files);
-						},
-						error => {
-							reject(error);
-						});
-				},
-				error => {
+			GlslExport.readFiles(src).then((files: string[]) => {
+				Promise.all(
+					files.filter(x => {
+						const filePath = path.join(src, x);
+						return fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
+					}).map(x => {
+						return GlslExport.copyFile(
+							path.join(src, x),
+							path.join(dest, x)
+						);
+					})
+				).then(files => {
+					resolve(files);
+				}, error => {
 					reject(error);
-				}
-			);
+				});
+			}, error => {
+				reject(error);
+			});
 		});
 	}
 
 	static copyFile(src: string, dest: string): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const folder = path.dirname(dest);
-			GlslExport.existsOrCreateFolder(folder).then(
-				folder => {
-					fs.copyFile(
-						src,
-						dest,
-						(error) => {
-							if (error) {
-								reject(error);
-							} else {
-								resolve(dest);
-							}
-						}
-					);
-				},
-				error => {
-					reject(error);
-				}
-			);
+			GlslExport.existsOrCreateFolder(folder).then(_ => {
+				fs.copyFile(src, dest, (error) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(dest);
+					}
+				});
+			}, error => {
+				reject(error);
+			});
 		});
 	}
 
 	static writeFile(content: string, dest: string): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const folder = path.dirname(dest);
-			GlslExport.existsOrCreateFolder(folder).then(
-				folder => {
-					fs.writeFile(
-						dest,
-						content,
-						'utf8',
-						error => {
-							if (error) {
-								reject(error);
-							} else {
-								resolve(dest);
-							}
-						});
-				},
-				error => {
-					reject(error);
-				}
-			);
-		});
-	}
-
-	static existsOrCreateFolder(folder: string): Promise<string> {
-		return new Promise((resolve, reject) => {
-			fs.exists(folder, (exists: boolean) => {
-				if (exists) {
-					resolve(folder);
-				} else {
-					return fs.mkdir(folder, (error) => {
-						if (error) {
-							if (fs.existsSync(folder)) {
-								resolve(folder);
-							} else {
-								reject(error);
-							}
-						} else {
-							resolve(folder);
-						}
-					});
-				}
+			GlslExport.existsOrCreateFolder(folder).then(_ => {
+				fs.writeFile(dest, content, 'utf8', error => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(dest);
+					}
+				});
+			}, error => {
+				reject(error);
 			});
 		});
 	}
 
-	static npmInstallOrStart(dest: string): Thenable<vscode.Terminal> {
+	static readFile(src: string): string {
+		return fs.readFileSync(src, { encoding: 'utf8' });
+	}
+
+	static existsOrCreateFolder(folder: string): Promise<string> {
 		return new Promise((resolve, reject) => {
+			if (fs.existsSync(folder)) {
+				resolve(folder);
+			} else {
+				return fs.mkdir(folder, (error) => {
+					if (error) {
+						if (fs.existsSync(folder)) {
+							resolve(folder);
+						} else {
+							reject(error);
+						}
+					} else {
+						resolve(folder);
+					}
+				});
+			}
+		});
+	}
+
+	static npmInstallOrStart(dest: string): Thenable<vscode.Terminal> {
+		return new Promise((resolve, _) => {
 			if (fs.existsSync(path.join(dest, 'node_modules'))) {
 				const terminal = GlslExport.runCommand(['--prefix', `"${dest}"`, 'start', `"${dest}"`], dest);
 				resolve(terminal);
@@ -311,17 +320,19 @@ export default class GlslExport {
 		return GlslExport.terminal;
 	}
 
+	/*
 	static getInlineIncludes(options: GlslOptions): string[] {
 		const fragmentString = options.fragment;
 		const slices: string[] = [];
 		const includes: string[] = [];
 		const regexp = /#include\s*['|"](.*.glsl)['|"]/gm;
 		let i = 0, n = 0;
-		let match;
+		let match: RegExpExecArray;
 		while ((match = regexp.exec(fragmentString)) !== null) {
 			slices.push(fragmentString.slice(i, match.index));
 			i = match.index + match[0].length;
-			const include = match[1].replace('vscode-resource:/', '');
+			// const include = match[1].replace(`${WORKPATH_SCHEME}/`, '');
+			const include = match[1];
 			const file = path.basename(include);
 			includes.push(include);
 			// console.log('include', include, 'file', file);
@@ -335,14 +346,59 @@ export default class GlslExport {
 		// return [];
 		return includes;
 	}
+	*/
+
+	static collectInlineIncludes(folder: string, fragmentString: string, filename: string = 'shaders/fragment.glsl', n:number = 0, includes: GlslExportInclude[] = []): GlslExportInclude[] {
+		const slices: string[] = [];
+		const regexp = /^\s*#include\s*['|"]((?!http:\/\/|https:\/\/).*.glsl)['|"]/gm;
+		let i = 0;
+		let match: RegExpExecArray;
+		while ((match = regexp.exec(fragmentString)) !== null) {
+			slices.push(fragmentString.slice(i, match.index));
+			i = match.index + match[0].length;
+			const fileName = match[1];
+			const filePath = path.join(folder, fileName);
+			const nextWorkpath = fileName.indexOf(':/') === -1 ? path.dirname(filePath) : '';
+			// console.log('collectInlineIncludes.filePath', filePath);
+			const includeFragment = GlslExport.readFile(filePath);
+			const uniqueFileName = `${n}-${path.basename(fileName)}`;
+			const uniqueFilePath = path.join('shaders', uniqueFileName);
+			n++;
+			includes = GlslExport.collectInlineIncludes(nextWorkpath, includeFragment, uniqueFilePath, n, includes);
+			slices.push(`#include "${uniqueFileName}"`);
+		}
+		slices.push(fragmentString.slice(i));
+		const fragment = slices.join('');
+		const include = { fragment, filename };
+		includes.push(include);
+		return includes;
+	}
 
 	static getInlineTextures(fragmentString: string): string[] {
 		const textures: string[] = [];
 		const textureExtensions = ['jpg', 'jpeg', 'png', 'ogv', 'webm', 'mp4'];
-		const regexp = /uniform\s*sampler2D\s*([\w]*);(\s*\/\/\s*([\w|\:\/\/|\.|\-|\_]*)|\s*)/gm;
-		let matches;
+		const regexp = /^\s*uniform\s+sampler2D\s+([\w]+);(\s*\/\/\s*((?!http:\/\/|https:\/\/)[\w|\.|\/|\-|\_]*)|\s*)/gm;
+		let matches: RegExpExecArray;
 		while ((matches = regexp.exec(fragmentString)) !== null) {
-			const key = matches[1];
+			// const key = matches[1];
+			if (matches[3]) {
+				const ext = matches[3].split('.').pop().toLowerCase();
+				const url = matches[3];
+				if (url && textureExtensions.indexOf(ext) !== -1) {
+					textures.push(url);
+				}
+			}
+		}
+		return textures;
+	}
+
+	static getInlineModels(fragmentString: string): string[] {
+		const textures: string[] = [];
+		const textureExtensions = ['obj'];
+		const regexp = /^\s*attribute\s+vec4\s+([\w]+);(\s*\/\/\s*((?!http:\/\/|https:\/\/)[\w|\.|\/|\-|\_]*)|\s*)/gm;
+		let matches: RegExpExecArray;
+		while ((matches = regexp.exec(fragmentString)) !== null) {
+			// const key = matches[1];
 			if (matches[3]) {
 				const ext = matches[3].split('.').pop().toLowerCase();
 				const url = matches[3];
@@ -364,7 +420,7 @@ export default class GlslExport {
 				return resolve(true);
 			}
 			const childProcess: ChildProcess = spawn('npm -v');
-			childProcess.stdout.on('data', function (data) {
+			childProcess.stdout.on('data', function (_) {
 				// console.log('stdout', data.toString());
 				GlslExport.npm = true;
 				resolve(true);

@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
-const vscode_1 = require("vscode");
+// import { ExtensionContext, Uri } from 'vscode';
 const color_provider_1 = require("./glsl/color.provider");
 const common_1 = require("./glsl/common");
 const editor_1 = require("./glsl/editor");
@@ -21,7 +21,7 @@ const panel_1 = require("./glsl/panel");
 const SERIALIZE_PANEL = true;
 const SELECTOR = { scheme: 'file', language: 'glsl' };
 const disposables_ = [];
-let uri = vscode_1.Uri.parse('glsl-preview://authority/glsl-preview');
+// let uri = Uri.parse('glsl-preview://authority/glsl-preview');
 let currentContext;
 let currentExtensionPath;
 let diagnosticCollection;
@@ -148,13 +148,13 @@ function setConfiguration(event = null) {
     if (event.affectsConfiguration('glsl-canvas.doubleSided')) {
         // console.log('updated');
         if (common_1.currentGlslEditor()) {
-            return panel_1.default.render(uri);
+            return panel_1.default.render();
         }
     }
     if (event.affectsConfiguration('glsl-canvas.textures') || event.affectsConfiguration('glsl-canvas.uniforms')) {
         // console.log('updated');
         if (common_1.currentGlslEditor()) {
-            return panel_1.default.update(uri);
+            return panel_1.default.update();
         }
     }
 }
@@ -170,8 +170,7 @@ function onDidChangeTextDocument(event) {
         diagnosticCollection.clear();
         ti = setTimeout(function () {
             // if (currentGlslEditor()) {
-            uri = event.document.uri;
-            panel_1.default.update(uri);
+            panel_1.default.update();
             // }
         }, options.timeout);
     }
@@ -179,22 +178,20 @@ function onDidChangeTextDocument(event) {
 function onDidCloseTextDocument(document) {
     // console.log('onDidCloseTextDocument');
     if (common_1.isGlslLanguage(document.languageId)) {
-        panel_1.default.update(document.uri);
+        panel_1.default.update();
     }
 }
 function onDidSaveDocument(document) {
     // console.log('onDidSaveDocument');
     const options = new options_1.default();
     if (common_1.currentGlslEditor() && options.refreshOnSave) {
-        uri = document.uri;
-        panel_1.default.update(document.uri);
+        panel_1.default.update();
     }
 }
 function onDidChangeActiveTextEditor(editor) {
     // console.log('onDidChangeActiveTextEditor');
     if (common_1.currentGlslEditor()) {
-        uri = editor.document.uri;
-        panel_1.default.update(uri);
+        panel_1.default.update();
         // GlslPanel.rebuild(onGlslPanelMessage);
     }
 }
@@ -269,11 +266,11 @@ function deactivate() {
 exports.deactivate = deactivate;
 /*
 function onDidChangeTextEditorViewColumn(e: vscode.TextEditorViewColumnChangeEvent) {
-    console.log('onDidChangeTextEditorViewColumn', e.viewColumn.toString());
+    // console.log('onDidChangeTextEditorViewColumn', e.viewColumn.toString());
 }
 
 function onDidOpenTextDocument(document: vscode.TextDocument) {
-    console.log('onDidOpenTextDocument', document.uri.path);
+    // console.log('onDidOpenTextDocument', document.uri.path);
 }
 */
 /*
@@ -300,7 +297,6 @@ class GlslPanelSerializer {
             // Restore the content of our webview.
             // Make sure we hold on to the `webviewPanel` passed in here and
             // also restore any event listeners we need on it.
-            // webviewPanel.webview.html = getWebviewContent();
             panel_1.default.revive(webviewPanel, currentExtensionPath, onGlslPanelMessage, state);
             // return Promise.resolve();
         });

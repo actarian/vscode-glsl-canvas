@@ -285,6 +285,7 @@
     window.CameraService = CameraService;
 
 }());
+
 /* global window, document, console, GlslCanvas */
 /* 
 Author: Brett Camper (@professorlemeza)
@@ -844,6 +845,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 	var vscode = acquireVsCodeApi();
 	var oldState = vscode.getState();
+	// console.log('oldState', oldState);
 
 	function onLoad() {
 		var stats, statsdom;
@@ -920,7 +922,6 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		load();
 
-		var li;
 		function load() {
 			var o = window.options;
 			o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
@@ -1073,6 +1074,8 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		}
 
 		function onExport(e) {
+			// console.log('app.onExport');
+			window.options.mode = glslCanvas.mode;
 			vscode.postMessage({
 				command: 'onExport',
 				data: JSON.stringify(window.options),
@@ -1088,6 +1091,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		function onMessage(event) {
 			window.options = JSON.parse(event.data);
+			// console.log('window.options', window.options);
 			vscode.setState(window.options);
 			load();
 		}
@@ -1197,6 +1201,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		addListeners_();
 		resize();
+		vscode.setState(options);
 	}
 
 	function clearDiagnostic() {

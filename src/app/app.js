@@ -3,6 +3,7 @@
 
 	var vscode = acquireVsCodeApi();
 	var oldState = vscode.getState();
+	// console.log('oldState', oldState);
 
 	function onLoad() {
 		var stats, statsdom;
@@ -79,7 +80,6 @@
 
 		load();
 
-		var li;
 		function load() {
 			var o = window.options;
 			o.vertex = o.vertex.trim().length > 0 ? o.vertex : null;
@@ -232,6 +232,8 @@
 		}
 
 		function onExport(e) {
+			// console.log('app.onExport');
+			window.options.mode = glslCanvas.mode;
 			vscode.postMessage({
 				command: 'onExport',
 				data: JSON.stringify(window.options),
@@ -247,6 +249,7 @@
 
 		function onMessage(event) {
 			window.options = JSON.parse(event.data);
+			// console.log('window.options', window.options);
 			vscode.setState(window.options);
 			load();
 		}
@@ -356,6 +359,7 @@
 
 		addListeners_();
 		resize();
+		vscode.setState(options);
 	}
 
 	function clearDiagnostic() {

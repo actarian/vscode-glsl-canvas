@@ -1,13 +1,15 @@
 'use strict';
 
-import * as path from 'path';
 import * as vscode from 'vscode';
 import { currentGlslDocument } from './common';
+
+export const WORKPATH_SCHEME:string = 'vscode-webview-resource:'; // 'vscode-webview-resource':
 
 export default class GlslOptions {
 
 	public uri: vscode.Uri;
 	public workpath: string;
+	public folder: string;
 	public resources: string;
 	public fragment: string;
 	public vertex: string;
@@ -18,6 +20,7 @@ export default class GlslOptions {
 	public timeout: number;
 	public refreshOnChange: boolean;
 	public refreshOnSave: boolean;
+	public mode?: 'mesh' | 'torus' | 'spere' | 'box' | 'flat';
 
 	constructor() {
 		const document: vscode.TextDocument = currentGlslDocument();
@@ -30,25 +33,6 @@ export default class GlslOptions {
 		this.textures = Object.assign({}, config['textures'] || {});
 		this.extensions = config['extensions'] || [];
 		this.doubleSided = config['doubleSided'] || false;
-		const folder = vscode.workspace ? vscode.workspace.rootPath : null;
-		if (folder) {
-			if (this.fragment !== '') {
-				const regex = /#include\s*['|"](.*.glsl)['|"]/gm;
-				this.fragment = this.fragment.replace(regex, (substring: string, ...args) => {
-					return `#include "vscode-resource:${vscode.Uri.file(path.join(folder, args[0])).path}"`;
-				});
-			}
-			Object.keys(this.textures).forEach(x => {
-				const texture = this.textures[x];
-				if (texture.indexOf('http') !== 0 && texture.indexOf('file') !== 0) {
-					this.textures[x] = 'vscode-resource:' + vscode.Uri.file(path.join(folder, texture)).path;
-				}
-			});
-			this.workpath = 'vscode-resource:' + vscode.Uri.file(folder).path;
-		} else {
-			this.workpath = '';
-		}
-		// console.log('workpath', this.workpath);
 		this.refreshOnChange = config['refreshOnChange'] || false;
 		this.refreshOnSave = config['refreshOnSave'] || false;
 	}

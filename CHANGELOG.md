@@ -3,6 +3,14 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
+## [0.2.12] - 2021-04-04
+### Added
+- Nested includes with relative paths.
+### Fixed
+- Formatter. Loading resources.
+
+---
+
 ## [0.2.11] - 2020-04-27
 ### Added
 - Mesh support with modes: flat, box, sphere, torus, mesh.

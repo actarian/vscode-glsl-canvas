@@ -8,6 +8,7 @@ function isGlslLanguage(languageId) {
 exports.isGlslLanguage = isGlslLanguage;
 function currentGlslEditor() {
     const editor = vscode.window.activeTextEditor;
+    // console.log('Common.currentGlslEditor', editor ? editor.document : null);
     return editor && isGlslLanguage(editor.document.languageId) ? editor : null; // || editor.document.languageId === 'plaintext'
 }
 exports.currentGlslEditor = currentGlslEditor;

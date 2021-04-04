@@ -285,6 +285,7 @@
     window.CameraService = CameraService;
 
 }());
+
 /* global window, document, console */
 
 (function () {
