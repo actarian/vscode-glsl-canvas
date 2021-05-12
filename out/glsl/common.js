@@ -6,10 +6,16 @@ function isGlslLanguage(languageId) {
     return LANGUAGES.indexOf(languageId) !== -1;
 }
 exports.isGlslLanguage = isGlslLanguage;
+let lastGlslEditor = null;
 function currentGlslEditor() {
     const editor = vscode.window.activeTextEditor;
     // console.log('Common.currentGlslEditor', editor ? editor.document : null);
-    return editor && isGlslLanguage(editor.document.languageId) ? editor : null; // || editor.document.languageId === 'plaintext'
+    if (editor && isGlslLanguage(editor.document.languageId)) {
+        lastGlslEditor = editor;
+        return editor;
+    }
+    // Just return the last valid editor we've seen
+    return lastGlslEditor;
 }
 exports.currentGlslEditor = currentGlslEditor;
 function currentGlslDocument() {

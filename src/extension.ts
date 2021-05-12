@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
 // import { ExtensionContext, Uri } from 'vscode';
 import GlslColorProvider from './glsl/color.provider';
-import { currentGlslEditor, isGlslLanguage } from './glsl/common';
+import { currentGlslDocument, currentGlslEditor, isGlslLanguage } from './glsl/common';
 import GlslEditor from './glsl/editor';
 import GlslExport from './glsl/export';
 import GlslFormatProvider from './glsl/format.provider';
@@ -167,6 +167,10 @@ function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
 
 function onDidChangeTextDocument(event: vscode.TextDocumentChangeEvent) {
 	// console.log('onDidChangeTextDocument');
+	const current = currentGlslDocument()
+	if (current !== event.document) {
+		return // this is for some other document
+	}
 	const options = new GlslOptions();
 	if (options.refreshOnChange) {
 		clearTimeout(ti);
@@ -196,7 +200,8 @@ function onDidSaveDocument(document: vscode.TextDocument) {
 
 function onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
 	// console.log('onDidChangeActiveTextEditor');
-	if (currentGlslEditor()) {
+	const current = currentGlslEditor()
+	if (current === editor) {
 		GlslPanel.update();
 		// GlslPanel.rebuild(onGlslPanelMessage);
 	}

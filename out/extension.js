@@ -164,6 +164,10 @@ function onDidChangeConfiguration(e) {
 }
 function onDidChangeTextDocument(event) {
     // console.log('onDidChangeTextDocument');
+    const current = common_1.currentGlslDocument();
+    if (current !== event.document) {
+        return; // this is for some other document
+    }
     const options = new options_1.default();
     if (options.refreshOnChange) {
         clearTimeout(ti);
@@ -190,7 +194,8 @@ function onDidSaveDocument(document) {
 }
 function onDidChangeActiveTextEditor(editor) {
     // console.log('onDidChangeActiveTextEditor');
-    if (common_1.currentGlslEditor()) {
+    const current = common_1.currentGlslEditor();
+    if (current === editor) {
         panel_1.default.update();
         // GlslPanel.rebuild(onGlslPanelMessage);
     }
