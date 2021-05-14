@@ -180,15 +180,17 @@ function onDidChangeTextDocument(event) {
     }
 }
 function onDidCloseTextDocument(document) {
+    const current = common_1.currentGlslDocument();
     // console.log('onDidCloseTextDocument');
-    if (common_1.isGlslLanguage(document.languageId)) {
+    if (current === document) {
         panel_1.default.update();
     }
 }
 function onDidSaveDocument(document) {
     // console.log('onDidSaveDocument');
+    const current = common_1.currentGlslDocument();
     const options = new options_1.default();
-    if (common_1.currentGlslEditor() && options.refreshOnSave) {
+    if (current === document && options.refreshOnSave) {
         panel_1.default.update();
     }
 }

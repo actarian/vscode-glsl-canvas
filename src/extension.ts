@@ -184,16 +184,18 @@ function onDidChangeTextDocument(event: vscode.TextDocumentChangeEvent) {
 }
 
 function onDidCloseTextDocument(document: vscode.TextDocument) {
+	const current = currentGlslDocument()
 	// console.log('onDidCloseTextDocument');
-	if (isGlslLanguage(document.languageId)) {
+	if (current === document) {
 		GlslPanel.update();
 	}
 }
 
 function onDidSaveDocument(document: vscode.TextDocument) {
 	// console.log('onDidSaveDocument');
+	const current = currentGlslDocument()
 	const options = new GlslOptions();
-	if (currentGlslEditor() && options.refreshOnSave) {
+	if (current === document && options.refreshOnSave) {
 		GlslPanel.update();
 	}
 }
