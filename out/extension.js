@@ -164,6 +164,10 @@ function onDidChangeConfiguration(e) {
 }
 function onDidChangeTextDocument(event) {
     // console.log('onDidChangeTextDocument');
+    const current = common_1.currentGlslDocument();
+    if (current !== event.document) {
+        return; // this is for some other document
+    }
     const options = new options_1.default();
     if (options.refreshOnChange) {
         clearTimeout(ti);
@@ -176,21 +180,24 @@ function onDidChangeTextDocument(event) {
     }
 }
 function onDidCloseTextDocument(document) {
+    const current = common_1.currentGlslDocument();
     // console.log('onDidCloseTextDocument');
-    if (common_1.isGlslLanguage(document.languageId)) {
+    if (current === document) {
         panel_1.default.update();
     }
 }
 function onDidSaveDocument(document) {
     // console.log('onDidSaveDocument');
+    const current = common_1.currentGlslDocument();
     const options = new options_1.default();
-    if (common_1.currentGlslEditor() && options.refreshOnSave) {
+    if (current === document && options.refreshOnSave) {
         panel_1.default.update();
     }
 }
 function onDidChangeActiveTextEditor(editor) {
     // console.log('onDidChangeActiveTextEditor');
-    if (common_1.currentGlslEditor()) {
+    const current = common_1.currentGlslEditor();
+    if (current === editor) {
         panel_1.default.update();
         // GlslPanel.rebuild(onGlslPanelMessage);
     }
