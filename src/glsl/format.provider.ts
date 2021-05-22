@@ -19,7 +19,7 @@ export default class GlslFormatProvider implements vscode.DocumentFormattingEdit
 
 	provideDocumentRangeFormattingEdits(document: vscode.TextDocument, range: vscode.Range, options: vscode.FormattingOptions, token: vscode.CancellationToken): vscode.ProviderResult<vscode.TextEdit[]> {
 		const config = vscode.workspace.getConfiguration('glsl-canvas');
-		// console.log('config', config);
+		// console.log('GlslFormatProvider.config', config);
 		const format = config['useFormatter'];
 		const compact = config['useCompactFormatter'];
 		if (format) {

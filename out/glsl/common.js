@@ -12,7 +12,6 @@ function currentGlslEditor() {
     // console.log('Common.currentGlslEditor', editor ? editor.document : null);
     if (editor && isGlslLanguage(editor.document.languageId)) {
         lastGlslEditor = editor;
-        return editor;
     }
     // Just return the last valid editor we've seen
     return lastGlslEditor;

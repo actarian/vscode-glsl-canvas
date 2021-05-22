@@ -88,7 +88,7 @@
 						break;
 				}
 			}
-			// console.log('Parser.get', data);
+			// console.log('GuiService.Parser.get', data);
 			return data;
 		}
 
@@ -135,7 +135,7 @@
 		// statics
 
 		function differs(a, b) {
-			// console.log('differs', JSON.stringify(a), JSON.stringify(b));
+			// console.log('GuiService.differs', JSON.stringify(a), JSON.stringify(b));
 			return JSON.stringify(a) !== JSON.stringify(b);
 		}
 
@@ -239,7 +239,7 @@
 				};
 				gui.add(pool, 'randomize');
 			} else {
-				// console.log('service.callback', service.pool);
+				// console.log('GuiService.service.callback', service.pool);
 				service.callback(service.pool);
 			}
 		}

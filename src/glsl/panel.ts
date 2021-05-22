@@ -45,7 +45,7 @@ export default class GlslPanel {
 		// cause an unneeded reload of the canvas
 		this.panel_.onDidChangeViewState(e => {
 			if (this.panel_.visible) {
-				// console.log('onDidChangeViewState', e);
+				// console.log('GlslPanel.onDidChangeViewState', e);
 				this.render();
 			}
 		}, null, this.disposables_);
@@ -97,12 +97,12 @@ export default class GlslPanel {
 			localResourceRoots.push(vscode.Uri.file(vscode.workspace.rootPath));
 		}
 		*/
-		// console.log(localResourceRoots);
+		// console.log('GlslPanel.getLocalResourceRoots', localResourceRoots);
 		return localResourceRoots;
 	}
 
 	public static revive(panel: vscode.WebviewPanel, extensionPath: string, onMessage?: Function, state?: any) {
-		// console.log('Panel.revive', panel, extensionPath, onMessage, state);
+		// console.log('GlslPanel.revive', panel, extensionPath, onMessage, state);
 		// panel.webview.options.localResourceRoots.concat(this.getLocalResourceRoots(extensionPath));
 		GlslPanel.current = new GlslPanel(panel, extensionPath, onMessage, state);
 	}
@@ -131,7 +131,7 @@ export default class GlslPanel {
 		if (GlslPanel.current) {
 			/*
 			const viewColumn = vscode.window.activeTextEditor ? vscode.ViewColumn.Beside : vscode.ViewColumn.One;
-			// console.log('reveal', vscode.window.activeTextEditor, viewColumn);
+			// console.log('GlslPanel.reveal', vscode.window.activeTextEditor, viewColumn);
 			GlslPanel.current.panel_.reveal(viewColumn, true);
 			*/
 			GlslPanel.current.panel_.reveal(vscode.ViewColumn.Beside, true);
@@ -158,15 +158,13 @@ export default class GlslPanel {
 
 	public update() {
 		// return this.render(); // !!!
-		const options = new GlslOptions();
+		const options = new GlslOptions(this.panel_.webview, this.extensionPath_);
 		const fsPath = options.uri ? options.uri.fsPath : null;
 		if (this.fsPath !== fsPath) {
 			this.fsPath = fsPath;
 			return this.render();
 		}
-		options.workpath = this.getWorkPath(this.panel_.webview, options.uri);
-		options.folder = this.getWorkFolder(this.panel_.webview, options.uri);
-		options.resources = this.getExtensionPath(this.panel_.webview);
+		// console.log('GlslPanel.update', options.workpath, options.folder, options.resources);
 		this.panel_.webview.postMessage(options.serialize()).then(
 			(success) => {
 				// console.log('GlslPanel.update.success');
@@ -185,11 +183,7 @@ export default class GlslPanel {
 
 	private getPanelWebviewHtml(webview: vscode.Webview): string {
 		const config = vscode.workspace.getConfiguration('editor');
-		const options = new GlslOptions();
-		options.workpath = this.getWorkPath(webview, options.uri);
-		options.folder = this.getWorkFolder(webview, options.uri);
-		options.resources = this.getExtensionPath(webview);
-		// console.log(options.fragment, options.workpath);
+		const options = new GlslOptions(webview, this.extensionPath_);
 		this.fsPath = options.uri ? options.uri.fsPath : null;
 		const nonce = this.getNonce();
 		const content = /* html */`<!DOCTYPE html>
@@ -246,47 +240,13 @@ export default class GlslPanel {
 		return content;
 	}
 
-	private getWorkPath(webview: vscode.Webview, uri?: vscode.Uri): string {
-		let url: string;
-		const folder = uri ? path.dirname(uri.path) : (vscode.workspace && vscode.workspace.workspaceFolders) ? vscode.workspace.workspaceFolders[0].uri.path : null;
-		// console.log('folder', folder);
-		if (folder) {
-			uri = webview.asWebviewUri(vscode.Uri.file(folder));
-		} else {
-			uri = vscode.Uri.file(path.join(this.extensionPath_, 'resources'));
-		}
-		url = uri.scheme + '://' + uri.authority + uri.path;
-		return url;
-	}
-
-	private getWorkFolder(webview: vscode.Webview, uri?: vscode.Uri): string {
-		let url: string;
-		const folder = uri ? path.dirname(uri.path) : (vscode.workspace && vscode.workspace.workspaceFolders) ? vscode.workspace.workspaceFolders[0].uri.path : null;
-		if (folder) {
-			url = folder;
-		} else {
-			url = path.join(this.extensionPath_, 'resources');
-		}
-		return url;
-	}
-
-	private getExtensionPath(webview: vscode.Webview): string {
-		const filePath = vscode.Uri.file(
-			path.join(this.extensionPath_, 'resources')
-		);
-		const uri: vscode.Uri = webview.asWebviewUri(filePath);
-		const url: string = uri.scheme + '://' + uri.authority + uri.path;
-		// console.log('getExtensionPath', url);
-		return url;
-	}
-
 	private getResourcePath(webview: vscode.Webview, resource: string): string {
 		const filePath = vscode.Uri.file(
 			path.join(this.extensionPath_, 'resources', resource)
 		);
 		const uri: vscode.Uri = webview.asWebviewUri(filePath);
 		const url: string = uri.scheme + '://' + uri.authority + uri.path;
-		// console.log('getResourcePath', url);
+		// console.log('GlslPanel.getResourcePath', url);
 		return url;
 	}
 

@@ -18,9 +18,9 @@ export default class GlslExport {
 	static npm: boolean = false;
 
 	static onExport(extensionPath: string, options: GlslOptions) {
-		// console.log('onExport', extensionPath, options);
+		// console.log('GlslExport.onExport', extensionPath, options);
 		const includes = GlslExport.collectInlineIncludes(options.folder, options.fragment);
-		// console.log('includes', includes);
+		// console.log('GlslExport.includes', includes);
 		// const includeUris: string[] = GlslExport.getInlineIncludes(options);
 		const textureUris: string[] = GlslExport.getInlineTextures(options.fragment);
 		const modelUris: string[] = GlslExport.getInlineModels(options.fragment);
@@ -36,8 +36,9 @@ export default class GlslExport {
 			const regexp = new RegExp('uniform\\s+sampler2D\\s+(u_texture_' + key + ')\\s*;');
 			if (regexp.test(options.fragment)) {
 				let texture = options.textures[key];
-				if (texture.indexOf(options.workpath) === 0) {
-					texture = texture.replace(options.workpath, '');
+				// if (texture.indexOf(options.workpath) === 0) {
+				if (texture.indexOf('http') === -1) {
+					// texture = texture.replace(options.workpath, '');
 					textureUris.push(texture);
 				}
 				textures[key] = texture;
@@ -164,18 +165,18 @@ export default class GlslExport {
 				)
 			];
 			Promise.all(tasks1.concat(tasks2, tasks3, tasks4)).then(resolve => {
-				// console.log('all.resolve', resolve);
+				// console.log('GlslExport.all.resolve', resolve);
 				GlslExport.detectNpm().then(has => {
 					GlslExport.npmInstallOrStart(outputPath).then((success: vscode.Terminal) => {
-						// console.log('npmInstall.success', success);
+						// console.log('GlslExport.npmInstall.success', success);
 					}, (error: any) => {
-						console.log('npmInstall.error', error);
+						console.log('GlslExport.npmInstallOrStart.error', error);
 					});
 				}, error => {
 					vscode.window.showInformationMessage(`All files exported to '${outputPath}'`);
 				});
 			}, reject => {
-				console.log('all.reject', reject);
+				console.log('GlslExport.all.reject', reject);
 			});
 		});
 	}
@@ -191,7 +192,7 @@ export default class GlslExport {
 			vscode.window.showOpenDialog(options).then((uris: vscode.Uri[]) => {
 				if (uris && uris[0]) {
 					const outputPath = uris[0].fsPath;
-					// console.log(openLabel + ' ' + outputPath);
+					// console.log('GlslExport', openLabel + ' ' + outputPath);
 					resolve(outputPath);
 				}
 			});
@@ -335,14 +336,14 @@ export default class GlslExport {
 			const include = match[1];
 			const file = path.basename(include);
 			includes.push(include);
-			// console.log('include', include, 'file', file);
+			// console.log('GlslExport.include', include, 'file', file);
 			slices.push(`#include "shaders/${n}-${file}"`);
 			n++;
 		}
 		slices.push(fragmentString.slice(i));
 		const fragment = slices.join('');
 		options.fragment = fragment;
-		// console.log('fragment', fragment);
+		// console.log('GlslExport.fragment', fragment);
 		// return [];
 		return includes;
 	}
@@ -359,7 +360,7 @@ export default class GlslExport {
 			const fileName = match[1];
 			const filePath = path.join(folder, fileName);
 			const nextWorkpath = fileName.indexOf(':/') === -1 ? path.dirname(filePath) : '';
-			// console.log('collectInlineIncludes.filePath', filePath);
+			// console.log('GlslExport.collectInlineIncludes.filePath', filePath);
 			const includeFragment = GlslExport.readFile(filePath);
 			const uniqueFileName = `${n}-${path.basename(fileName)}`;
 			const uniqueFilePath = path.join('shaders', uniqueFileName);
@@ -421,12 +422,12 @@ export default class GlslExport {
 			}
 			const childProcess: ChildProcess = spawn('npm -v');
 			childProcess.stdout.on('data', function (_) {
-				// console.log('stdout', data.toString());
+				// console.log('GlslExport.stdout', data.toString());
 				GlslExport.npm = true;
 				resolve(true);
 			});
 			childProcess.stderr.on('data', function (data) {
-				// console.log('stderr', data.toString());
+				// console.log('GlslExport.stderr', data.toString());
 				reject(data.toString());
 			});
 			childProcess.kill();

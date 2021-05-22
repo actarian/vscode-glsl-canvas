@@ -15,7 +15,6 @@ export function currentGlslEditor(): vscode.TextEditor | null {
 	// console.log('Common.currentGlslEditor', editor ? editor.document : null);
     if (editor && isGlslLanguage(editor.document.languageId)) {
 		lastGlslEditor = editor;
-		return editor;
 	}
 	// Just return the last valid editor we've seen
 	return lastGlslEditor;
@@ -25,4 +24,3 @@ export function currentGlslDocument(): vscode.TextDocument {
     const editor: vscode.TextEditor = currentGlslEditor();
     return editor ? editor.document : null;
 }
-

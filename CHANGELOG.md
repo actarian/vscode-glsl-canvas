@@ -3,6 +3,12 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
+## [0.2.13] - 2021-05-22
+### Fixed
+- u_camera uniform & buffers.
+
+---
+
 ## [0.2.12] - 2021-04-04
 ### Added
 - Nested includes with relative paths.

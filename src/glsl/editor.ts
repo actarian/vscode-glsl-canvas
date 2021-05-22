@@ -121,7 +121,7 @@ export default class GlslEditor {
 			}
 			*/
 			const folder: string = vscode.workspace.rootPath || '';
-			// console.log('onCreateShader', folder);
+			// console.log('GlslEditor.onCreateShader', folder);
 			let newFile = vscode.Uri.parse('untitled:' + path.join(folder, 'untitled.glsl'));
 			let i = 1;
 			while (fs.existsSync(newFile.fsPath)) {
@@ -130,7 +130,7 @@ export default class GlslEditor {
 			}
 			vscode.workspace.openTextDocument(newFile).then(
 				document => {
-					// console.log('document', document);
+					// console.log('GlslEditor.document', document);
 					const edit = new vscode.WorkspaceEdit();
 					edit.insert(newFile, new vscode.Position(0, 0), DefaultFragment);
 					return vscode.workspace.applyEdit(edit).then(
@@ -149,12 +149,12 @@ export default class GlslEditor {
 							}
 						},
 						error => {
-							console.log('onCreateShader.applyEdit', error);
+							console.log('GlslEditor.onCreateShader.applyEdit', error);
 							reject(error);
 						});
 				},
 				error => {
-					console.log('onCreateShader.openTextDocument', error);
+					console.log('GlslEditor.onCreateShader.openTextDocument', error);
 					reject(error);
 				});
 		});

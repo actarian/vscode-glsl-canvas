@@ -257,7 +257,7 @@
                 u.location = glsl.gl.getUniformLocation(glsl.program, name);
                 glsl.gl[u.method].apply(glsl.gl, [u.location].concat(u.value));
             } catch (e) {
-                console.log('fastUpdate', e);
+                console.log('CameraService.update.error', e);
             }
         }
 
@@ -402,7 +402,7 @@
                 u.location = glsl.gl.getUniformLocation(glsl.program, name);
                 glsl.gl[u.method].apply(glsl.gl, [u.location].concat(u.value));
             } catch (e) {
-                console.log('fastUpdate', e);
+                console.log('TrailsService.update.error', e);
             }
         }
 
@@ -412,6 +412,7 @@
     window.TrailsService = TrailsService;
 
 }());
+
 /* global window, document, console, GlslEditor, CameraService, TrailsService */
 
 (function () {

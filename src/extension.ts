@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
 // import { ExtensionContext, Uri } from 'vscode';
 import GlslColorProvider from './glsl/color.provider';
-import { currentGlslDocument, currentGlslEditor, isGlslLanguage } from './glsl/common';
+import { currentGlslDocument, currentGlslEditor } from './glsl/common';
 import GlslEditor from './glsl/editor';
 import GlslExport from './glsl/export';
 import GlslFormatProvider from './glsl/format.provider';
@@ -167,9 +167,9 @@ function onDidChangeConfiguration(e: vscode.ConfigurationChangeEvent) {
 
 function onDidChangeTextDocument(event: vscode.TextDocumentChangeEvent) {
 	// console.log('onDidChangeTextDocument');
-	const current = currentGlslDocument()
+	const current = currentGlslDocument();
 	if (current !== event.document) {
-		return // this is for some other document
+		return; // this is for some other document
 	}
 	const options = new GlslOptions();
 	if (options.refreshOnChange) {
@@ -184,7 +184,7 @@ function onDidChangeTextDocument(event: vscode.TextDocumentChangeEvent) {
 }
 
 function onDidCloseTextDocument(document: vscode.TextDocument) {
-	const current = currentGlslDocument()
+	const current = currentGlslDocument();
 	// console.log('onDidCloseTextDocument');
 	if (current === document) {
 		GlslPanel.update();
@@ -193,7 +193,7 @@ function onDidCloseTextDocument(document: vscode.TextDocument) {
 
 function onDidSaveDocument(document: vscode.TextDocument) {
 	// console.log('onDidSaveDocument');
-	const current = currentGlslDocument()
+	const current = currentGlslDocument();
 	const options = new GlslOptions();
 	if (current === document && options.refreshOnSave) {
 		GlslPanel.update();
@@ -202,7 +202,7 @@ function onDidSaveDocument(document: vscode.TextDocument) {
 
 function onDidChangeActiveTextEditor(editor: vscode.TextEditor) {
 	// console.log('onDidChangeActiveTextEditor');
-	const current = currentGlslEditor()
+	const current = currentGlslEditor();
 	if (current === editor) {
 		GlslPanel.update();
 		// GlslPanel.rebuild(onGlslPanelMessage);

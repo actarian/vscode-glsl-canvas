@@ -2,7 +2,7 @@
   "name": "glsl-canvas",
   "displayName": "glsl-canvas",
   "description": "Live WebGL preview of GLSL shaders",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "author": "Luca Zampetti <lzampetti@gmail.com>",
   "publisher": "circledev",
   "license": "MIT",
@@ -132,7 +132,7 @@
   },
   "dependencies": {
     "dat.gui": "0.7.7",
-    "glsl-canvas-js": "0.2.3",
+    "glsl-canvas-js": "0.2.6",
     "glslEditor": "0.0.22",
     "natives": "~1.1.6",
     "spawn-command-with-kill": "~1.0.2",

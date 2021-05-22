@@ -97,6 +97,7 @@
 					filtering: 'mipmap',
 					repeat: true,
 				});
+				// console.log('texture', t, o.textures[t]);
 			}
 			glslCanvas.load(o.fragment, o.vertex).then(success => {
 				missing.classList.remove('active');

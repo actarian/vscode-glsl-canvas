@@ -257,7 +257,7 @@
                 u.location = glsl.gl.getUniformLocation(glsl.program, name);
                 glsl.gl[u.method].apply(glsl.gl, [u.location].concat(u.value));
             } catch (e) {
-                console.log('fastUpdate', e);
+                console.log('CameraService.update.error', e);
             }
         }
 
@@ -525,7 +525,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 						break;
 				}
 			}
-			// console.log('Parser.get', data);
+			// console.log('GuiService.Parser.get', data);
 			return data;
 		}
 
@@ -572,7 +572,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		// statics
 
 		function differs(a, b) {
-			// console.log('differs', JSON.stringify(a), JSON.stringify(b));
+			// console.log('GuiService.differs', JSON.stringify(a), JSON.stringify(b));
 			return JSON.stringify(a) !== JSON.stringify(b);
 		}
 
@@ -676,7 +676,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 				};
 				gui.add(pool, 'randomize');
 			} else {
-				// console.log('service.callback', service.pool);
+				// console.log('GuiService.service.callback', service.pool);
 				service.callback(service.pool);
 			}
 		}
@@ -830,7 +830,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
                 u.location = glsl.gl.getUniformLocation(glsl.program, name);
                 glsl.gl[u.method].apply(glsl.gl, [u.location].concat(u.value));
             } catch (e) {
-                console.log('fastUpdate', e);
+                console.log('TrailsService.update.error', e);
             }
         }
 
@@ -840,6 +840,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
     window.TrailsService = TrailsService;
 
 }());
+
 (function () {
 	'use strict';
 
@@ -939,6 +940,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 					filtering: 'mipmap',
 					repeat: true,
 				});
+				// console.log('texture', t, o.textures[t]);
 			}
 			glslCanvas.load(o.fragment, o.vertex).then(success => {
 				missing.classList.remove('active');

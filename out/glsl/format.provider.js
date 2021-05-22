@@ -11,7 +11,7 @@ class GlslFormatProvider {
     }
     provideDocumentRangeFormattingEdits(document, range, options, token) {
         const config = vscode.workspace.getConfiguration('glsl-canvas');
-        // console.log('config', config);
+        // console.log('GlslFormatProvider.config', config);
         const format = config['useFormatter'];
         const compact = config['useCompactFormatter'];
         if (format) {
