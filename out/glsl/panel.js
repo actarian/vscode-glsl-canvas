@@ -166,7 +166,7 @@ class GlslPanel {
 	">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link nonce="${nonce}" href="${this.getResourcePath(webview, 'fonts/styles.css')}" rel="stylesheet">
-	<!-- <link nonce="${nonce}" href="${this.getResourcePath(webview, 'css/vendors.min.css')}" rel="stylesheet"> -->
+	<link nonce="${nonce}" href="${this.getResourcePath(webview, 'css/vendors.min.css')}" rel="stylesheet">
 	<style nonce="${nonce}">
 		html, body { font-family: ${config.fontFamily}; font-weight: ${config.fontWeight}; font-size: ${config.fontSize}; };
 	</style>

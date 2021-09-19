@@ -3,6 +3,12 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
+## [0.2.14] - 2021-09-19
+### Fixed
+- dat.gui style.
+
+---
+
 ## [0.2.13] - 2021-05-22
 ### Fixed
 - u_camera uniform & buffers.

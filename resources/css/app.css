@@ -230,7 +230,7 @@ body {
 
 /*
 var(--vscode-editor-background)
-var(--vscode-editor-foreground)    
+var(--vscode-editor-foreground)
 var(--vscode-editor-lineHighlightBorder)
 var(--vscode-editor-lineHighlightBackground)
 */
@@ -338,23 +338,24 @@ var(--vscode-editor-lineHighlightBackground)
   .dg .cr.function:hover, .dg .cr.boolean:hover {
     background: var(--vscode-editor-background); }
 
-body {
-  /*
-	.stats {
-		background: var(--vscode-editor-foreground);
-		canvas {
-			mix-blend-mode: luminosity;
-		}
+/*
+.stats {
+	background: var(--vscode-editor-foreground);
+	canvas {
+		mix-blend-mode: luminosity;
 	}
-	*/ }
-  body.idle .stats, body.empty .stats {
-    visibility: hidden; }
-  body .tools, body .dg.main, body .stats {
-    opacity: 0 !important;
-    transition: opacity ease-in-out 1000ms; }
-  body:not(.idle):hover .tools, body:not(.idle):hover .dg.main, body:not(.idle):hover .stats {
-    transition: none;
-    opacity: 1 !important; }
+}
+*/
+body.idle .stats, body.empty .stats {
+  visibility: hidden; }
+
+body .tools, body .dg.main, body .stats {
+  opacity: 0 !important;
+  transition: opacity ease-in-out 1000ms; }
+
+body:not(.idle):hover .tools, body:not(.idle):hover .dg.main, body:not(.idle):hover .stats {
+  transition: none;
+  opacity: 1 !important; }
 
 /*
 .dg.main{transition:opacity .1s linear}

@@ -1,6 +1,6 @@
 {
   "name": "glsl-canvas-preview",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "author": "Luca Zampetti <lzampetti@gmail.com>",
   "license": "MIT",
   "scripts": {

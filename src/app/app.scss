@@ -314,15 +314,16 @@ body {
 
 @import 'services/gui/gui';
 
-body {
-	/*
-	.stats {
-		background: var(--vscode-editor-foreground);
-		canvas {
-			mix-blend-mode: luminosity;
-		}
+/*
+.stats {
+	background: var(--vscode-editor-foreground);
+	canvas {
+		mix-blend-mode: luminosity;
 	}
-	*/
+}
+*/
+
+body {
 
 	&.idle,
 	&.empty {
