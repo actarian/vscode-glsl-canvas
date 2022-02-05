@@ -287,7 +287,7 @@
 }());
 
 /* global window, document, console, GlslCanvas */
-/* 
+/*
 Author: Brett Camper (@professorlemeza)
 URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 */
@@ -341,14 +341,17 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
         try {
             var capture = {};
             var chunks = [];
-            var stream = service.canvas.captureStream();
+            var stream = service.canvas.captureStream(30);
             var options = {
-                mimeType: 'video/webm', // 'video/webm\;codecs=h264'
+                mimeType: 'video/webm; codecs=vp9', // 'video/webm', // 'video/webm\;codecs=h264'
+				audioBitsPerSecond: 0,
+				videoBitsPerSecond: 1048576 * 10,
             };
             var recorder = new MediaRecorder(stream, options);
-            recorder.ondataavailable = function (e) {
-                if (e.data.size > 0) {
-                    chunks.push(e.data);
+			// console.log('videoBitsPerSecond', recorder.videoBitsPerSecond);
+            recorder.ondataavailable = function (event) {
+                if (event.data.size > 0) {
+                    chunks.push(event.data);
                 }
                 // Stopped recording? Create the final capture file blob
                 if (capture.resolve) {
@@ -374,10 +377,10 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             service.capture = capture;
             service.recorder = recorder;
             recorder.start();
-        } catch (e) {
+        } catch (error) {
             service.capture = null;
             service.recorder = null;
-            console.log('error: Scene video capture failed', e);
+            console.log('error: Scene video capture failed', error);
             return false;
         }
         return true;
@@ -435,6 +438,74 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
     window.CaptureService = CaptureService;
 }());
+
+/* global window, document, console, GlslCanvas */
+/*
+Author: Brett Camper (@professorlemeza)
+URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
+*/
+
+(function () {
+    'use strict';
+
+    function CCaptureService() {
+		this.capturer = new CCapture({
+			format: 'webm',
+			quality: 90,
+			framerate: 60,
+			// motionBlurFrames: 3,
+			// timeLimit: window.options.recordDuration !== 0 ? window.options.recordDuration : null,
+		});
+	}
+
+    CCaptureService.prototype = {
+        set: set,
+        snapshot: snapshot,
+        snapshotRender: snapshotRender,
+        record: record,
+        stop: stop,
+    };
+
+    function set(canvas) {
+        var service = this;
+        service.canvas = canvas;
+    }
+
+    function record() {
+        var service = this;
+        var capturer = service.capturer;
+        capturer.start();
+        return true;
+    }
+
+    function stop() {
+        var service = this;
+		var capturer = service.capturer;
+        return new Promise(function (resolve, reject) {
+            capturer.stop();
+			capturer.save(function(blob) {
+				resolve({
+					blob: blob,
+					extension: '.webm',
+				});
+			});
+        });
+    }
+
+    function snapshot() {
+        var service = this;
+        return null;
+    }
+
+    function snapshotRender() {
+        var service = this;
+		var capturer = service.capturer;
+		capturer.capture(service.canvas);
+    }
+
+    window.CCaptureService = CCaptureService;
+}());
+
 /* global window, document, console */
 
 (function () {
@@ -841,7 +912,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 }());
 
-(function () {
+(function() {
 	'use strict';
 
 	var vscode = acquireVsCodeApi();
@@ -874,20 +945,20 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		};
 		resize(true);
 
-		// console.log('app.js workpath', options.workpath);
-		// console.log('app.js resources', options.resources);
+		// console.log('app.js workpath', window.options.workpath);
+		// console.log('app.js resources', window.options.resources);
 
 		var glslCanvas = new glsl.Canvas(canvas, {
 			backgroundColor: 'rgba(0.0, 0.0, 0.0, 0.0)',
 			alpha: true,
-			antialias: true,
+			antialias: window.options.antialias,
 			premultipliedAlpha: false,
 			preserveDrawingBuffer: false,
-			workpath: options.workpath,
-			// mesh: options.resources + '/model/lego.obj',
-			mesh: options.resources + '/model/duck-toy.obj',
-			extensions: options.extensions,
-			doubleSided: options.doubleSided,
+			workpath: window.options.workpath,
+			// mesh: window.options.resources + '/model/lego.obj',
+			mesh: window.options.resources + '/model/duck-toy.obj',
+			extensions: window.options.extensions,
+			doubleSided: window.options.doubleSided,
 		});
 
 		// console.log('glslCanvas.init', glslCanvas.mode);
@@ -896,17 +967,21 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		glslCanvas.on('error', onGlslError);
 		glslCanvas.on('textureError', onGlslTextureError);
 
-		var capture = new CaptureService();
+		// console.log(window.options.recordMethod);
+
+		var capture = window.options.recordMethod === 'CCapture' ? new CCaptureService() : new CaptureService();
 		capture.set(canvas);
 
 		// var camera = new CameraService();
 		var trails = new TrailsService();
 
-		glslCanvas.on('render', function () {
+		glslCanvas.on('render', function() {
 			if (flags.stats) {
 				stats.end();
 			}
-			capture.snapshotRender();
+			if (flags.record) {
+				capture.snapshotRender();
+			}
 			// camera.render(glslCanvas);
 			trails.render(glslCanvas);
 			if (flags.stats) {
@@ -942,6 +1017,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 				});
 				// console.log('texture', t, o.textures[t]);
 			}
+			// console.log(o.fragment, o.vertex);
 			glslCanvas.load(o.fragment, o.vertex).then(success => {
 				missing.classList.remove('active');
 			}, error => {
@@ -956,7 +1032,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			gui.load(o.uniforms);
 			glslCanvas.setUniforms(gui.uniforms());
 			errors.classList.remove('active');
-			if (options.uri) {
+			if (o.uri) {
 				welcome.classList.remove('active');
 			} else {
 				welcome.classList.add('active');
@@ -969,7 +1045,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			swapCanvas_(glslCanvas.canvas);
 		}
 
-		function resize(init) {
+		function resize() {
 			var w = content.offsetWidth;
 			var h = content.offsetHeight;
 			canvas.style.width = w + 'px';
@@ -979,26 +1055,66 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		function snapshot() {
 			glslCanvas.forceRender = true;
 			glslCanvas.render();
-			return capture.snapshot();
+			// return capture.snapshot();
 		}
 
-		function record() {
+		function recordStart() {
+			if (window.options.recordWidth > 0 && window.options.recordHeight > 0) {
+				content.style.width = window.options.recordWidth + 'px';
+				content.style.height = window.options.recordHeight + 'px';
+			}
+			resize();
 			glslCanvas.forceRender = true;
 			glslCanvas.render();
 			if (capture.record()) {
 				// flags.record = true;
 			}
+			const rdt = window.options.recordDuration;
+			// if (rdt > 0) {
+				window.rdt = rdt;
+				body.style.setProperty('--record-duration', window.rdt);
+				window.rii = setInterval(function() {
+					if (rdt > 0) {
+						window.rdt--;
+						body.style.setProperty('--record-duration', window.rdt);
+						if (window.rdt === 0) {
+							stopRecord();
+						}
+					} else {
+						window.rdt++;
+						body.style.setProperty('--record-duration', window.rdt);
+					}
+				}, 1000);
+				/*
+				window.rto = setTimeout(function() {
+					stopRecord();
+				}, window.options.recordDuration * 1000);
+				*/
+			// }
 		}
 
-		function stop() {
-			capture.stop().then(function (video) {
+		function recordStop() {
+			if (window.rii) {
+				clearInterval(window.rii);
+				window.rii = null;
+			}
+			/*
+			if (window.rto) {
+				clearTimeout(window.rto);
+				window.rto = null;
+			}
+			*/
+			capture.stop().then(function(video) {
+				content.style.width = '';
+				content.style.height = '';
+				resize();
 				var url = URL.createObjectURL(video.blob);
 				var link = document.createElement('a');
 				link.href = url;
 				link.download = 'shader' + video.extension;
 				link.click();
-				setTimeout(function () {
-					window.URL.revokeObjectURL(output);
+				setTimeout(function() {
+					window.URL.revokeObjectURL(url);
 				}, 100);
 			});
 		}
@@ -1008,8 +1124,8 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 				flags.pause = false;
 				/*
 				if (glslCanvas.timePause) {
-				    glslCanvas.timePrev = new Date();
-				    glslCanvas.timeLoad += (glslCanvas.timePrev - glslCanvas.timePause);
+					glslCanvas.timePrev = new Date();
+					glslCanvas.timeLoad += (glslCanvas.timePrev - glslCanvas.timePause);
 				}
 				*/
 				glslCanvas.play();
@@ -1027,24 +1143,40 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		function toggleRecord() {
 			flags.record = !flags.record;
 			if (flags.record) {
-				buttons.record.setAttribute('class', 'btn btn-record active');
-				buttons.record.querySelector('i').setAttribute('class', 'icon-stop');
-				record();
+				startRecord();
 			} else {
-				buttons.record.setAttribute('class', 'btn btn-record');
-				buttons.record.querySelector('i').setAttribute('class', 'icon-record');
-				stop();
+				stopRecord();
 			}
+		}
+
+		function startRecord() {
+			// if (window.options.recordDuration > 0) {
+				body.classList.add('recording');
+			// }
+			buttons.record.setAttribute('class', 'btn btn-record active');
+			buttons.record.querySelector('i').setAttribute('class', 'icon-stop');
+			recordStart();
+		}
+
+		function stopRecord() {
+			if (window.rii) {
+				clearInterval(window.rii);
+			}
+			flags.record = false;
+			body.classList.remove('recording');
+			buttons.record.setAttribute('class', 'btn btn-record');
+			buttons.record.querySelector('i').setAttribute('class', 'icon-record');
+			recordStop();
 		}
 
 		function toggleStats() {
 			flags.stats = !flags.stats;
 			/*
-            function statsTick() {
-                stats.update();
-                if (flags.stats) {
-                    requestAnimationFrame(statsTick);
-                }
+			function statsTick() {
+				stats.update();
+				if (flags.stats) {
+					requestAnimationFrame(statsTick);
+				}
 			}
 			*/
 			if (flags.stats) {
@@ -1111,7 +1243,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			if (ui) {
 				clearTimeout(ui);
 			}
-			ui = setTimeout(function () {
+			ui = setTimeout(function() {
 				onUpdateUniforms();
 			}, 1000 / 25);
 		}
@@ -1147,7 +1279,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 				removeCanvasListeners_();
 				canvas = canvas_;
 				addCanvasListeners_();
-				capture.set(canvas);
+				// capture.set(canvas);
 			}
 		}
 
@@ -1178,15 +1310,15 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			buttons.stats.addEventListener('mousedown', toggleStats);
 			buttons.export.addEventListener('mousedown', onExport);
 			buttons.create.addEventListener('click', createShader);
-			buttons.mode.addEventListener('mouseenter', function () {
+			buttons.mode.addEventListener('mouseenter', function() {
 				buttons.mode.classList.add('hover');
 			});
-			buttons.mode.addEventListener('mouseleave', function () {
+			buttons.mode.addEventListener('mouseleave', function() {
 				buttons.mode.classList.remove('hover');
 			});
-			modes.forEach(function (node) {
-				node.addEventListener('mousedown', function () {
-					modes.forEach(function (x) {
+			modes.forEach(function(node) {
+				node.addEventListener('mousedown', function() {
+					modes.forEach(function(x) {
 						x === node ? x.classList.add('active') : x.classList.remove('active');
 					});
 					var value = node.getAttribute('value');
@@ -1195,7 +1327,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 			});
 			window.addEventListener('message', onMessage, false);
 			window.addEventListener('resize', onResize);
-			errors.addEventListener('click', function () {
+			errors.addEventListener('click', function() {
 				clearDiagnostic();
 			});
 			addCanvasListeners_();
@@ -1203,7 +1335,7 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 
 		addListeners_();
 		resize();
-		vscode.setState(options);
+		vscode.setState(window.options);
 	}
 
 	function clearDiagnostic() {
@@ -1227,14 +1359,14 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		var errorLines = [],
 			warningLines = [],
 			lines = [];
-		message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function (m, l, v, t) {
+		message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function(m, l, v, t) {
 			l = Number(l) - message.offset;
 			var li = '<li><span class="error" unselectable reveal-line="' + lines.length + '"><span class="line">ERROR line ' + l + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
 			errorLines.push(li);
 			lines.push([options.uri, l, 'ERROR (' + v + ') ' + t]);
 			return li;
 		});
-		message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function (m, l, v, t) {
+		message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function(m, l, v, t) {
 			l = Number(l) - message.offset;
 			var li = '<li><span class="warning" unselectable reveal-line="' + lines.length + '"><span class="line">WARN line ' + l + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
 			warningLines.push(li);
@@ -1248,9 +1380,9 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 		errors.innerHTML = output;
 		errors.classList.add('active');
 		// console.log('onGlslError', 'errorLines', errorLines, 'warningLines', warningLines);
-		[].slice.call(document.querySelectorAll('.errors [reveal-line]')).forEach(function (node) {
+		[].slice.call(document.querySelectorAll('.errors [reveal-line]')).forEach(function(node) {
 			var index = parseInt(node.getAttribute('reveal-line'));
-			node.addEventListener('click', function (event) {
+			node.addEventListener('click', function(event) {
 				revealGlslLine(lines[index]);
 				event.preventDefault();
 				event.stopPropagation();

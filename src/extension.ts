@@ -152,7 +152,9 @@ function setConfiguration(event: vscode.ConfigurationChangeEvent = null) {
 			return GlslPanel.render();
 		}
 	}
-	if (event.affectsConfiguration('glsl-canvas.textures') || event.affectsConfiguration('glsl-canvas.uniforms')) {
+	if (event.affectsConfiguration('glsl-canvas.antialias') ||
+		event.affectsConfiguration('glsl-canvas.textures') ||
+		event.affectsConfiguration('glsl-canvas.uniforms')) {
 		// console.log('updated');
 		if (currentGlslEditor()) {
 			return GlslPanel.update();

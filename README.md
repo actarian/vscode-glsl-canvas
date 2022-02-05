@@ -13,6 +13,8 @@ It use [glsl-canvas](https://github.com/actarian/glsl-canvas) a modified and imp
 
 ***Now supporting nested includes with relative paths.***
 
+***Optimized video recording options, with record size and duration. Choose between MediaRecorderApi or CCapture for high quality compression.***
+
 ___
 
 *Run ⌘ ⇧ P on mac os, ctrl ⇧ P on windows.*  
@@ -32,7 +34,7 @@ ___
 * Vertex in fragment with ```VERTEX``` macro.
 * Multiple buffers with ```BUFFER``` macro.
 * Play / pause functionality.
-* Recording and exporting to ```.webm``` video.
+* Recording and exporting to ```.webm``` video with resolution and duration settings, using ```MediaRecorder``` or ```CCapture``` for high quality video.
 * Activable [stats.js](https://github.com/mrdoob/stats.js/) performance monitor.
 * Custom uniforms.
 * Activable gui for changing custom uniforms at runtime.
@@ -214,6 +216,17 @@ void main(){
 ```
 ___
 
+## Antialias
+
+Enables or disables antialias in the WebGL context.  
+
+```json
+{
+    "glsl-canvas.antialias": false
+}
+```
+___
+
 ## Change detection 
 
 You can set the timeout change detection option by modifying the workspace's ```settings.json``` file. 
@@ -277,6 +290,39 @@ Enables or disables installing the Npm packages on export.
 ```json
 {
     "glsl-canvas.installOnExport": true
+}
+```
+___
+
+## Record duration
+
+Specify automatic recording duration in seconds. Set to ```0``` to disable this feature.  
+
+```json
+{
+    "glsl-canvas.recordDuration": 10
+}
+```
+___
+
+## Record width
+
+Specify canvas recording width in pixels. Default value is ```1024```.  
+
+```json
+{
+    "glsl-canvas.recordWidth": 1024
+}
+```
+___
+
+## Record height
+
+Specify canvas recording height in pixels. Default value is ```1024```.  
+
+```json
+{
+    "glsl-canvas.recordHeight": 1024
 }
 ```
 ___

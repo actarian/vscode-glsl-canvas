@@ -192,6 +192,7 @@ class GlslPanel {
 		<button class="btn btn-stats" unselectable><i class="icon-stats"></i></button>
 		<button class="btn btn-export" unselectable><i class="icon-export"></i></button>
 	</div>
+	<div class="record"></div>
 	<div class="errors"></div>
 	<div class="welcome"><div class="welcome-content" unselectable><p>There's no active .glsl editor</p><button class="btn-create"><span>create one</span></button></div></div>
 	<div class="missing"><div class="missing-content" unselectable><p>Oops. There was a problem with WebGL.</p></div></div>

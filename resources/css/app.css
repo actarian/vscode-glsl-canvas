@@ -11,7 +11,11 @@ body {
   font-size: var(--vscode-editor-font-size);
   font-weight: var(--vscode-editor-font-weight); }
 
+body {
+  --record-duration: 10; }
+
 .content,
+.record,
 .shader,
 .error {
   width: 100%;
@@ -62,6 +66,9 @@ body {
     transition: transform ease-in-out 150ms; }
     .tools .btn:hover, .tools .btn.active {
       transform: scale3d(0.9, 0.9, 0.9); }
+  .recording .tools .btn:not(.btn-record) {
+    pointer-events: none;
+    opacity: 0.3; }
 
 .tools .btn-record.active {
   margin-top: 1px;
@@ -104,6 +111,34 @@ body {
     .nav-modes li:hover, .nav-modes li.active {
       opacity: 1;
       transform: scale3d(0.9, 0.9, 0.9); }
+
+.record {
+  display: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  min-height: 100%;
+  pointer-events: none; }
+  .recording .record {
+    display: block; }
+    .recording .record:after {
+      counter-reset: time var(--record-duration);
+      content: counter(time);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      margin: -40px 0 0 -40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 40px;
+      font-size: 30px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      z-index: 1; }
 
 .errors {
   display: none;

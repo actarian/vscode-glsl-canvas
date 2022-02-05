@@ -151,7 +151,9 @@ function setConfiguration(event = null) {
             return panel_1.default.render();
         }
     }
-    if (event.affectsConfiguration('glsl-canvas.textures') || event.affectsConfiguration('glsl-canvas.uniforms')) {
+    if (event.affectsConfiguration('glsl-canvas.antialias') ||
+        event.affectsConfiguration('glsl-canvas.textures') ||
+        event.affectsConfiguration('glsl-canvas.uniforms')) {
         // console.log('updated');
         if (common_1.currentGlslEditor()) {
             return panel_1.default.update();

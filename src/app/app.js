@@ -1,4 +1,4 @@
-(function () {
+(function() {
 	'use strict';
 
 	var vscode = acquireVsCodeApi();
@@ -31,20 +31,20 @@
 		};
 		resize(true);
 
-		// console.log('app.js workpath', options.workpath);
-		// console.log('app.js resources', options.resources);
+		// console.log('app.js workpath', window.options.workpath);
+		// console.log('app.js resources', window.options.resources);
 
 		var glslCanvas = new glsl.Canvas(canvas, {
 			backgroundColor: 'rgba(0.0, 0.0, 0.0, 0.0)',
 			alpha: true,
-			antialias: true,
+			antialias: window.options.antialias,
 			premultipliedAlpha: false,
 			preserveDrawingBuffer: false,
-			workpath: options.workpath,
-			// mesh: options.resources + '/model/lego.obj',
-			mesh: options.resources + '/model/duck-toy.obj',
-			extensions: options.extensions,
-			doubleSided: options.doubleSided,
+			workpath: window.options.workpath,
+			// mesh: window.options.resources + '/model/lego.obj',
+			mesh: window.options.resources + '/model/duck-toy.obj',
+			extensions: window.options.extensions,
+			doubleSided: window.options.doubleSided,
 		});
 
 		// console.log('glslCanvas.init', glslCanvas.mode);
@@ -53,17 +53,21 @@
 		glslCanvas.on('error', onGlslError);
 		glslCanvas.on('textureError', onGlslTextureError);
 
-		var capture = new CaptureService();
+		// console.log(window.options.recordMethod);
+
+		var capture = window.options.recordMethod === 'CCapture' ? new CCaptureService() : new CaptureService();
 		capture.set(canvas);
 
 		// var camera = new CameraService();
 		var trails = new TrailsService();
 
-		glslCanvas.on('render', function () {
+		glslCanvas.on('render', function() {
 			if (flags.stats) {
 				stats.end();
 			}
-			capture.snapshotRender();
+			if (flags.record) {
+				capture.snapshotRender();
+			}
 			// camera.render(glslCanvas);
 			trails.render(glslCanvas);
 			if (flags.stats) {
@@ -99,6 +103,7 @@
 				});
 				// console.log('texture', t, o.textures[t]);
 			}
+			// console.log(o.fragment, o.vertex);
 			glslCanvas.load(o.fragment, o.vertex).then(success => {
 				missing.classList.remove('active');
 			}, error => {
@@ -113,7 +118,7 @@
 			gui.load(o.uniforms);
 			glslCanvas.setUniforms(gui.uniforms());
 			errors.classList.remove('active');
-			if (options.uri) {
+			if (o.uri) {
 				welcome.classList.remove('active');
 			} else {
 				welcome.classList.add('active');
@@ -126,7 +131,7 @@
 			swapCanvas_(glslCanvas.canvas);
 		}
 
-		function resize(init) {
+		function resize() {
 			var w = content.offsetWidth;
 			var h = content.offsetHeight;
 			canvas.style.width = w + 'px';
@@ -136,26 +141,66 @@
 		function snapshot() {
 			glslCanvas.forceRender = true;
 			glslCanvas.render();
-			return capture.snapshot();
+			// return capture.snapshot();
 		}
 
-		function record() {
+		function recordStart() {
+			if (window.options.recordWidth > 0 && window.options.recordHeight > 0) {
+				content.style.width = window.options.recordWidth + 'px';
+				content.style.height = window.options.recordHeight + 'px';
+			}
+			resize();
 			glslCanvas.forceRender = true;
 			glslCanvas.render();
 			if (capture.record()) {
 				// flags.record = true;
 			}
+			const rdt = window.options.recordDuration;
+			// if (rdt > 0) {
+				window.rdt = rdt;
+				body.style.setProperty('--record-duration', window.rdt);
+				window.rii = setInterval(function() {
+					if (rdt > 0) {
+						window.rdt--;
+						body.style.setProperty('--record-duration', window.rdt);
+						if (window.rdt === 0) {
+							stopRecord();
+						}
+					} else {
+						window.rdt++;
+						body.style.setProperty('--record-duration', window.rdt);
+					}
+				}, 1000);
+				/*
+				window.rto = setTimeout(function() {
+					stopRecord();
+				}, window.options.recordDuration * 1000);
+				*/
+			// }
 		}
 
-		function stop() {
-			capture.stop().then(function (video) {
+		function recordStop() {
+			if (window.rii) {
+				clearInterval(window.rii);
+				window.rii = null;
+			}
+			/*
+			if (window.rto) {
+				clearTimeout(window.rto);
+				window.rto = null;
+			}
+			*/
+			capture.stop().then(function(video) {
+				content.style.width = '';
+				content.style.height = '';
+				resize();
 				var url = URL.createObjectURL(video.blob);
 				var link = document.createElement('a');
 				link.href = url;
 				link.download = 'shader' + video.extension;
 				link.click();
-				setTimeout(function () {
-					window.URL.revokeObjectURL(output);
+				setTimeout(function() {
+					window.URL.revokeObjectURL(url);
 				}, 100);
 			});
 		}
@@ -165,8 +210,8 @@
 				flags.pause = false;
 				/*
 				if (glslCanvas.timePause) {
-				    glslCanvas.timePrev = new Date();
-				    glslCanvas.timeLoad += (glslCanvas.timePrev - glslCanvas.timePause);
+					glslCanvas.timePrev = new Date();
+					glslCanvas.timeLoad += (glslCanvas.timePrev - glslCanvas.timePause);
 				}
 				*/
 				glslCanvas.play();
@@ -184,24 +229,40 @@
 		function toggleRecord() {
 			flags.record = !flags.record;
 			if (flags.record) {
-				buttons.record.setAttribute('class', 'btn btn-record active');
-				buttons.record.querySelector('i').setAttribute('class', 'icon-stop');
-				record();
+				startRecord();
 			} else {
-				buttons.record.setAttribute('class', 'btn btn-record');
-				buttons.record.querySelector('i').setAttribute('class', 'icon-record');
-				stop();
+				stopRecord();
 			}
+		}
+
+		function startRecord() {
+			// if (window.options.recordDuration > 0) {
+				body.classList.add('recording');
+			// }
+			buttons.record.setAttribute('class', 'btn btn-record active');
+			buttons.record.querySelector('i').setAttribute('class', 'icon-stop');
+			recordStart();
+		}
+
+		function stopRecord() {
+			if (window.rii) {
+				clearInterval(window.rii);
+			}
+			flags.record = false;
+			body.classList.remove('recording');
+			buttons.record.setAttribute('class', 'btn btn-record');
+			buttons.record.querySelector('i').setAttribute('class', 'icon-record');
+			recordStop();
 		}
 
 		function toggleStats() {
 			flags.stats = !flags.stats;
 			/*
-            function statsTick() {
-                stats.update();
-                if (flags.stats) {
-                    requestAnimationFrame(statsTick);
-                }
+			function statsTick() {
+				stats.update();
+				if (flags.stats) {
+					requestAnimationFrame(statsTick);
+				}
 			}
 			*/
 			if (flags.stats) {
@@ -268,7 +329,7 @@
 			if (ui) {
 				clearTimeout(ui);
 			}
-			ui = setTimeout(function () {
+			ui = setTimeout(function() {
 				onUpdateUniforms();
 			}, 1000 / 25);
 		}
@@ -304,7 +365,7 @@
 				removeCanvasListeners_();
 				canvas = canvas_;
 				addCanvasListeners_();
-				capture.set(canvas);
+				// capture.set(canvas);
 			}
 		}
 
@@ -335,15 +396,15 @@
 			buttons.stats.addEventListener('mousedown', toggleStats);
 			buttons.export.addEventListener('mousedown', onExport);
 			buttons.create.addEventListener('click', createShader);
-			buttons.mode.addEventListener('mouseenter', function () {
+			buttons.mode.addEventListener('mouseenter', function() {
 				buttons.mode.classList.add('hover');
 			});
-			buttons.mode.addEventListener('mouseleave', function () {
+			buttons.mode.addEventListener('mouseleave', function() {
 				buttons.mode.classList.remove('hover');
 			});
-			modes.forEach(function (node) {
-				node.addEventListener('mousedown', function () {
-					modes.forEach(function (x) {
+			modes.forEach(function(node) {
+				node.addEventListener('mousedown', function() {
+					modes.forEach(function(x) {
 						x === node ? x.classList.add('active') : x.classList.remove('active');
 					});
 					var value = node.getAttribute('value');
@@ -352,7 +413,7 @@
 			});
 			window.addEventListener('message', onMessage, false);
 			window.addEventListener('resize', onResize);
-			errors.addEventListener('click', function () {
+			errors.addEventListener('click', function() {
 				clearDiagnostic();
 			});
 			addCanvasListeners_();
@@ -360,7 +421,7 @@
 
 		addListeners_();
 		resize();
-		vscode.setState(options);
+		vscode.setState(window.options);
 	}
 
 	function clearDiagnostic() {
@@ -384,14 +445,14 @@
 		var errorLines = [],
 			warningLines = [],
 			lines = [];
-		message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function (m, l, v, t) {
+		message.error.replace(/ERROR: \d+:(\d+): \'(.+)\' : (.+)/g, function(m, l, v, t) {
 			l = Number(l) - message.offset;
 			var li = '<li><span class="error" unselectable reveal-line="' + lines.length + '"><span class="line">ERROR line ' + l + '</span> <span class="value" title="' + v + '">' + v + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
 			errorLines.push(li);
 			lines.push([options.uri, l, 'ERROR (' + v + ') ' + t]);
 			return li;
 		});
-		message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function (m, l, v, t) {
+		message.error.replace(/WARNING: \d+:(\d+): \'(.*\n*|.*|\n*)\' : (.+)/g, function(m, l, v, t) {
 			l = Number(l) - message.offset;
 			var li = '<li><span class="warning" unselectable reveal-line="' + lines.length + '"><span class="line">WARN line ' + l + '</span> <span class="text" title="' + t + '">' + t + '</span></span></li>';
 			warningLines.push(li);
@@ -405,9 +466,9 @@
 		errors.innerHTML = output;
 		errors.classList.add('active');
 		// console.log('onGlslError', 'errorLines', errorLines, 'warningLines', warningLines);
-		[].slice.call(document.querySelectorAll('.errors [reveal-line]')).forEach(function (node) {
+		[].slice.call(document.querySelectorAll('.errors [reveal-line]')).forEach(function(node) {
 			var index = parseInt(node.getAttribute('reveal-line'));
-			node.addEventListener('click', function (event) {
+			node.addEventListener('click', function(event) {
 				revealGlslLine(lines[index]);
 				event.preventDefault();
 				event.stopPropagation();

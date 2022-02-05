@@ -18,7 +18,9 @@
           "input": [
             "node_modules/stats.js/build/stats.min.js",
             "node_modules/dat.gui/build/dat.gui.min.js",
-            "node_modules/glsl-canvas-js/dist/umd/glsl-canvas.min.js"
+            "node_modules/glsl-canvas-js/dist/umd/glsl-canvas.min.js",
+            "node_modules/ccapture.js/src/CCapture.js",
+            "node_modules/ccapture.js/src/webm-writer-0.2.0.js"
           ],
           "output": "resources/js/vendors.js",
           "minify": true
@@ -35,6 +37,7 @@
             "src/app/services/vector/vector.js",
             "src/app/services/camera/camera.service.js",
             "src/app/services/capture/capture.service.js",
+            "src/app/services/capture/ccapture.service.js",
             "src/app/services/gui/gui.service.js",
             "src/app/services/trails/trails.service.js",
             "src/app/app.js"

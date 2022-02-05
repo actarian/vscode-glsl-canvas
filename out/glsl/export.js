@@ -99,7 +99,7 @@ class GlslExport {
 		var options = {
 			backgroundColor: 'rgba(0.0, 0.0, 0.0, 0.0)',
 			alpha: true,
-			antialias: true,
+			antialias: ${JSON.stringify(options.antialias)},
 			premultipliedAlpha: false,
 			preserveDrawingBuffer: false, ${options.mode !== 'flat' ? `
 				mode: ${JSON.stringify(options.mode)},

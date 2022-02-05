@@ -3,6 +3,14 @@ All notable changes to the "vscode-glsl-canvas" extension will be documented in 
 
 ---
 
+## [0.2.15] - 2022-02-05
+### Added
+- Video recording options, recordDuration, recordWidth, recordHeight, recordMethod MediaRecorder or CCapture.
+### Fixed
+- WebGL2 VERTEX shader definition updating GlslCanvas.
+
+---
+
 ## [0.2.14] - 2021-09-19
 ### Fixed
 - dat.gui style.

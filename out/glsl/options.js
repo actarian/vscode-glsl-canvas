@@ -19,23 +19,34 @@ class GlslOptions {
         this.uniforms = config['uniforms'] || {};
         this.timeout = config['timeout'] || 0;
         this.extensions = config['extensions'] || [];
+        this.antialias = config['antialias'] || false;
         this.doubleSided = config['doubleSided'] || false;
         this.refreshOnChange = config['refreshOnChange'] || false;
         this.refreshOnSave = config['refreshOnSave'] || false;
+        this.recordMethod = config['recordMethod'] || 'MediaRecorder';
+        // tslint:disable-next-line: triple-equals
+        this.recordDuration = config['recordDuration'] != null ? config['recordDuration'] : 10;
+        // tslint:disable-next-line: triple-equals
+        this.recordWidth = config['recordWidth'] != null ? config['recordWidth'] : 1024;
+        // tslint:disable-next-line: triple-equals
+        this.recordHeight = config['recordHeight'] != null ? config['recordHeight'] : 1024;
         if (webview !== null && extensionPath !== null) {
             const workpath = this.getWorkpath_(webview, extensionPath, workspaceFolder, uri);
             const folder = this.getFolder_(extensionPath, workspaceFolder, uri);
             const resources = this.getResources_(webview, extensionPath);
-            if (workspaceFolder) {
-                Object.keys(textures).forEach(key => {
-                    let texture = textures[key];
-                    if (texture.indexOf('http') === -1) {
+            Object.keys(textures).forEach(key => {
+                let texture = textures[key];
+                if (texture.indexOf('http') === -1) {
+                    if (workspaceFolder) {
                         texture = path.join(workspaceFolder, texture);
                         texture = path.relative(folder, texture);
                     }
-                    textures[key] = texture;
-                });
-            }
+                    else {
+                        texture = path.join(folder, texture);
+                    }
+                }
+                textures[key] = texture;
+            });
             this.workpath = workpath;
             this.folder = folder;
             this.resources = resources;

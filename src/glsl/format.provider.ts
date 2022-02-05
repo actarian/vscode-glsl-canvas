@@ -72,6 +72,8 @@ export default class GlslFormatProvider implements vscode.DocumentFormattingEdit
 					*/
 					// remove extra new line
 					s = s.replace(/\n\s*\n\s*\n/g, '\n\n');
+					// #pragma
+					s = s.replace(/[^\S\r\n]*#pragma(.+?)\s*:\s*(\S+)[^\S\r\n]*/g, '#pragma$1:$2');
 				}
 				return s;
 			});

@@ -2,7 +2,7 @@
   "name": "glsl-canvas",
   "displayName": "glsl-canvas",
   "description": "Live WebGL preview of GLSL shaders",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "author": "Luca Zampetti <lzampetti@gmail.com>",
   "publisher": "circledev",
   "license": "MIT",
@@ -36,16 +36,20 @@
         },
         "glsl-canvas.extensions": {
           "type": "array",
-          "description": "An array of extensions to enable in the webgl context, like EXT_shader_texture_lod"
+          "description": "An array of extensions to enable in the webgl context, like EXT_shader_texture_lod."
         },
         "glsl-canvas.doubleSided": {
           "type": "boolean",
-          "description": "Enables/Disables doubleSided rendering"
+          "description": "Enables/Disables doubleSided rendering."
+        },
+        "glsl-canvas.antialias": {
+          "type": "boolean",
+          "description": "Enables/Disables antialias in webgl context."
         },
         "glsl-canvas.timeout": {
           "type": "number",
           "default": 0,
-          "description": "Wait time in milliseconds before updating the canvas after a change in the source code. set 0 to update immediately"
+          "description": "Wait time in milliseconds before updating the canvas after a change in the source code. Set 0 to update immediately."
         },
         "glsl-canvas.refreshOnSave": {
           "type": "boolean",
@@ -71,6 +75,33 @@
           "type": "boolean",
           "default": true,
           "description": "Enables/Disables compact formatter."
+        },
+        "glsl-canvas.recordMethod": {
+          "type": "string",
+          "default": "MediaRecorder",
+          "enum": [
+            "MediaRecorder",
+            "CCapture"
+          ],
+          "enumDescriptions": [
+            "Use MediaRecorder api for standard quality webm video capture.",
+            "Use CCapture for high quality webm video capture (slower)."
+          ]
+        },
+        "glsl-canvas.recordDuration": {
+          "type": "number",
+          "default": 0,
+          "description": "Recording duration in seconds. Set 0 for manual control."
+        },
+        "glsl-canvas.recordWidth": {
+          "type": "number",
+          "default": 1024,
+          "description": "Recording canvas width in pixels. Set 0 to adapt."
+        },
+        "glsl-canvas.recordHeight": {
+          "type": "number",
+          "default": 1024,
+          "description": "Recording canvas height in pixels. Set 0 to adapt."
         }
       }
     },
@@ -131,8 +162,9 @@
     "url": "git://github.com/actarian/vscode-glsl-canvas.git"
   },
   "dependencies": {
+    "ccapture.js": "1.1.0",
     "dat.gui": "0.7.7",
-    "glsl-canvas-js": "0.2.6",
+    "glsl-canvas-js": "0.2.8",
     "glslEditor": "0.0.22",
     "natives": "~1.1.6",
     "spawn-command-with-kill": "~1.0.2",

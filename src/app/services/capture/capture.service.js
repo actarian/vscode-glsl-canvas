@@ -1,5 +1,5 @@
 /* global window, document, console, GlslCanvas */
-/* 
+/*
 Author: Brett Camper (@professorlemeza)
 URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
 */
@@ -53,14 +53,17 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
         try {
             var capture = {};
             var chunks = [];
-            var stream = service.canvas.captureStream();
+            var stream = service.canvas.captureStream(30);
             var options = {
-                mimeType: 'video/webm', // 'video/webm\;codecs=h264'
+                mimeType: 'video/webm; codecs=vp9', // 'video/webm', // 'video/webm\;codecs=h264'
+				audioBitsPerSecond: 0,
+				videoBitsPerSecond: 1048576 * 10,
             };
             var recorder = new MediaRecorder(stream, options);
-            recorder.ondataavailable = function (e) {
-                if (e.data.size > 0) {
-                    chunks.push(e.data);
+			// console.log('videoBitsPerSecond', recorder.videoBitsPerSecond);
+            recorder.ondataavailable = function (event) {
+                if (event.data.size > 0) {
+                    chunks.push(event.data);
                 }
                 // Stopped recording? Create the final capture file blob
                 if (capture.resolve) {
@@ -86,10 +89,10 @@ URL: https://github.com/tangrams/tangram/blob/master/src/utils/media_capture.js
             service.capture = capture;
             service.recorder = recorder;
             recorder.start();
-        } catch (e) {
+        } catch (error) {
             service.capture = null;
             service.recorder = null;
-            console.log('error: Scene video capture failed', e);
+            console.log('error: Scene video capture failed', error);
             return false;
         }
         return true;
