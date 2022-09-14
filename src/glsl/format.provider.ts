@@ -51,7 +51,7 @@ export default class GlslFormatProvider implements vscode.DocumentFormattingEdit
 					s = s.replace(/[^\S\n]*([\(\)\[\]])[^\S\n]*/g, '$1');
 					// s = s.replace(/(?<!if|return)[^\S\n]*([\(\)\[\]])[^\S\n]*/g, '$1');
 					// spaces
-					s = s.replace(/([^\(\[])[^\S\n)]*([\*\+\-\/\=\>\<\!\?\:]+)[^\S\n)]*([^\+\-])/g, '$1 $2 $3');
+					s = s.replace(/([^\(\[])[^\S\n)]*([\*\+\-\/\=\>\<\!\?\:\^\%\&\|]+)[^\S\n)]*([^\+\-])/g, '$1 $2 $3');
 					// s = s.replace(/([^\(\[])[^\S\n\()]*([\*\+\-\/\=/>/<]+)[^\S\n]*([^\+\-])/g, '$1 $2 $3');
 					s = s.replace(/([\,\;])[^\S\n]*/g, '$1 ');
 					s = s.replace(/[^\S\n]*([/{])/g, ' $1');
