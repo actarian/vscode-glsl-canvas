@@ -63,7 +63,13 @@
 					} else if (v.length) {
 						data[p] = v[0];
 					}
-				} else if (v !== undefined && v !== null) {
+				} else if(Array.isArray(v.value)) {
+					// Apply tuple on data with min & max value
+					data[p] = tuple(v.value);
+					data[p].min = v.min;
+					data[p].max = v.max;
+				}
+				 else if (v !== undefined && v !== null) {
 					data[p] = v;
 				}
 			}
@@ -171,16 +177,18 @@
 			}
 			keys.filter(function (key) {
 				var value = params[key];
-				if (typeof value === 'number') {
-					p = obj.add(params, key, 0.0, 1.0);
-					p.onChange(callback);
-				} else if (typeof value === 'object' && Object.keys(value).length > 0) {
-					p = null;
-					var folder = obj.addFolder(key);
-					loop(folder, value, callback);
-				} else {
-					p = obj.add(params, key);
-					p.onChange(callback);
+				if(key !== 'max' && key !== 'min') {
+					if (typeof value === 'number') {
+						p = obj.add(params, key, params.min || 0.0, params.max || 1.0);
+						p.onChange(callback);
+					} else if (typeof value === 'object' && Object.keys(value).length > 0) {
+						p = null;
+						var folder = obj.addFolder(key);
+						loop(folder, value, callback);
+					} else {
+						p = obj.add(params, key);
+						p.onChange(callback);
+					}
 				}
 			});
 		}
@@ -267,6 +275,18 @@
 		function uniforms() {
 			var service = this;
 			var pool = service.pool;
+			// Cleaning Pool And Locals due to get uniforms contain min & max
+			for (var i = 0; i < Object.keys(service.pool).length; i++) {
+				if (service.pool.hasOwnProperty(Object.keys(service.pool)[i])) {
+					if (service.pool[Object.keys(service.pool)[i]].max || service.pool[Object.keys(service.pool)[i]].min) {
+						delete service.pool[Object.keys(service.pool)[i]].max;
+						delete service.locals[Object.keys(service.locals)[i]].max;
+						delete service.pool[Object.keys(service.pool)[i]].min;
+						delete service.locals[Object.keys(service.locals)[i]].min;
+						service.locals[[Object.keys(service.pool)[i]]] = Object.keys(service.pool[Object.keys(service.pool)[i]]).map((val) => service.pool[Object.keys(service.pool)[i]][val]).flat();
+					}
+				}
+			}
 			return Parser.get(pool);
 		}
 
