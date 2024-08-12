@@ -133,13 +133,20 @@ function setConfiguration(event = null) {
     }
     const config = vscode.workspace.getConfiguration('glsl-canvas');
     // console.log('setConfiguration', config);
-    registerColorFormatter(currentContext);
     if (!event || event.affectsConfiguration('glsl-canvas.useFormatter')) {
         if (config['useFormatter'] === true) {
             registerCodeFormatter(currentContext);
         }
         else {
             disposeCodeFormatter();
+        }
+    }
+    if (!event || event.affectsConfiguration('glsl-canvas.useColorPicker')) {
+        if (config['useColorPicker'] === true) {
+            registerColorFormatter(currentContext);
+        }
+        else {
+            disposeColorFormatter();
         }
     }
     if (!event) {

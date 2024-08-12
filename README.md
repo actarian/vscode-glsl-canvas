@@ -268,6 +268,15 @@ Enables or disables glsl code formatter.
     "glsl-canvas.useFormatter": true
 }
 ```
+## Use Color Picker
+
+Enables or disables the color picker.
+
+```json
+{
+    "glsl-canvas.useColorPicker": true
+}
+```
 ___
 
 ## Use compact formatter

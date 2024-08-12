@@ -71,6 +71,11 @@
           "default": true,
           "description": "Enables/Disables code formatter."
         },
+        "glsl-canvas.useColorPicker": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables/Disables color picker."
+        },
         "glsl-canvas.useCompactFormatter": {
           "type": "boolean",
           "default": true,
